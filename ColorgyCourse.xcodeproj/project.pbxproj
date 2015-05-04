@@ -7,13 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		634FD6211AF749A9003B627D /* NCKU_samll_course.json in Resources */ = {isa = PBXBuildFile; fileRef = 634FD6201AF749A9003B627D /* NCKU_samll_course.json */; };
 		63A29E4D1AF722DF000494DB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E4C1AF722DF000494DB /* AppDelegate.swift */; };
 		63A29E501AF722DF000494DB /* ColorgyCourse.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E4E1AF722DF000494DB /* ColorgyCourse.xcdatamodeld */; };
-		63A29E521AF722DF000494DB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E511AF722DF000494DB /* ViewController.swift */; };
 		63A29E551AF722DF000494DB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63A29E531AF722DF000494DB /* Main.storyboard */; };
 		63A29E571AF722DF000494DB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63A29E561AF722DF000494DB /* Images.xcassets */; };
 		63A29E5A1AF722DF000494DB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63A29E581AF722DF000494DB /* LaunchScreen.xib */; };
 		63A29E661AF722DF000494DB /* ColorgyCourseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E651AF722DF000494DB /* ColorgyCourseTests.swift */; };
+		63A29E701AF72332000494DB /* ColorgyTimeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E6F1AF72332000494DB /* ColorgyTimeTableViewController.swift */; };
+		63A29E721AF7236C000494DB /* ColorgyFBLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E711AF7236C000494DB /* ColorgyFBLoginViewController.swift */; };
+		63A29E741AF7246E000494DB /* ColorgySetupProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E731AF7246E000494DB /* ColorgySetupProfileViewController.swift */; };
+		63A29E761AF72E41000494DB /* Course.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E751AF72E41000494DB /* Course.swift */; };
+		63A29E781AF740E3000494DB /* ColorgyCourseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E771AF740E3000494DB /* ColorgyCourseCell.swift */; };
+		63A29E7A1AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E791AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift */; };
+		BCB60EF032C3499020ABF860 /* libPods-ColorgyCourse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA6BD5834EC034FAA28A0DB4 /* libPods-ColorgyCourse.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,17 +34,26 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		572BB26BB0AC9A6CCD0BE10F /* Pods-ColorgyCourse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ColorgyCourse.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ColorgyCourse/Pods-ColorgyCourse.debug.xcconfig"; sourceTree = "<group>"; };
+		634FD6201AF749A9003B627D /* NCKU_samll_course.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NCKU_samll_course.json; sourceTree = "<group>"; };
 		63A29E471AF722DF000494DB /* ColorgyCourse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ColorgyCourse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63A29E4B1AF722DF000494DB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		63A29E4C1AF722DF000494DB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		63A29E4F1AF722DF000494DB /* ColorgyCourse.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ColorgyCourse.xcdatamodel; sourceTree = "<group>"; };
-		63A29E511AF722DF000494DB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		63A29E541AF722DF000494DB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		63A29E561AF722DF000494DB /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		63A29E591AF722DF000494DB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		63A29E5F1AF722DF000494DB /* ColorgyCourseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ColorgyCourseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		63A29E641AF722DF000494DB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		63A29E651AF722DF000494DB /* ColorgyCourseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorgyCourseTests.swift; sourceTree = "<group>"; };
+		63A29E6F1AF72332000494DB /* ColorgyTimeTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyTimeTableViewController.swift; sourceTree = "<group>"; };
+		63A29E711AF7236C000494DB /* ColorgyFBLoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyFBLoginViewController.swift; sourceTree = "<group>"; };
+		63A29E731AF7246E000494DB /* ColorgySetupProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgySetupProfileViewController.swift; sourceTree = "<group>"; };
+		63A29E751AF72E41000494DB /* Course.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Course.swift; sourceTree = "<group>"; };
+		63A29E771AF740E3000494DB /* ColorgyCourseCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyCourseCell.swift; sourceTree = "<group>"; };
+		63A29E791AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyViewAndAddCourseTableViewController.swift; sourceTree = "<group>"; };
+		8807EE0034D20B6587094B35 /* Pods-ColorgyCourse.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ColorgyCourse.release.xcconfig"; path = "Pods/Target Support Files/Pods-ColorgyCourse/Pods-ColorgyCourse.release.xcconfig"; sourceTree = "<group>"; };
+		AA6BD5834EC034FAA28A0DB4 /* libPods-ColorgyCourse.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ColorgyCourse.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BCB60EF032C3499020ABF860 /* libPods-ColorgyCourse.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,12 +75,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1C430DB70014A2FFB0752EB7 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				572BB26BB0AC9A6CCD0BE10F /* Pods-ColorgyCourse.debug.xcconfig */,
+				8807EE0034D20B6587094B35 /* Pods-ColorgyCourse.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		4D876CEB43146647A3289BCE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AA6BD5834EC034FAA28A0DB4 /* libPods-ColorgyCourse.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		63A29E3E1AF722DF000494DB = {
 			isa = PBXGroup;
 			children = (
 				63A29E491AF722DF000494DB /* ColorgyCourse */,
 				63A29E621AF722DF000494DB /* ColorgyCourseTests */,
 				63A29E481AF722DF000494DB /* Products */,
+				1C430DB70014A2FFB0752EB7 /* Pods */,
+				4D876CEB43146647A3289BCE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -80,11 +116,16 @@
 			isa = PBXGroup;
 			children = (
 				63A29E4C1AF722DF000494DB /* AppDelegate.swift */,
-				63A29E511AF722DF000494DB /* ViewController.swift */,
 				63A29E531AF722DF000494DB /* Main.storyboard */,
+				63A29E771AF740E3000494DB /* ColorgyCourseCell.swift */,
+				63A29E791AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift */,
 				63A29E561AF722DF000494DB /* Images.xcassets */,
 				63A29E581AF722DF000494DB /* LaunchScreen.xib */,
+				63A29E751AF72E41000494DB /* Course.swift */,
 				63A29E4E1AF722DF000494DB /* ColorgyCourse.xcdatamodeld */,
+				63A29E731AF7246E000494DB /* ColorgySetupProfileViewController.swift */,
+				63A29E711AF7236C000494DB /* ColorgyFBLoginViewController.swift */,
+				63A29E6F1AF72332000494DB /* ColorgyTimeTableViewController.swift */,
 				63A29E4A1AF722DF000494DB /* Supporting Files */,
 			);
 			path = ColorgyCourse;
@@ -93,6 +134,7 @@
 		63A29E4A1AF722DF000494DB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				634FD6201AF749A9003B627D /* NCKU_samll_course.json */,
 				63A29E4B1AF722DF000494DB /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -122,9 +164,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 63A29E691AF722DF000494DB /* Build configuration list for PBXNativeTarget "ColorgyCourse" */;
 			buildPhases = (
+				074F8C9D2DB4FA9E1D09C04B /* Check Pods Manifest.lock */,
 				63A29E431AF722DF000494DB /* Sources */,
 				63A29E441AF722DF000494DB /* Frameworks */,
 				63A29E451AF722DF000494DB /* Resources */,
+				7E141BC61816B77AA135C582 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -198,6 +242,7 @@
 				63A29E551AF722DF000494DB /* Main.storyboard in Resources */,
 				63A29E5A1AF722DF000494DB /* LaunchScreen.xib in Resources */,
 				63A29E571AF722DF000494DB /* Images.xcassets in Resources */,
+				634FD6211AF749A9003B627D /* NCKU_samll_course.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,13 +255,51 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		074F8C9D2DB4FA9E1D09C04B /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		7E141BC61816B77AA135C582 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ColorgyCourse/Pods-ColorgyCourse-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		63A29E431AF722DF000494DB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63A29E521AF722DF000494DB /* ViewController.swift in Sources */,
+				63A29E781AF740E3000494DB /* ColorgyCourseCell.swift in Sources */,
+				63A29E7A1AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift in Sources */,
+				63A29E701AF72332000494DB /* ColorgyTimeTableViewController.swift in Sources */,
+				63A29E761AF72E41000494DB /* Course.swift in Sources */,
 				63A29E501AF722DF000494DB /* ColorgyCourse.xcdatamodeld in Sources */,
+				63A29E721AF7236C000494DB /* ColorgyFBLoginViewController.swift in Sources */,
+				63A29E741AF7246E000494DB /* ColorgySetupProfileViewController.swift in Sources */,
 				63A29E4D1AF722DF000494DB /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -344,21 +427,25 @@
 		};
 		63A29E6A1AF722DF000494DB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 572BB26BB0AC9A6CCD0BE10F /* Pods-ColorgyCourse.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ColorgyCourse/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = ./Header.h;
 			};
 			name = Debug;
 		};
 		63A29E6B1AF722DF000494DB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8807EE0034D20B6587094B35 /* Pods-ColorgyCourse.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ColorgyCourse/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = ./Header.h;
 			};
 			name = Release;
 		};
@@ -415,6 +502,7 @@
 				63A29E6B1AF722DF000494DB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		63A29E6C1AF722DF000494DB /* Build configuration list for PBXNativeTarget "ColorgyCourseTests" */ = {
 			isa = XCConfigurationList;
@@ -423,6 +511,7 @@
 				63A29E6E1AF722DF000494DB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
