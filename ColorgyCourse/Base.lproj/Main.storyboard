@@ -25,7 +25,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kne-Ct-u6F" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="340" y="418"/>
+            <point key="canvasLocation" x="-168" y="402"/>
         </scene>
         <!--Colorgy Time Table View Controller-->
         <scene sceneID="BiM-tP-yFf">
@@ -141,7 +141,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vmE-Z1-M3p" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1116" y="418"/>
+            <point key="canvasLocation" x="800" y="402"/>
         </scene>
         <!--課表-->
         <scene sceneID="j2R-FR-Etu">
@@ -363,6 +363,6 @@
         <image name="menu" width="26" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="2mM-Z1-ByW"/>
+        <segue reference="ccH-pG-NM5"/>
     </inferredMetricsTieBreakers>
 </document>

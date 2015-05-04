@@ -119,6 +119,7 @@
 		63A29E491AF722DF000494DB /* ColorgyCourse */ = {
 			isa = PBXGroup;
 			children = (
+				63A29E4E1AF722DF000494DB /* ColorgyCourse.xcdatamodeld */,
 				63E3F4861AF78AB900486812 /* ColorgySideMenuController.swift */,
 				63A29E4C1AF722DF000494DB /* AppDelegate.swift */,
 				63A29E531AF722DF000494DB /* Main.storyboard */,
@@ -128,7 +129,6 @@
 				63A29E561AF722DF000494DB /* Images.xcassets */,
 				63A29E581AF722DF000494DB /* LaunchScreen.xib */,
 				63A29E751AF72E41000494DB /* Course.swift */,
-				63A29E4E1AF722DF000494DB /* ColorgyCourse.xcdatamodeld */,
 				63A29E731AF7246E000494DB /* ColorgySetupProfileViewController.swift */,
 				63A29E711AF7236C000494DB /* ColorgyFBLoginViewController.swift */,
 				63A29E6F1AF72332000494DB /* ColorgyTimeTableViewController.swift */,

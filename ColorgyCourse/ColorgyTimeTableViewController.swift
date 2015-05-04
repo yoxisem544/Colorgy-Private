@@ -10,8 +10,10 @@ import UIKit
 
 class ColorgyTimeTableViewController: UIViewController {
     
+    // MARK: - reveal menu
     @IBOutlet weak var revealMenuButton: UIBarButtonItem!
     
+    // MARK: - declaration
     // screen h & w
     var screenWidth: CGFloat!
     var screenHeight: CGFloat!
@@ -37,11 +39,13 @@ class ColorgyTimeTableViewController: UIViewController {
     // we got 11 + 4 = 15 courses
     var courseCount: Int = 15
     
+    // MARK: - color declaration
     // color region
     var colorgyGreen: UIColor = UIColor(red: 42/255.0, green: 171/255.0, blue: 147/255.0, alpha: 1)
     var colorgyDarkGray: UIColor = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
     var timetableWhite: UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.6)
     
+    // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -51,6 +55,7 @@ class ColorgyTimeTableViewController: UIViewController {
             revealMenuButton.action = "revealToggle:"
             self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         }
+        self.revealViewController().rearViewRevealWidth = 140
         //
 
         // Do any additional setup after loading the view.
@@ -76,6 +81,8 @@ class ColorgyTimeTableViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    
+    // MARK: - timetable grid view and content view
     func ColorgyTimeTableView() -> UIScrollView {
         
         // set its bounds
@@ -85,7 +92,7 @@ class ColorgyTimeTableViewController: UIViewController {
         // set timetable scrollview's content size
         // width matches device width
         // height is headerBarHeight and coursescount height and some spacing
-        view.contentSize = CGSizeMake(self.screenWidth, self.headerHeight + self.colorgyTimeTableCell.height * CGFloat(self.courseCount))
+        view.contentSize = CGSizeMake(self.screenWidth, self.headerHeight + self.colorgyTimeTableCell.height * CGFloat(self.courseCount) + CGFloat(2) * self.timetableSpacing)
         
         // add grid view
         view.addSubview(self.ColorgyTimeTableColumnView())
@@ -99,7 +106,7 @@ class ColorgyTimeTableViewController: UIViewController {
     func ColorgyTimeTableColumnView() -> UIView {
         // this view is vertical view
         // this is days from mon to fri
-        var view = UIView(frame: CGRectMake(self.timetableSpacing + self.sideBarWidth, 0.0, self.colorgyTimeTableCell.width * 5, self.headerHeight + self.colorgyTimeTableCell.height * CGFloat(self.courseCount)))
+        var view = UIView(frame: CGRectMake(self.timetableSpacing + self.sideBarWidth, 0.0 + self.timetableSpacing, self.colorgyTimeTableCell.width * 5, self.headerHeight + self.colorgyTimeTableCell.height * CGFloat(self.courseCount)))
         println(view.frame)
         println(self.colorgyTimeTableCell.height)
         view.backgroundColor = self.timetableWhite
@@ -151,7 +158,7 @@ class ColorgyTimeTableViewController: UIViewController {
                 break
         }
         
-        var view = UIView(frame: CGRectMake(self.timetableSpacing, self.headerHeight + timeOffset, self.sideBarWidth + self.colorgyTimeTableCell.width * CGFloat(5), self.colorgyTimeTableCell.height * courses))
+        var view = UIView(frame: CGRectMake(self.timetableSpacing, self.timetableSpacing + self.headerHeight + timeOffset, self.sideBarWidth + self.colorgyTimeTableCell.width * CGFloat(5), self.colorgyTimeTableCell.height * courses))
         view.backgroundColor = self.timetableWhite
         view.layer.borderColor = UIColor.whiteColor().CGColor
         view.layer.borderWidth = 1

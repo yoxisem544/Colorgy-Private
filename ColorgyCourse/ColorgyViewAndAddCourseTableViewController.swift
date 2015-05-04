@@ -10,14 +10,17 @@ import UIKit
 
 class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
 
+    // MARK: - reveal menu
     @IBOutlet weak var revealMenuButon: UIBarButtonItem!
     
+    // MARK: - declaration
     var parsedCourseData: NSArray!
     var courseData: NSMutableArray! = NSMutableArray()
     var searchCourse = UISearchController()
     
     var filteredCourse: NSMutableArray! = NSMutableArray()
     
+    // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -27,6 +30,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             revealMenuButon.action = "revealToggle:"
             self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         }
+        self.revealViewController().rearViewRevealWidth = 140
         //
         
         // tableview delegate and datasource
