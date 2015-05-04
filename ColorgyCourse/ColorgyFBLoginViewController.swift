@@ -132,14 +132,14 @@ class ColorgyFBLoginViewController: UIViewController {
         self.userPassword.borderStyle = UITextBorderStyle.RoundedRect
         self.userPassword.placeholder = "password"
         self.userPassword.center.x = self.view.center.x
-        self.userPassword.center.y = self.view.center.y
+        self.userPassword.center.y = self.view.center.y + 50
         self.view.addSubview(self.userPassword)
         
         self.userAccount = UITextField(frame: CGRectMake(0, 0, 300, 30))
         self.userAccount.borderStyle = UITextBorderStyle.RoundedRect
         self.userAccount.placeholder = "account"
         self.userAccount.center.x = self.view.center.x
-        self.userAccount.center.y = self.view.center.y + 50
+        self.userAccount.center.y = self.view.center.y
         self.view.addSubview(self.userAccount)
         
         // button
@@ -176,10 +176,10 @@ class ColorgyFBLoginViewController: UIViewController {
     func showUserPasswordAndAccount() {
         
         UIView.animateWithDuration(0.5, delay: 0.8+0.5, usingSpringWithDamping: 0.6, initialSpringVelocity: 1, options: nil, animations: {
-            self.userPassword.transform = CGAffineTransformMakeScale(1, 1)
+            self.userAccount.transform = CGAffineTransformMakeScale(1, 1)
             }, completion: nil)
         UIView.animateWithDuration(0.5, delay: 0.9+0.5, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: nil, animations: {
-            self.userAccount.transform = CGAffineTransformMakeScale(1, 1)
+            self.userPassword.transform = CGAffineTransformMakeScale(1, 1)
             }, completion: nil)
         UIView.animateWithDuration(0.5, delay: 1.0+0.5, usingSpringWithDamping: 0.8, initialSpringVelocity: 1, options: nil, animations: {
             self.passwordLoginButton.transform = CGAffineTransformMakeScale(1, 1)

@@ -10,6 +10,8 @@ import UIKit
 
 class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
 
+    @IBOutlet weak var revealMenuButon: UIBarButtonItem!
+    
     var parsedCourseData: NSArray!
     var courseData: NSMutableArray! = NSMutableArray()
     var searchCourse = UISearchController()
@@ -19,6 +21,15 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //reveal region
+        if self.revealViewController() != nil {
+            revealMenuButon.target = self.revealViewController()
+            revealMenuButon.action = "revealToggle:"
+            self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
+        }
+        //
+        
+        // tableview delegate and datasource
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
@@ -135,5 +146,23 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return 70
+    }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        if self.searchCourse.active {
+            let optionMenu = UIAlertController(title: "\(self.filteredCourse[indexPath.row][0])", message: "\(self.filteredCourse[indexPath.row][1])\n\(self.filteredCourse[indexPath.row][2])\n\(self.filteredCourse[indexPath.row][3])", preferredStyle: UIAlertControllerStyle.Alert)
+            let ok = UIAlertAction(title: "加入課程", style: UIAlertActionStyle.Default, handler: { (action:UIAlertAction!) -> Void in
+                
+            })
+            let cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: { (action:UIAlertAction!) -> Void in
+                optionMenu.dismissViewControllerAnimated(true, completion: nil)
+            })
+            
+            optionMenu.addAction(ok)
+            optionMenu.addAction(cancel)
+            
+            self.presentViewController(optionMenu, animated: true, completion: nil)
+        }
     }
 }

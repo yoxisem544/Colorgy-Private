@@ -39,6 +39,7 @@ class ColorgyTimeTableViewController: UIViewController {
     
     // color region
     var colorgyGreen: UIColor = UIColor(red: 42/255.0, green: 171/255.0, blue: 147/255.0, alpha: 1)
+    var colorgyDarkGray: UIColor = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
     var timetableWhite: UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.6)
     
     override func viewDidLoad() {
@@ -66,8 +67,6 @@ class ColorgyTimeTableViewController: UIViewController {
         self.colorgyTimeTableCell = CGSizeMake(cellWidth, cellHeight)
         // also header bar width is equal to cell width
         self.headerWidth = cellWidth
-        
-
         
         self.view.addSubview(self.ColorgyTimeTableView())
     }

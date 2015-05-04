@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7531" systemVersion="14E11f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="tjl-k1-Wo2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7531" systemVersion="14E11f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ERC-rS-cej">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -51,10 +51,10 @@
             </objects>
             <point key="canvasLocation" x="2686" y="-92"/>
         </scene>
-        <!--Table View Controller-->
+        <!--Colorgy Side Menu Controller-->
         <scene sceneID="TaK-5E-Lxg">
             <objects>
-                <tableViewController id="679-rO-xRa" sceneMemberID="viewController">
+                <tableViewController id="679-rO-xRa" customClass="ColorgySideMenuController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="wMa-pF-uuc">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -111,6 +111,23 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <segue destination="92q-nm-e2z" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="4ra-lV-AU9"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="oED-8F-5Bl">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="oED-8F-5Bl" id="fAi-8O-W8p">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="選課" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vh8-sd-uNL">
+                                                    <rect key="frame" x="8" y="11" width="34" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="tjl-k1-Wo2" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="4Ud-vn-fVl"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -212,16 +229,21 @@
                             <outlet property="delegate" destination="zc5-9Q-oJx" id="m9D-JE-pa8"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="課表" id="doZ-4e-ijb"/>
+                    <navigationItem key="navigationItem" title="課表" id="doZ-4e-ijb">
+                        <barButtonItem key="leftBarButtonItem" image="menu" id="126-i7-NCf"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="revealMenuButon" destination="126-i7-NCf" id="qhH-DY-e1H"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ChC-xk-GHG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2694" y="1420"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Colorgy Navigation Controller-->
         <scene sceneID="caM-oY-yFh">
             <objects>
-                <navigationController id="tjl-k1-Wo2" sceneMemberID="viewController">
+                <navigationController id="tjl-k1-Wo2" customClass="ColorgyNavigationController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="HnT-v1-98w">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -282,10 +304,10 @@
             </objects>
             <point key="canvasLocation" x="2686" y="615"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Colorgy Navigation Controller-->
         <scene sceneID="CSa-ag-7TI">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="92q-nm-e2z" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="92q-nm-e2z" customClass="ColorgyNavigationController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="Pvl-Hq-ALa">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -300,10 +322,10 @@
             </objects>
             <point key="canvasLocation" x="1874" y="615"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Colorgy Navigation Controller-->
         <scene sceneID="Y63-X2-RKf">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="AUs-2t-DyB" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="AUs-2t-DyB" customClass="ColorgyNavigationController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="gLX-pq-Rgo">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -318,10 +340,10 @@
             </objects>
             <point key="canvasLocation" x="1874" y="-92"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Colorgy Navigation Controller-->
         <scene sceneID="vcC-tW-THr">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ILZ-QE-8u6" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ILZ-QE-8u6" customClass="ColorgyNavigationController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="sTd-p6-orO">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
