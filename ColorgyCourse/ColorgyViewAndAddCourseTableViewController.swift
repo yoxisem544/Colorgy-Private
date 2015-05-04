@@ -20,6 +20,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     
     var filteredCourse: NSMutableArray! = NSMutableArray()
     
+    // MARK: - color
+    var colorgyGreen: UIColor = UIColor(red: 42/255.0, green: 171/255.0, blue: 147/255.0, alpha: 1)
+    
     // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,6 +65,8 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         self.searchCourse.searchBar.placeholder = "搜尋並加入課程"
         // i want to select tableview while searching
         self.searchCourse.dimsBackgroundDuringPresentation = false
+        // change search abr color
+        self.searchCourse.searchBar.tintColor = self.colorgyGreen
         
         // add search bar to top of tableview
         self.tableView.tableHeaderView = self.searchCourse.searchBar
