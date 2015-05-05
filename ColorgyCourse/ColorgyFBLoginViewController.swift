@@ -39,6 +39,9 @@ class ColorgyFBLoginViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         
+        // keyboard
+        
+        
         //reveal region
         if self.revealViewController() != nil {
             revealMenuButton.target = self.revealViewController()

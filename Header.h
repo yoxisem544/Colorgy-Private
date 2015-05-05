@@ -10,6 +10,6 @@
 #define _Header_h
 
 #import "SWRevealViewController.h"
-
+#import <FacebookSDK/FacebookSDK.h>
 
 #endif

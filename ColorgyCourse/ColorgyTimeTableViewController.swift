@@ -41,7 +41,7 @@ class ColorgyTimeTableViewController: UIViewController {
     
     // MARK: - color declaration
     // color region
-    var colorgyGreen: UIColor = UIColor(red: 42/255.0, green: 171/255.0, blue: 147/255.0, alpha: 1)
+    var colorgyOrange: UIColor = UIColor(red: 246/255.0, green: 150/255.0, blue: 114/255.0, alpha: 1)
     var colorgyDarkGray: UIColor = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
     var timetableWhite: UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.6)
     
@@ -87,7 +87,7 @@ class ColorgyTimeTableViewController: UIViewController {
         
         // set its bounds
         var view = UIScrollView(frame: CGRectMake(0, 0, self.screenWidth, self.screenHeight))
-        view.backgroundColor = self.colorgyGreen
+        view.backgroundColor = self.colorgyOrange
         
         // set timetable scrollview's content size
         // width matches device width

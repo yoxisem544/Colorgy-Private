@@ -21,7 +21,8 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     var filteredCourse: NSMutableArray! = NSMutableArray()
     
     // MARK: - color
-    var colorgyGreen: UIColor = UIColor(red: 42/255.0, green: 171/255.0, blue: 147/255.0, alpha: 1)
+    var colorgyGreen: UIColor = UIColor(red: 228/255.0, green: 133/255.0, blue: 111/255.0, alpha: 1)
+//    var colorgyGreen: UIColor = UIColor(red: 42/255.0, green: 171/255.0, blue: 147/255.0, alpha: 1)
     
     // MARK: - view
     override func viewDidLoad() {
