@@ -30,6 +30,9 @@ class ColorgySetupProfileViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         
+        // setup user info view's style
+        self.view.backgroundColor = self.colorgyOrange
+        
         //reveal region
         if self.revealViewController() != nil {
             revealMenuButton.target = self.revealViewController()
@@ -38,15 +41,31 @@ class ColorgySetupProfileViewController: UIViewController {
         }
         self.revealViewController().rearViewRevealWidth = 140
         //
-        self.view.backgroundColor = self.colorgyOrange
-        
+
         // upper patches of profile
+        // and profile image
+        self.setupUserProfilePhoto()
+        
+        // add text field to user
+        self.setupUserFillinPart()
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    // MARK: - setup views
+    
+    func setupUserProfilePhoto() {
+        
+        // upper patches beyond profile photo
         var upperpatches = UIView(frame: CGRectMake(0, 0, self.view.frame.width, self.view.frame.height * 0.36))
         upperpatches.backgroundColor = self.colorgyDarkGray
         
         self.view.addSubview(upperpatches)
         
-        // profile image
+        // user profile photo
         var profilePhtotHeight = self.view.frame.width * 0.3
         profilePhoto = UIImageView(frame: CGRectMake(0, 0, profilePhtotHeight, profilePhtotHeight))
         profilePhoto.layer.borderColor = self.colorrgyLightGray.CGColor
@@ -58,32 +77,32 @@ class ColorgySetupProfileViewController: UIViewController {
         profilePhoto.layer.masksToBounds = true
         
         self.view.addSubview(profilePhoto)
+    }
+    
+    
+    func setupUserFillinPart() {
         
-        // add text field to user
+        // user name text field and its style
         userName = UITextField(frame: CGRectMake(0, 0, self.view.frame.width*0.8, 30))
         userName.placeholder = "name"
         userName.borderStyle = UITextBorderStyle.RoundedRect
         userName.center = CGPointMake(self.view.center.x, self.view.center.y+20)
         self.view.addSubview(userName)
         
+        // user phone text field and its style
         userPhone = UITextField(frame: CGRectMake(0, 0, self.view.frame.width*0.8, 30))
         userPhone.placeholder = "phone"
         userPhone.borderStyle = UITextBorderStyle.RoundedRect
         userPhone.center = CGPointMake(self.view.center.x, self.view.center.y+68)
         self.view.addSubview(userPhone)
         
+        // user school text field and its style
         userSchool = UITextField(frame: CGRectMake(0, 0, self.view.frame.width*0.8, 30))
         userSchool.placeholder = "school"
         userSchool.borderStyle = UITextBorderStyle.RoundedRect
         userSchool.center = CGPointMake(self.view.center.x, self.view.center.y+20+48*2)
         self.view.addSubview(userSchool)
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
 
     /*
     // MARK: - Navigation

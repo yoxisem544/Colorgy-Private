@@ -68,6 +68,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         self.searchCourse.dimsBackgroundDuringPresentation = false
         // change search abr color
         self.searchCourse.searchBar.tintColor = self.colorgyGreen
+        self.searchCourse.searchBar.barTintColor = UIColor(red: 113/255.0, green: 112/255.0, blue: 113/255.0, alpha: 1)
+//        self.searchCourse.searchBar.searchBarStyle = UISearchBarStyle.Minimal
+        self.tableView.bounces = false
         
         // add search bar to top of tableview
         self.tableView.tableHeaderView = self.searchCourse.searchBar

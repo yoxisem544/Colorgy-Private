@@ -3,6 +3,7 @@
 
 target 'ColorgyCourse' do
   pod 'SWRevealViewController'
+  pod 'AFNetworking'
 end
 
 target 'ColorgyCourseTests' do

@@ -143,10 +143,10 @@
             </objects>
             <point key="canvasLocation" x="2686" y="-92"/>
         </scene>
-        <!--Colorgy Side Menu Controller-->
+        <!--TestingUSERDEFAULT Table View Controller-->
         <scene sceneID="TaK-5E-Lxg">
             <objects>
-                <tableViewController id="679-rO-xRa" customClass="ColorgySideMenuController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="679-rO-xRa" customClass="testingUSERDEFAULTTableViewController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="wMa-pF-uuc">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

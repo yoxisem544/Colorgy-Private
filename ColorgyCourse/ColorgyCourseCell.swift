@@ -11,7 +11,7 @@ import UIKit
 class ColorgyCourseCell: UITableViewCell {
 
     @IBOutlet weak var verticalSeparatorLine: UIView!
-    var colorgySeparatorGreen: UIColor = UIColor(red: 54/255.0, green: 191/255.0, blue: 163/255.0, alpha: 1)
+    var colorgyOrange: UIColor = UIColor(red: 246/255.0, green: 150/255.0, blue: 114/255.0, alpha: 1)
 
     @IBOutlet weak var horizontalSeparatorLine: UIView!
     
@@ -23,9 +23,19 @@ class ColorgyCourseCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        
+        // style of cell
+        // set separator line color, and backgroundcolor
         self.selectionStyle = UITableViewCellSelectionStyle.None
-        self.verticalSeparatorLine.backgroundColor = self.colorgySeparatorGreen
-        self.horizontalSeparatorLine.backgroundColor = self.colorgySeparatorGreen
+        self.verticalSeparatorLine.backgroundColor = UIColor.whiteColor()
+        self.horizontalSeparatorLine.backgroundColor = UIColor.whiteColor()
+        self.contentView.backgroundColor = self.colorgyOrange
+        
+        // set text color
+        self.name.textColor = UIColor.whiteColor()
+        self.teacher.textColor = UIColor.whiteColor()
+        self.time.textColor = UIColor.whiteColor()
+        self.location.textColor = UIColor.whiteColor()
     }
     
     override func setSelected(selected: Bool, animated: Bool) {

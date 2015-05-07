@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		630849B01AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630849AF1AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift */; };
 		631008DF1AF771B7008A40E4 /* ColorgyNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631008DE1AF771B7008A40E4 /* ColorgyNavigationController.swift */; };
 		6316F6E21AF8F4FF00877DE2 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6316F6E11AF8F4FF00877DE2 /* FacebookSDK.framework */; };
 		634FD6211AF749A9003B627D /* NCKU_samll_course.json in Resources */ = {isa = PBXBuildFile; fileRef = 634FD6201AF749A9003B627D /* NCKU_samll_course.json */; };
@@ -38,6 +39,7 @@
 
 /* Begin PBXFileReference section */
 		572BB26BB0AC9A6CCD0BE10F /* Pods-ColorgyCourse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ColorgyCourse.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ColorgyCourse/Pods-ColorgyCourse.debug.xcconfig"; sourceTree = "<group>"; };
+		630849AF1AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = testingUSERDEFAULTTableViewController.swift; sourceTree = "<group>"; };
 		631008DE1AF771B7008A40E4 /* ColorgyNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyNavigationController.swift; sourceTree = "<group>"; };
 		6316F6E11AF8F4FF00877DE2 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		634FD6201AF749A9003B627D /* NCKU_samll_course.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NCKU_samll_course.json; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				636FFF791AF9086D0012135C /* ColorgySideMenuViewController.swift */,
 				631008DE1AF771B7008A40E4 /* ColorgyNavigationController.swift */,
 				63A29E531AF722DF000494DB /* Main.storyboard */,
+				630849AF1AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift */,
 				63A29E771AF740E3000494DB /* ColorgyCourseCell.swift */,
 				63A29E791AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift */,
 				63A29E561AF722DF000494DB /* Images.xcassets */,
@@ -304,6 +307,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				63A29E781AF740E3000494DB /* ColorgyCourseCell.swift in Sources */,
+				630849B01AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift in Sources */,
 				63A29E7A1AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift in Sources */,
 				63A29E701AF72332000494DB /* ColorgyTimeTableViewController.swift in Sources */,
 				63A29E761AF72E41000494DB /* Course.swift in Sources */,

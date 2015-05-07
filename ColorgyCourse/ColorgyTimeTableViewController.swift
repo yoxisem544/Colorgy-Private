@@ -215,12 +215,8 @@ class ColorgyTimeTableViewController: UIViewController {
             default:
                 break
         }
-        
-        
-        
-        
+
         // add session to it
-        
         return view as UIView
     }
     
