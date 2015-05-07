@@ -100,6 +100,10 @@ class ColorgyTimeTableViewController: UIViewController {
         view.addSubview(self.ColorgyTimeTableRowSessionView("afternoon"))
         view.addSubview(self.ColorgyTimeTableRowSessionView("night"))
         
+        // add course here
+        view.addSubview(self.CourseViewAtDay(1, session: "A"))
+        view.addSubview(self.CourseViewAtDay(2, session: "2"))
+        
         return view as UIScrollView
     }
     
@@ -216,6 +220,39 @@ class ColorgyTimeTableViewController: UIViewController {
         
         
         // add session to it
+        
+        return view as UIView
+    }
+    
+
+    func CourseViewAtDay(day: Int, session: String) -> UIView {
+        
+        // srink cell by 1, 1 make it fit to the bound of time table
+        var CellSrinkSize = CGSizeMake(1, 1)
+        var view = UIView(frame: CGRectMake(0, 0, self.colorgyTimeTableCell.width - CellSrinkSize.width, self.colorgyTimeTableCell.height - CellSrinkSize.height))
+        var offset = CGPointMake(self.timetableSpacing + self.sideBarWidth - self.colorgyTimeTableCell.width / 2, self.timetableSpacing + self.headerHeight - self.colorgyTimeTableCell.width / 2)
+        
+        // course cell style
+        view.backgroundColor = UIColor.grayColor()
+        view.layer.cornerRadius = 5
+        
+        // postion of course
+        view.center.x = offset.x + CGFloat(day) * self.colorgyTimeTableCell.width
+        if let morningClass = session.toInt() {
+            // course in morning
+            view.center.y = offset.y + CGFloat(morningClass) * self.colorgyTimeTableCell.height
+        } else {
+            // course at night
+            if session == "A" {
+                view.center.y = offset.y + CGFloat(12) * self.colorgyTimeTableCell.height
+            } else if session == "B" {
+                view.center.y = offset.y + CGFloat(13) * self.colorgyTimeTableCell.height
+            } else if session == "C" {
+                view.center.y = offset.y + CGFloat(14) * self.colorgyTimeTableCell.height
+            } else if session == "D" {
+                view.center.y = offset.y + CGFloat(15) * self.colorgyTimeTableCell.height
+            }
+        }
         
         return view as UIView
     }
