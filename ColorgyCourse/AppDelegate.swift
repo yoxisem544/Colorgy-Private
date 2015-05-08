@@ -21,11 +21,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // this line changes status bar text color from black to white
         UIApplication.sharedApplication().setStatusBarStyle(UIStatusBarStyle.LightContent, animated: true)
         
-        
+        // register for user notification
+        // beware of ios 8 and ios 7, settings are not the same!
+        // register ios 8 notification setting
+        UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(forTypes: UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound, categories: nil))
+        UIApplication.sharedApplication().registerForRemoteNotifications()
         
         
         
         return true
+    }
+    
+    // notification did successfully set.
+    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+        println("notification set, user token : \(deviceToken)")
+    }
+    
+    // notification set error.
+    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
+        println("error setting notification: \(error)")
     }
 
     func applicationWillResignActive(application: UIApplication) {
@@ -36,6 +50,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        var noti = UILocalNotification()
+        noti.fireDate = NSDate().dateByAddingTimeInterval(3)
+        noti.alertBody = "testing!!"
+        UIApplication.sharedApplication().scheduleLocalNotification(noti)
+        UIApplication.sharedApplication().cancelAllLocalNotifications()
     }
 
     func applicationWillEnterForeground(application: UIApplication) {

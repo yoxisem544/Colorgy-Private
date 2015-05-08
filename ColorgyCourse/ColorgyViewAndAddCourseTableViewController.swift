@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
 
@@ -78,6 +79,96 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         //style fo search bar
         //if you dont add this, status bar will be ruin by the search
         self.definesPresentationContext = true
+        
+        self.getDataFromDatabase()
+        self.storeDataToDatabase()
+        self.isCourseAlreadyAddedToSelectedCourse()
+    }
+    
+    // check if course is already added to selected course
+    func isCourseAlreadyAddedToSelectedCourse() {
+        
+        var name = "digital circuit"
+        var teacher = "Mrs. Chen"
+        var location = "TR412"
+        var time = "R4"
+        
+        var courses = self.getDataFromDatabase()
+        if courses != nil {
+            // get data!
+            var isRepeated: Bool = false
+            for cc in courses! {
+                let c = cc as Course
+                if c.name == name {
+                    if c.teacher == teacher {
+                        if c.location == location {
+                            if c.time == time {
+                                isRepeated = true
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // judge if is already repeated 
+            if isRepeated {
+                println("yes repeat")
+            } else {
+                println("no repeat")
+            }
+        }
+    }
+    
+    // MARK: - operating database
+    func getDataFromDatabase() -> [Course]? {
+        
+        if let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext {
+            let fetchRequest = NSFetchRequest(entityName: "Course")
+            var e: NSError?
+            var course: [Course] = managedObjectContext.executeFetchRequest(fetchRequest, error: &e) as! [Course]
+            if e != nil {
+                println("something error")
+            } else {
+                println("ok")
+                for c in course {
+                    println(c)
+                }
+            }
+            
+            // if sucessfullly get the selected coruse data
+            // return it, as [Course] type
+            return course
+        }
+        
+        // if something wrong, return nil.
+        return nil
+    }
+    
+    // this function help you to store data into db
+    func storeDataToDatabase() {
+        
+        // get out managedObjectContext
+        if let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext {
+            
+            // insert a new course, but not yet saved.
+            var course = NSEntityDescription.insertNewObjectForEntityForName("Course", inManagedObjectContext: managedObjectContext) as! Course
+            // assign its value to it's key
+            course.name = "digital circuit"
+            course.teacher = "Mrs. Chen"
+            course.location = "TR412"
+            course.time = "R4"
+            
+            var e: NSError?
+            // to see if successfully store to db
+            if managedObjectContext.save(&e) != true {
+                // if i got a error
+                println("error \(e)")
+            } else {
+                // if success
+                println("store OK!")
+            }
+        }
     }
     
     // MARK: - Search bar update and filter
