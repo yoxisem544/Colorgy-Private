@@ -53,7 +53,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         
         // get json file
-        let path = NSBundle.mainBundle().pathForResource("NCKU_samll_course", ofType: "json")
+        let path = NSBundle.mainBundle().pathForResource("CCU_courses", ofType: "json")
         var e: NSError?
         var courseData = NSData(contentsOfFile: path!)
 
@@ -63,7 +63,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         } else {
             // parse json format to nsarray. easier to use
             for c in self.parsedCourseData {
-                self.courseData.addObject( [c["course_name"] as! String, c["teacher_name"] as! String, c["time"] as! String, c["classroom"] as! String] )
+                self.courseData.addObject( [c["name"] as! String, c["lecturer"] as! String, c["periods"] as! NSArray, c["credits"] as! Int] )
             }
         }
         
@@ -260,8 +260,8 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
 //            println(d)
             var name = d[0] as! String
             var teacher = d[1] as! String
-            var time = d[2] as! String
-            var location = d[3] as! String
+            var periods = d[2] as! NSArray
+            var location = "\(d[3])"
             
             var match: Bool! = false
             
@@ -271,8 +271,13 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             if teacher.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
                 match = true
             }
-            if time.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
-                match = true
+            for p in periods {
+                if let location = p[2]{
+                    let loca = location as! String
+                    if loca.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
+                        match = true
+                    }
+                }
             }
             if location.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
                 match = true
@@ -311,8 +316,8 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
 
             cell.name.text = self.filteredCourse[indexPath.row][0] as! String
             cell.teacher.text = self.filteredCourse[indexPath.row][1] as! String
-            cell.time.text = self.filteredCourse[indexPath.row][2] as! String
-            cell.location.text = self.filteredCourse[indexPath.row][3] as! String
+            cell.time.text = self.filteredCourse[indexPath.row][2][0] as! String
+            cell.location.text = "\(self.filteredCourse[indexPath.row][3])"
             
             return cell
         } else {
