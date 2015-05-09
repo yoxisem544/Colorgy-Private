@@ -59,11 +59,11 @@ class ColorgyFBLoginViewController: UIViewController {
         // password and account login
         self.setupUserPasswordAndAccount()
         self.hideUserPasswordAndAccount()
-        self.showUserPasswordAndAccount(1.3)
+//        self.showUserPasswordAndAccount(1.3)
         
         self.setupFacebookLoginButton()
         self.hideFacebookButton()
-//        self.showFacebookButton(1.3)
+        self.showFacebookButton(1.3)
         
         self.setupLoginSwitchButton()
         self.loginMode = "password"
@@ -238,6 +238,9 @@ class ColorgyFBLoginViewController: UIViewController {
         self.facebookLoginButton.center = CGPointMake(self.view.center.x, self.view.center.y + 130)
         
         self.view.addSubview(self.facebookLoginButton)
+        
+        // add target to fb login button.
+        self.facebookLoginButton.addTarget(self, action: "LoginToFacebook", forControlEvents: UIControlEvents.TouchUpInside)
     }
     
     
@@ -318,14 +321,72 @@ class ColorgyFBLoginViewController: UIViewController {
             }, completion: nil)
     }
     
+    // MARK: - facebook login helper function
+    func LoginToFacebook() {
+        
+        if FBSession.activeSession().isOpen {
+            // user is already login.
+            // do somthing here
+        } else {
+            // user request login to fb
+            // extended permission: email -> this is a must!
+            FBSession.openActiveSessionWithReadPermissions(["email"], allowLoginUI: true, completionHandler: { (session:FBSession!, state:FBSessionState, error: NSError!) in
+                
+                // completion handler
+                // first detect if something went wrong
+                if error != nil {
+                    self.alertUserWithError("登入FB時出錯囉！")
+                } else {
+                    println("login fb success!")
+                    println(session.accessTokenData.accessToken)
+//                    FBSession.activeSession().closeAndClearTokenInformation()
+                    self.requestColorgyOAuthAccessTokenWithFBToken(session.accessTokenData.accessToken)
+                }
+            })
+        }
+    }
     
+    // AFNetworking POST helper
+    func requestColorgyOAuthAccessTokenWithFBToken(token: String) {
+        
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        
+        afManager.requestSerializer = AFJSONRequestSerializer()
+        afManager.responseSerializer = AFJSONResponseSerializer()
+        
+        let params = [
+            "grant_type": "password",
+            "client_id": "de323349f404663158c5fbd8f149c126040371128cddbf4702b3d8d40206d29c",
+            "client_secret": "54178a05f5c0980f2a42ed41090e4dcce31c2a86787fa1d329c596afe1edacb2",
+            "username": "facebook:access_token",
+            "password": token,
+            "scope": "public account offline_access"
+        ]
+        
+        afManager.POST("https://colorgy.io/oauth/token", parameters: params, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
+                println("succccc post")
+                println(responseObject)
+            }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
+                println("error post")
+                self.alertUserWithError("與 Colorgy Server 溝通時發生錯誤！")
+            })
+    }
     
-    
+    func alertUserWithError(error: String) {
+        
+        let errorAlert = UIAlertController(title: "哦！出錯了！😨", message: "\(error)", preferredStyle: UIAlertControllerStyle.Alert)
+        let dismiss = UIAlertAction(title: "知道了！", style: UIAlertActionStyle.Cancel, handler: { (action:UIAlertAction!) -> Void in
+            errorAlert.dismissViewControllerAnimated(true, completion: nil)
+        })
+        errorAlert.addAction(dismiss)
+        self.presentViewController(errorAlert, animated: true, completion: nil)
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     
 
     /*

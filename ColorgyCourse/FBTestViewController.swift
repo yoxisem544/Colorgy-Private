@@ -31,9 +31,17 @@ class FBTestViewController: UIViewController {
             println(FBSession.activeSession().accessTokenData)
         } else {
             println("close")
-            if FBSession.openActiveSessionWithReadPermissions(["email"], allowLoginUI: true, completionHandler: nil) {
+            // request user email permission...
+            FBSession.openActiveSessionWithReadPermissions(["email"], allowLoginUI: true, completionHandler: { (session:FBSession!, state:FBSessionState, error: NSError!) in
+                // completion handler.
+                if error != nil {
+                    println(error)
+                }
+                println("open session with permisson email!")
                 
-            }
+            } )
+                
+            
             
         }
     }

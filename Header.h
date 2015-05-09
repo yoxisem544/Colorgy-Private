@@ -11,5 +11,6 @@
 
 #import "SWRevealViewController.h"
 #import <FacebookSDK/FacebookSDK.h>
+#import "AFNetworking.h"
 
 #endif
