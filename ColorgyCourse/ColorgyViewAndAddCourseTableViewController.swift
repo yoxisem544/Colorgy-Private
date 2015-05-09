@@ -19,7 +19,14 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     var courseData: NSMutableArray! = NSMutableArray()
     var searchCourse = UISearchController()
     
+    // filteredcoures is courses that filtered by search text
     var filteredCourse: NSMutableArray! = NSMutableArray()
+    
+    // courses user added to their timetable
+    var coursesAddedToTimetable: NSMutableArray!
+    
+    // background dimmer view
+    var dimmer: UIView!
     
     // MARK: - color
     var colorgyGreen: UIColor = UIColor(red: 228/255.0, green: 133/255.0, blue: 111/255.0, alpha: 1)
@@ -41,7 +48,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         // tableview delegate and datasource
         self.tableView.delegate = self
         self.tableView.dataSource = self
-        
+
         // tableview style
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         
@@ -73,6 +80,8 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
 //        self.searchCourse.searchBar.searchBarStyle = UISearchBarStyle.Minimal
         self.tableView.bounces = false
         
+//        self.searchCourse.dimsBackgroundDuringPresentation = true
+
         // add search bar to top of tableview
         self.tableView.tableHeaderView = self.searchCourse.searchBar
         
@@ -80,18 +89,28 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         //if you dont add this, status bar will be ruin by the search
         self.definesPresentationContext = true
         
-        self.getDataFromDatabase()
-        self.storeDataToDatabase()
-        self.isCourseAlreadyAddedToSelectedCourse()
+//        self.getDataFromDatabase()
+//        self.storeDataToDatabase()
+//        self.isCourseAlreadyAddedToSelectedCourse()
+        
+        // fetch data at the very begining
+        self.fetchDataAndUpdateSelectedCourses()
+        
+        // dimmer test region
+        self.dimmer = UIView(frame: CGRectMake(0, 44, self.view.frame.width, self.view.frame.height))
+        self.dimmer.backgroundColor = UIColor.blackColor()
+        self.dimmer.alpha = 0.5
+        self.tableView.addSubview(self.dimmer)
+        self.dimmer.hidden = true
     }
     
     // check if course is already added to selected course
-    func isCourseAlreadyAddedToSelectedCourse() {
+    func isCourseAlreadyAddedToSelectedCourse(course: NSArray) -> Bool{
         
-        var name = "digital circuit"
-        var teacher = "Mrs. Chen"
-        var location = "TR412"
-        var time = "R4"
+        var name = course[0] as! String
+        var teacher = course[1] as! String
+        var location = course[2] as! String
+        var time = course[3] as! String
         
         var courses = self.getDataFromDatabase()
         if courses != nil {
@@ -117,7 +136,12 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             } else {
                 println("no repeat")
             }
+            
+            return isRepeated
         }
+        
+        // empty course
+        return false
     }
     
     // MARK: - operating database
@@ -130,10 +154,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             if e != nil {
                 println("something error")
             } else {
-                println("ok")
-                for c in course {
-                    println(c)
-                }
+                println("ok count: \(course.count)")
             }
             
             // if sucessfullly get the selected coruse data
@@ -146,19 +167,21 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     }
     
     // this function help you to store data into db
-    func storeDataToDatabase() {
+    func storeDataToDatabase(courseToAdd: NSArray) {
         
+        println("store")
         // get out managedObjectContext
         if let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext {
             
             // insert a new course, but not yet saved.
             var course = NSEntityDescription.insertNewObjectForEntityForName("Course", inManagedObjectContext: managedObjectContext) as! Course
             // assign its value to it's key
-            course.name = "digital circuit"
-            course.teacher = "Mrs. Chen"
-            course.location = "TR412"
-            course.time = "R4"
+            course.name = courseToAdd[0] as! String
+            course.teacher = courseToAdd[1] as! String
+            course.location = courseToAdd[2] as! String
+            course.time = courseToAdd[3] as! String
             
+            println(course.name)
             var e: NSError?
             // to see if successfully store to db
             if managedObjectContext.save(&e) != true {
@@ -171,12 +194,62 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         }
     }
     
+    func fetchDataAndUpdateSelectedCourses() {
+        
+        // first get out the data from db
+        if let coursesFromDB = self.getDataFromDatabase() {
+            // if successfully get course data, parse it.
+
+            // if courseaddedtotimetable is nil, alloc it.
+            // or if there are some data in it re alloc it to make it a clean table.
+            // then get data from db again
+            self.coursesAddedToTimetable = NSMutableArray()
+
+            for c in coursesFromDB {
+                self.coursesAddedToTimetable.addObject([c.name, c.teacher, c.time, c.location])
+            }
+        }
+        // after getting data from db
+        // reload tableview
+        self.tableView.reloadData()
+    }
+    
     // MARK: - Search bar update and filter
     func updateSearchResultsForSearchController(searchController: UISearchController) {
         println("update!")
         self.filterContentForSearchText(self.searchCourse.searchBar.text)
         self.tableView.reloadData()
+        
+        if self.searchCourse.active && self.searchCourse.searchBar.text != "" {
+            // user is searching course
+            // do something if user is using search bar
+            // light up backgoround view if user is searching
+            self.dimmerViewisOn(false)
+        } else {
+            // user is viewing selected courses
+            // display it to user
+            self.fetchDataAndUpdateSelectedCourses()
+            // dim backgoround view if user is not searching
+            if self.searchCourse.active {
+                // if user is searching but not entering anything, dim the view
+                self.dimmerViewisOn(true)
+            } else {
+                // if user leave search, light up view
+                self.dimmerViewisOn(false)
+            }
+        }
     }
+    
+    func dimmerViewisOn(isOn: Bool) {
+
+        if isOn {
+            self.dimmer.hidden = false
+        } else {
+            self.dimmer.hidden = true
+        }
+        
+    }
+    
     
     func filterContentForSearchText(searchText: String) {
         
@@ -218,16 +291,22 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if searchCourse.active {
-            return self.filteredCourse.count
+        if searchCourse.active && self.searchCourse.searchBar.text != "" {
+            // dim view alittle if user is not yet entering any keywords.
+                return self.filteredCourse.count
+            
         } else {
-            return self.parsedCourseData.count
+            if self.coursesAddedToTimetable == nil {
+                // if there is nothing in it, fetch data from db
+                self.fetchDataAndUpdateSelectedCourses()
+            }
+            return self.coursesAddedToTimetable.count
         }
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        if searchCourse.active {
+        if searchCourse.active && searchCourse.searchBar.text != "" {
             var cell = tableView.dequeueReusableCellWithIdentifier("ColorgyCourseCell", forIndexPath: indexPath) as! ColorgyCourseCell
 
             cell.name.text = self.filteredCourse[indexPath.row][0] as! String
@@ -239,10 +318,15 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         } else {
             var cell = tableView.dequeueReusableCellWithIdentifier("ColorgyCourseCell", forIndexPath: indexPath) as! ColorgyCourseCell
             
-            cell.name.text = self.parsedCourseData[indexPath.row]["course_name"] as! String
-            cell.teacher.text = self.parsedCourseData[indexPath.row]["teacher_name"] as! String
-            cell.time.text = self.parsedCourseData[indexPath.row]["time"] as! String
-            cell.location.text = self.parsedCourseData[indexPath.row]["classroom"] as! String
+//            cell.name.text = self.parsedCourseData[indexPath.row]["course_name"] as! String
+//            cell.teacher.text = self.parsedCourseData[indexPath.row]["teacher_name"] as! String
+//            cell.time.text = self.parsedCourseData[indexPath.row]["time"] as! String
+//            cell.location.text = self.parsedCourseData[indexPath.row]["classroom"] as! String
+            
+            cell.name.text = self.coursesAddedToTimetable[indexPath.row][0] as! String
+            cell.teacher.text = self.coursesAddedToTimetable[indexPath.row][1] as! String
+            cell.time.text = self.coursesAddedToTimetable[indexPath.row][2] as! String
+            cell.location.text = self.coursesAddedToTimetable[indexPath.row][3] as! String
             
             return cell
         }
@@ -255,9 +339,19 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         if self.searchCourse.active {
-            let optionMenu = UIAlertController(title: "\(self.filteredCourse[indexPath.row][0])", message: "\(self.filteredCourse[indexPath.row][1])\n\(self.filteredCourse[indexPath.row][2])\n\(self.filteredCourse[indexPath.row][3])", preferredStyle: UIAlertControllerStyle.Alert)
+            
+            // get out all the data, easy to read.
+            let name = self.filteredCourse[indexPath.row][0] as! String
+            let teacher = self.filteredCourse[indexPath.row][1] as! String
+            let time = self.filteredCourse[indexPath.row][2] as! String
+            let location = self.filteredCourse[indexPath.row][3] as! String
+            let optionMenu = UIAlertController(title: "\(name)", message: "\(teacher)\n\(time)\n\(location)", preferredStyle: UIAlertControllerStyle.Alert)
             let ok = UIAlertAction(title: "加入課程", style: UIAlertActionStyle.Default, handler: { (action:UIAlertAction!) -> Void in
-                
+                var packedCourseArray = [name , teacher, time, location] as NSArray
+                if !self.isCourseAlreadyAddedToSelectedCourse(packedCourseArray) {
+                    // if this course is not selected...... add it
+                    self.storeDataToDatabase(packedCourseArray)
+                }
             })
             let cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: { (action:UIAlertAction!) -> Void in
                 optionMenu.dismissViewControllerAnimated(true, completion: nil)
