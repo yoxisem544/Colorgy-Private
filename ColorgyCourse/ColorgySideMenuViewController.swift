@@ -37,6 +37,12 @@ class ColorgySideMenuViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    @IBAction func logout(sender: AnyObject) {
+        var ud = NSUserDefaults.standardUserDefaults()
+        ud.setObject(nil, forKey: "isLogin")
+        FBSession.activeSession().closeAndClearTokenInformation()
+        ud.synchronize()
+    }
 
     /*
     // MARK: - Navigation

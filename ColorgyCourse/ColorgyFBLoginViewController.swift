@@ -356,6 +356,9 @@ class ColorgyFBLoginViewController: UIViewController {
             "scope": "public account offline_access"
         ]
         
+        // hide switch while posting
+        self.loginSwitchButton.hidden = true
+        
         afManager.POST("https://colorgy.io/oauth/token", parameters: params, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
                 println("succccc post")
                 println(responseObject)
@@ -377,6 +380,8 @@ class ColorgyFBLoginViewController: UIViewController {
             }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
                 println("error post")
                 self.alertUserWithError("與 Colorgy Server 溝通時發生錯誤！")
+                // show switch if user got a error while login
+                self.loginSwitchButton.hidden = false
             })
     }
     
