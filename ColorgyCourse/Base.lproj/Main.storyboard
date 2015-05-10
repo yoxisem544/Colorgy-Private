@@ -39,89 +39,40 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="nTA-Db-lXb">
-                                <rect key="frame" x="39" y="75" width="70" height="70"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="70" id="nEN-hx-RPS"/>
-                                    <constraint firstAttribute="height" constant="70" id="zQ0-Gy-QIf"/>
-                                </constraints>
-                            </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kRv-hb-VMF">
-                                <rect key="frame" x="53" y="153" width="42" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="sEO-Je-5GK">
-                                <rect key="frame" x="0.0" y="182" width="220" height="43"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="43" id="cPZ-kh-kV6"/>
-                                    <constraint firstAttribute="width" constant="220" id="t9T-ON-lf2"/>
-                                </constraints>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dCf-6R-YLr">
-                                <rect key="frame" x="0.0" y="225" width="140" height="75"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="140" id="WFs-LL-BUB"/>
-                                    <constraint firstAttribute="height" constant="75" id="WVG-L0-kHL"/>
-                                </constraints>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ohr-YB-bI6">
+                                <rect key="frame" x="41" y="36" width="30" height="30"/>
+                                <state key="normal" title="課表">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="yy:" destination="c4P-6e-yFm" eventType="touchUpInside" id="b9N-yE-QVG"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="37a-Q0-pru">
+                                <rect key="frame" x="33" y="81" width="60" height="30"/>
                                 <state key="normal" title="個人資料">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="896-tN-Dvn" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="gjL-kL-NUR"/>
+                                    <action selector="hi:" destination="c4P-6e-yFm" eventType="touchUpInside" id="Nph-2p-zKd"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aC6-he-1b7">
-                                <rect key="frame" x="0.0" y="300" width="140" height="75"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="140" id="AM4-ek-Gye"/>
-                                    <constraint firstAttribute="height" constant="75" id="rDH-QD-uhg"/>
-                                </constraints>
-                                <state key="normal" title="編輯課表">
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TKb-TY-Qab">
+                                <rect key="frame" x="33" y="126" width="30" height="30"/>
+                                <state key="normal" title="選課">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="tjl-k1-Wo2" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="haj-IL-zLu"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BHw-Vw-FSf">
-                                <rect key="frame" x="0.0" y="375" width="140" height="75"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="75" id="4WK-Qh-gv9"/>
-                                    <constraint firstAttribute="width" constant="140" id="P8k-zH-YCl"/>
-                                </constraints>
-                                <state key="normal" title="Button">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="AUs-2t-DyB" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="CXi-Em-MDJ"/>
+                                    <action selector="ss:" destination="c4P-6e-yFm" eventType="touchUpInside" id="MgN-St-9Ya"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="sEO-Je-5GK" firstAttribute="leading" secondItem="S11-4u-7nx" secondAttribute="leading" id="9OE-CB-or9"/>
-                            <constraint firstItem="aC6-he-1b7" firstAttribute="top" secondItem="dCf-6R-YLr" secondAttribute="bottom" id="AKR-ke-Zaj"/>
-                            <constraint firstItem="BHw-Vw-FSf" firstAttribute="top" secondItem="aC6-he-1b7" secondAttribute="bottom" id="QIg-3G-Vfn"/>
-                            <constraint firstItem="nTA-Db-lXb" firstAttribute="top" secondItem="a1m-cY-4gK" secondAttribute="bottom" constant="55" id="Uub-53-ynT"/>
-                            <constraint firstItem="nTA-Db-lXb" firstAttribute="leading" secondItem="S11-4u-7nx" secondAttribute="leading" constant="39" id="Wb4-Af-F0r"/>
-                            <constraint firstItem="dCf-6R-YLr" firstAttribute="top" secondItem="sEO-Je-5GK" secondAttribute="bottom" id="idL-IC-oxL"/>
-                            <constraint firstItem="kRv-hb-VMF" firstAttribute="top" secondItem="nTA-Db-lXb" secondAttribute="bottom" constant="8" id="jSG-qD-Gc3"/>
-                            <constraint firstItem="dCf-6R-YLr" firstAttribute="leading" secondItem="S11-4u-7nx" secondAttribute="leading" id="p4S-kl-N7O"/>
-                            <constraint firstItem="aC6-he-1b7" firstAttribute="leading" secondItem="S11-4u-7nx" secondAttribute="leading" id="s2b-sc-JiG"/>
-                            <constraint firstItem="BHw-Vw-FSf" firstAttribute="leading" secondItem="S11-4u-7nx" secondAttribute="leading" id="xHT-xm-cLa"/>
-                            <constraint firstItem="sEO-Je-5GK" firstAttribute="top" secondItem="kRv-hb-VMF" secondAttribute="bottom" constant="8" id="yD5-eM-t9J"/>
-                            <constraint firstItem="kRv-hb-VMF" firstAttribute="centerX" secondItem="nTA-Db-lXb" secondAttribute="centerX" id="yOI-xM-d3c"/>
-                        </constraints>
                     </view>
                     <connections>
-                        <outlet property="aboutUs" destination="BHw-Vw-FSf" id="QLW-GV-GhQ"/>
-                        <outlet property="editTimetable" destination="aC6-he-1b7" id="WKG-lk-iou"/>
-                        <outlet property="personalInfo" destination="dCf-6R-YLr" id="DdK-E1-xQg"/>
-                        <outlet property="profilePhoto" destination="nTA-Db-lXb" id="gRu-sN-J0T"/>
-                        <outlet property="userName" destination="kRv-hb-VMF" id="sFS-VR-rVl"/>
-                        <outlet property="waveImage" destination="sEO-Je-5GK" id="RAl-rR-StL"/>
+                        <segue destination="AUs-2t-DyB" kind="custom" identifier="fff" customClass="SWRevealViewControllerSeguePushController" id="dgS-SD-nX2"/>
+                        <segue destination="tjl-k1-Wo2" kind="custom" identifier="s" customClass="SWRevealViewControllerSeguePushController" id="yVy-gB-MrG"/>
+                        <segue destination="896-tN-Dvn" kind="custom" identifier="p" customClass="SWRevealViewControllerSeguePushController" id="f0B-DK-8Ih"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AUg-4F-Rpk" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -404,6 +355,6 @@
         <image name="menu" width="26" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="z2X-d6-Ptj"/>
+        <segue reference="dgS-SD-nX2"/>
     </inferredMetricsTieBreakers>
 </document>
