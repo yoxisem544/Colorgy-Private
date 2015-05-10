@@ -10,9 +10,6 @@ import UIKit
 
 class ColorgyFBLoginViewController: UIViewController {
     
-    // MARK: - reveal menu
-    @IBOutlet weak var revealMenuButton: UIBarButtonItem!
-    
     // MARK: - declaration
     // this is background of login view
     // green ink and logo
@@ -41,15 +38,6 @@ class ColorgyFBLoginViewController: UIViewController {
         
         // keyboard
         
-        
-        //reveal region
-        if self.revealViewController() != nil {
-            revealMenuButton.target = self.revealViewController()
-            revealMenuButton.action = "revealToggle:"
-            self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
-        }
-        self.revealViewController().rearViewRevealWidth = 140
-        //
         
         // setup logo and backgorun
         self.setupLogoAndBackgorund()
@@ -338,9 +326,14 @@ class ColorgyFBLoginViewController: UIViewController {
                     self.alertUserWithError("登入FB時出錯囉！")
                 } else {
                     println("login fb success!")
-                    println(session.accessTokenData.accessToken)
+                    
+//                    println(session.accessTokenData.accessToken)
 //                    FBSession.activeSession().closeAndClearTokenInformation()
-                    self.requestColorgyOAuthAccessTokenWithFBToken(session.accessTokenData.accessToken)
+                    if session.accessTokenData != nil {
+                        self.requestColorgyOAuthAccessTokenWithFBToken(session.accessTokenData.accessToken)
+                    } else {
+                        println("fuc!!!!!")
+                    }
                 }
             })
         }
@@ -366,10 +359,46 @@ class ColorgyFBLoginViewController: UIViewController {
         afManager.POST("https://colorgy.io/oauth/token", parameters: params, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
                 println("succccc post")
                 println(responseObject)
+            
+                let access_token = responseObject["access_token"] as! String
+                let created_at = String(stringInterpolationSegment: responseObject["created_at"])
+                let expires_in = String(stringInterpolationSegment: responseObject["expires_in"])
+                let refresh_token = responseObject["refresh_token"] as! String
+                let token_type = responseObject["token_type"] as! String
+            
+                self.animateLogoOff()
+            
+                // wait for animation to finish, then store login info
+                var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                dispatch_after(delay, dispatch_get_main_queue()) {
+                    self.userSuccessfullyLoginToColorgyWithToken(access_token, created_at: created_at, expires_in: expires_in, refresh_token: refresh_token, token_type: token_type)
+                }
+    
             }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
                 println("error post")
                 self.alertUserWithError("與 Colorgy Server 溝通時發生錯誤！")
             })
+    }
+    
+    func userSuccessfullyLoginToColorgyWithToken(token: String, created_at: String, expires_in: String, refresh_token: String, token_type: String) {
+        
+        var ud = NSUserDefaults.standardUserDefaults()
+        ud.setObject(token, forKey: "ColorgyAccessToken")
+        ud.setObject(created_at, forKey: "ColorgyCreatedTime")
+        ud.setObject(expires_in, forKey: "ColorgyExpireTime")
+        ud.setObject(refresh_token, forKey: "ColorgyRefreshToken")
+        ud.setObject(token_type, forKey: "ColorgyTokenType")
+        
+        // set user login type as fb
+        ud.setObject("fb", forKey: "isLogin")
+        
+        // sync setting
+        ud.synchronize()
+        
+        println("ready to switch view")
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyService") as! SWRevealViewController
+        self.presentViewController(vc, animated: true, completion: nil)
     }
     
     func alertUserWithError(error: String) {
@@ -377,9 +406,56 @@ class ColorgyFBLoginViewController: UIViewController {
         let errorAlert = UIAlertController(title: "哦！出錯了！😨", message: "\(error)", preferredStyle: UIAlertControllerStyle.Alert)
         let dismiss = UIAlertAction(title: "知道了！", style: UIAlertActionStyle.Cancel, handler: { (action:UIAlertAction!) -> Void in
             errorAlert.dismissViewControllerAnimated(true, completion: nil)
+            // if user login error, close fbsession everytime.
+            FBSession.activeSession().closeAndClearTokenInformation()
+        })
+        errorAlert.dismissViewControllerAnimated(true, completion: {
+            
         })
         errorAlert.addAction(dismiss)
         self.presentViewController(errorAlert, animated: true, completion: nil)
+    }
+    
+    // MARK: - login animation
+    
+    func animateLogoOff() {
+        println("offff")
+        
+        var transDown: CGAffineTransform!
+        if self.view.frame.height == 667 {
+            // for iPhone 6
+            transDown = CGAffineTransformMakeTranslation(0, -330 + 30)
+        } else if self.view.frame.height == 568 {
+            // for iPhone 5S
+            transDown = CGAffineTransformMakeTranslation(0, -430 + 30)
+        } else if self.view.frame.height == 736 {
+            // for 6+
+            transDown = CGAffineTransformMakeTranslation(0, -261 + 30)
+        } else if self.view.frame.height == 480 {
+            // for 4s
+            transDown = CGAffineTransformMakeTranslation(0, -518 + 30)
+        }
+        
+        // animate down
+        UIView.animateWithDuration(0.5, delay: 0.5, options: UIViewAnimationOptions.CurveEaseIn, animations: {
+                self.colorgyLogo.transform = transDown
+            }, completion: nil)
+        UIView.animateWithDuration(0.5, delay: 0.5, options: UIViewAnimationOptions.CurveEaseIn, animations: {
+                self.loginBackground.transform = transDown
+            }, completion: nil)
+        // animate up
+        UIView.animateWithDuration(1, delay: 1, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: nil, animations: {
+                self.colorgyLogo.transform = CGAffineTransformMakeTranslation(0, -1000)
+            }, completion: nil)
+        UIView.animateWithDuration(1, delay: 1, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: nil, animations: {
+                self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -1000)
+            }, completion: nil)
+        
+        // fade out buttons
+        UIView.animateWithDuration(0.5, animations: {
+            self.loginSwitchButton.alpha = 0
+            self.facebookLoginButton.alpha = 0
+        })
     }
 
     override func didReceiveMemoryWarning() {

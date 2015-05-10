@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14E11f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ERC-rS-cej">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14E11f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -8,7 +8,7 @@
         <!--Reveal View Controller-->
         <scene sceneID="ssc-GM-iYq">
             <objects>
-                <viewController id="ERC-rS-cej" customClass="SWRevealViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ColorgyService" id="ERC-rS-cej" customClass="SWRevealViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="0dz-gR-GvN"/>
                         <viewControllerLayoutGuide type="bottom" id="b9e-Dj-8wL"/>
@@ -19,13 +19,13 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
-                        <segue destination="ILZ-QE-8u6" kind="custom" identifier="sw_front" customClass="SWRevealViewControllerSegueSetController" id="ccH-pG-NM5"/>
-                        <segue destination="679-rO-xRa" kind="custom" identifier="sw_rear" customClass="SWRevealViewControllerSegueSetController" id="iM4-jK-ogp"/>
+                        <segue destination="c4P-6e-yFm" kind="custom" identifier="sw_rear" customClass="SWRevealViewControllerSegueSetController" id="2b3-BM-V9e"/>
+                        <segue destination="AUs-2t-DyB" kind="custom" identifier="sw_front" customClass="SWRevealViewControllerSegueSetController" id="z2X-d6-Ptj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kne-Ct-u6F" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-168" y="402"/>
+            <point key="canvasLocation" x="186" y="237"/>
         </scene>
         <!--Colorgy Side Menu View Controller-->
         <scene sceneID="2yO-Xd-KgD">
@@ -65,9 +65,12 @@
                                     <constraint firstAttribute="width" constant="140" id="WFs-LL-BUB"/>
                                     <constraint firstAttribute="height" constant="75" id="WVG-L0-kHL"/>
                                 </constraints>
-                                <state key="normal" title="Button">
+                                <state key="normal" title="個人資料">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <segue destination="896-tN-Dvn" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="gjL-kL-NUR"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aC6-he-1b7">
                                 <rect key="frame" x="0.0" y="300" width="140" height="75"/>
@@ -75,9 +78,12 @@
                                     <constraint firstAttribute="width" constant="140" id="AM4-ek-Gye"/>
                                     <constraint firstAttribute="height" constant="75" id="rDH-QD-uhg"/>
                                 </constraints>
-                                <state key="normal" title="Button">
+                                <state key="normal" title="編輯課表">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <segue destination="tjl-k1-Wo2" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="haj-IL-zLu"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BHw-Vw-FSf">
                                 <rect key="frame" x="0.0" y="375" width="140" height="75"/>
@@ -88,6 +94,9 @@
                                 <state key="normal" title="Button">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <segue destination="AUs-2t-DyB" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="CXi-Em-MDJ"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -117,7 +126,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AUg-4F-Rpk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="312" y="1093"/>
+            <point key="canvasLocation" x="932" y="237"/>
         </scene>
         <!--Test View Controller-->
         <scene sceneID="BFk-xB-awG">
@@ -171,98 +180,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pfw-zb-fZq" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2686" y="-92"/>
-        </scene>
-        <!--TestingUSERDEFAULT Table View Controller-->
-        <scene sceneID="TaK-5E-Lxg">
-            <objects>
-                <tableViewController id="679-rO-xRa" customClass="testingUSERDEFAULTTableViewController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="wMa-pF-uuc">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <sections>
-                            <tableViewSection id="BUd-Uw-PaI">
-                                <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="fXM-7K-jLo">
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fXM-7K-jLo" id="g8v-Pe-UHk">
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="登入畫面" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4uK-Ec-D6Q">
-                                                    <rect key="frame" x="8" y="11" width="68" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="ILZ-QE-8u6" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="2mM-Z1-ByW"/>
-                                        </connections>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="QjG-YM-JMY">
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QjG-YM-JMY" id="1KT-gx-Mpn">
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="課表" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mQ0-du-Xga">
-                                                    <rect key="frame" x="8" y="11" width="34" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="AUs-2t-DyB" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="DYT-If-hWn"/>
-                                        </connections>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="1jm-1S-7mV">
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1jm-1S-7mV" id="oVa-8u-i0Y">
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="設定個人業面" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vcV-4E-tLa">
-                                                    <rect key="frame" x="8" y="11" width="102" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="92q-nm-e2z" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="4ra-lV-AU9"/>
-                                        </connections>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="oED-8F-5Bl">
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="oED-8F-5Bl" id="fAi-8O-W8p">
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="選課" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vh8-sd-uNL">
-                                                    <rect key="frame" x="8" y="11" width="34" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="tjl-k1-Wo2" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="4Ud-vn-fVl"/>
-                                        </connections>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                        </sections>
-                        <connections>
-                            <outlet property="dataSource" destination="679-rO-xRa" id="eQ5-bF-cU1"/>
-                            <outlet property="delegate" destination="679-rO-xRa" id="lhR-Y0-oZ1"/>
-                        </connections>
-                    </tableView>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="vmE-Z1-M3p" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="800" y="402"/>
         </scene>
         <!--課表-->
         <scene sceneID="j2R-FR-Etu">
@@ -359,7 +276,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ChC-xk-GHG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2694" y="1420"/>
+            <point key="canvasLocation" x="2694" y="726"/>
         </scene>
         <!--Colorgy Navigation Controller-->
         <scene sceneID="caM-oY-yFh">
@@ -375,12 +292,12 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XfA-JI-sNk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1874" y="1420"/>
+            <point key="canvasLocation" x="1874" y="726"/>
         </scene>
         <!--ColorgyFB Login View Controller-->
         <scene sceneID="Fxb-FD-Rzs">
             <objects>
-                <viewController storyboardIdentifier="fblogin" id="e4h-V4-csD" customClass="ColorgyFBLoginViewController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="colorgyFBLoginView" id="e4h-V4-csD" customClass="ColorgyFBLoginViewController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="pLc-IM-1bJ"/>
                         <viewControllerLayoutGuide type="bottom" id="nDI-CH-EJg"/>
@@ -393,13 +310,10 @@
                     <navigationItem key="navigationItem" id="BOR-7q-zMn">
                         <barButtonItem key="leftBarButtonItem" image="menu" id="Gzm-H1-dhI"/>
                     </navigationItem>
-                    <connections>
-                        <outlet property="revealMenuButton" destination="Gzm-H1-dhI" id="mEu-e4-6ZW"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="THk-vY-HaP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2686" y="-759"/>
+            <point key="canvasLocation" x="1506" y="-847"/>
         </scene>
         <!--Colorgy Setup Profile View Controller-->
         <scene sceneID="mBE-XM-txw">
@@ -423,25 +337,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="atJ-ct-XZV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2686" y="615"/>
-        </scene>
-        <!--Colorgy Navigation Controller-->
-        <scene sceneID="CSa-ag-7TI">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="92q-nm-e2z" customClass="ColorgyNavigationController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Pvl-Hq-ALa">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="VLm-43-TgE" kind="relationship" relationship="rootViewController" id="tLL-BH-1Tz"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="kC4-vz-an3" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1874" y="615"/>
+            <point key="canvasLocation" x="2218" y="-847"/>
         </scene>
         <!--Colorgy Navigation Controller-->
         <scene sceneID="Y63-X2-RKf">
@@ -461,29 +357,53 @@
             </objects>
             <point key="canvasLocation" x="1874" y="-92"/>
         </scene>
-        <!--Colorgy Navigation Controller-->
-        <scene sceneID="vcC-tW-THr">
+        <!--Colorgy User Profile View Controller-->
+        <scene sceneID="sUn-Vm-J9E">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ILZ-QE-8u6" customClass="ColorgyNavigationController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="6o6-gb-1bl" customClass="ColorgyUserProfileViewController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="8Im-bB-6WT"/>
+                        <viewControllerLayoutGuide type="bottom" id="AfK-Wg-jWn"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Rlu-xC-SIN">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="6kp-RG-1da">
+                        <barButtonItem key="leftBarButtonItem" image="menu" id="tUc-Ck-eBi"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="revealMenuButton" destination="tUc-Ck-eBi" id="ywi-XJ-9tn"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jwG-Oo-H1g" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2686" y="1533"/>
+        </scene>
+        <!--Colorgy Navigation Controller-->
+        <scene sceneID="jT5-fJ-TYw">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="896-tN-Dvn" customClass="ColorgyNavigationController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="sTd-p6-orO">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="fb2-gT-Pgb">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="e4h-V4-csD" kind="relationship" relationship="rootViewController" id="GWd-vz-DoA"/>
+                        <segue destination="6o6-gb-1bl" kind="relationship" relationship="rootViewController" id="TXI-b0-SMv"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="lM1-Pu-WGe" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JTY-v0-kAV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1874" y="-759"/>
+            <point key="canvasLocation" x="1874" y="1533"/>
         </scene>
     </scenes>
     <resources>
         <image name="menu" width="26" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ccH-pG-NM5"/>
+        <segue reference="z2X-d6-Ptj"/>
     </inferredMetricsTieBreakers>
 </document>

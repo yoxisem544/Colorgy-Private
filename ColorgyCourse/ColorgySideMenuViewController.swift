@@ -43,7 +43,7 @@ class ColorgySideMenuViewController: UIViewController {
         
         self.personalInfo.setTitle("個人資料", forState: UIControlState.Normal)
         self.editTimetable.setTitle("編輯課表", forState: UIControlState.Normal)
-        self.aboutUs.setTitle("關於我們", forState: UIControlState.Normal)
+        self.aboutUs.setTitle("課表", forState: UIControlState.Normal)
         
         self.personalInfo.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
         self.editTimetable.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)

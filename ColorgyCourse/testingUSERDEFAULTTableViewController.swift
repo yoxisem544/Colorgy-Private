@@ -26,7 +26,7 @@ class testingUSERDEFAULTTableViewController: UITableViewController {
         ud.setObject("", forKey: "userName");
         ud.setObject("", forKey: "userCredit");
         ud.setObject("", forKey: "userProfilePhoto");
-        ud.setObject("", forKey: "OAuthToken");
+        ud.setObject("", forKey: "ColorgyAccessToken");
         ud.setObject("", forKey: "OAuthRefreshToken");
         ud.setObject("", forKey: "FacebookToken");
         ud.setObject("", forKey: "userFacebookId");

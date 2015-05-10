@@ -27,6 +27,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(forTypes: UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound, categories: nil))
         UIApplication.sharedApplication().registerForRemoteNotifications()
         
+        // determine if user logged in or not
+        // if user is not login, present login view to let user login
+        // first, get out user's settings
+        var ud = NSUserDefaults.standardUserDefaults()
+        // init window size
+        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        // get out main storyboard
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        // then detect if user is logged in.
+        if ud.objectForKey("isLogin") == nil {
+            // user not logged in condition
+            var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
+            self.window?.rootViewController = vc
+            self.window?.makeKeyAndVisible()
+        } else {
+            var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyService") as! SWRevealViewController
+            self.window?.rootViewController = vc
+            self.window?.makeKeyAndVisible()
+        }
+        
+        
         
         
         return true

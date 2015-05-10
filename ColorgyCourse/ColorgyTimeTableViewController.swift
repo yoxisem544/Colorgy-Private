@@ -74,6 +74,10 @@ class ColorgyTimeTableViewController: UIViewController {
         self.headerWidth = cellWidth
         
         self.view.addSubview(self.ColorgyTimeTableView())
+        
+        // style of nav bar
+        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        self.navigationItem.title = "課表"
     }
 
     override func didReceiveMemoryWarning() {
