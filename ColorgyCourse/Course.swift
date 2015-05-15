@@ -12,7 +12,8 @@ import CoreData
 class Course: NSManagedObject {
    
     @NSManaged var name: String!
-    @NSManaged var location: String!
-    @NSManaged var teacher: String!
-    @NSManaged var time: String!
+    @NSManaged var lecturer: String!
+    @NSManaged var periods: NSData!
+    @NSManaged var credits: Int
+    @NSManaged var uuid: String!
 }

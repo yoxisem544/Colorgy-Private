@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14E11f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14E17e" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -38,49 +38,11 @@
                     <view key="view" contentMode="scaleToFill" id="S11-4u-7nx">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ohr-YB-bI6">
-                                <rect key="frame" x="41" y="36" width="30" height="30"/>
-                                <state key="normal" title="課表">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="yy:" destination="c4P-6e-yFm" eventType="touchUpInside" id="b9N-yE-QVG"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="37a-Q0-pru">
-                                <rect key="frame" x="33" y="81" width="60" height="30"/>
-                                <state key="normal" title="個人資料">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="hi:" destination="c4P-6e-yFm" eventType="touchUpInside" id="Nph-2p-zKd"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TKb-TY-Qab">
-                                <rect key="frame" x="33" y="126" width="30" height="30"/>
-                                <state key="normal" title="選課">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="ss:" destination="c4P-6e-yFm" eventType="touchUpInside" id="MgN-St-9Ya"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zEh-a1-OuJ">
-                                <rect key="frame" x="25" y="275" width="63" height="30"/>
-                                <state key="normal" title="LOGOUT">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="logout:" destination="c4P-6e-yFm" eventType="touchUpInside" id="XIK-gG-zaF"/>
-                                </connections>
-                            </button>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
-                        <segue destination="AUs-2t-DyB" kind="custom" identifier="fff" customClass="SWRevealViewControllerSeguePushController" id="dgS-SD-nX2"/>
-                        <segue destination="tjl-k1-Wo2" kind="custom" identifier="s" customClass="SWRevealViewControllerSeguePushController" id="yVy-gB-MrG"/>
+                        <segue destination="AUs-2t-DyB" kind="custom" identifier="timetable" customClass="SWRevealViewControllerSeguePushController" id="dgS-SD-nX2"/>
+                        <segue destination="tjl-k1-Wo2" kind="custom" identifier="selectCourse" customClass="SWRevealViewControllerSeguePushController" id="yVy-gB-MrG"/>
                         <segue destination="896-tN-Dvn" kind="custom" identifier="p" customClass="SWRevealViewControllerSeguePushController" id="f0B-DK-8Ih"/>
                     </connections>
                 </viewController>
