@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14E17e" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14E17e" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="mqA-cc-meh">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -320,6 +320,162 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JTY-v0-kAV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1874" y="1533"/>
+        </scene>
+        <!--Table View Controller-->
+        <scene sceneID="AwW-G7-530">
+            <objects>
+                <tableViewController id="mqA-cc-meh" customClass="NNTableViewController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="sKH-Sk-58g">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" restorationIdentifier="nn" selectionStyle="default" indentationWidth="10" reuseIdentifier="nn" rowHeight="140" id="z6I-Zq-zWj" customClass="NNTableViewCell" customModule="ColorgyCourse" customModuleProvider="target">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="z6I-Zq-zWj" id="Pyi-eU-zT9">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZTb-pp-v6f">
+                                            <rect key="frame" x="16" y="8" width="568" height="123"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="代碼" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1gk-Q3-vyy">
+                                                    <rect key="frame" x="28" y="50" width="402" height="13"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="13" id="cYK-xf-gc2"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" name="STHeitiTC-Light" family="Heiti TC" pointSize="13"/>
+                                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="地點" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VXd-kI-Fh0">
+                                                    <rect key="frame" x="28" y="92" width="402" height="13"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="13" id="Mcl-1j-eZ6"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" name="STHeitiTC-Light" family="Heiti TC" pointSize="13"/>
+                                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="時間" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JKc-JE-ovg">
+                                                    <rect key="frame" x="28" y="71" width="402" height="13"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="13" id="dkw-7Y-iS4"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" name="STHeitiTC-Light" family="Heiti TC" pointSize="13"/>
+                                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="課程名稱" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4MO-Ei-8hC">
+                                                    <rect key="frame" x="28" y="18" width="402" height="24"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="24" id="lrM-bl-bi3"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" name="STHeitiTC-Light" family="Heiti TC" pointSize="24"/>
+                                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xu2-im-KwS">
+                                                    <rect key="frame" x="503" y="0.0" width="65" height="123"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yPD-EZ-7ZZ">
+                                                            <rect key="frame" x="11" y="33" width="42" height="57"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="42" id="CyY-fF-cdm"/>
+                                                                <constraint firstAttribute="height" constant="57" id="twN-eH-G15"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" name="STHeitiTC-Light" family="Heiti TC" pointSize="36"/>
+                                                            <color key="textColor" red="0.44313725490196076" green="0.4392156862745098" blue="0.44313725490196076" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="學分" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dJX-hX-Lcp">
+                                                            <rect key="frame" x="15" y="79" width="34" height="21"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="21" id="W45-7u-eVq"/>
+                                                                <constraint firstAttribute="width" constant="34" id="b0d-QV-D5Z"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" name="STHeitiTC-Light" family="Heiti TC" pointSize="17"/>
+                                                            <color key="textColor" red="0.44313725490196076" green="0.4392156862745098" blue="0.44313725490196076" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstItem="yPD-EZ-7ZZ" firstAttribute="bottom" secondItem="dJX-hX-Lcp" secondAttribute="bottom" constant="-10" id="6ek-5G-Yp5"/>
+                                                        <constraint firstAttribute="centerX" secondItem="dJX-hX-Lcp" secondAttribute="centerX" constant="0.5" id="ATv-9G-jmi"/>
+                                                        <constraint firstAttribute="width" constant="65" id="bax-6j-kRo"/>
+                                                        <constraint firstAttribute="centerY" secondItem="yPD-EZ-7ZZ" secondAttribute="centerY" id="rEq-pq-zGj"/>
+                                                        <constraint firstAttribute="centerX" secondItem="yPD-EZ-7ZZ" secondAttribute="centerX" constant="0.5" id="vSI-TW-gv4"/>
+                                                    </constraints>
+                                                </view>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hzt-ID-Tps">
+                                                    <rect key="frame" x="438" y="0.0" width="65" height="123"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="老師" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tPM-Z9-vDb">
+                                                            <rect key="frame" x="11" y="2" width="42" height="120"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="120" id="KZL-TX-YAZ"/>
+                                                                <constraint firstAttribute="width" constant="42" id="z8t-p0-b3F"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="65" id="bX8-Zc-0AR"/>
+                                                        <constraint firstAttribute="centerX" secondItem="tPM-Z9-vDb" secondAttribute="centerX" constant="0.5" id="dqS-eT-EJW"/>
+                                                        <constraint firstAttribute="centerY" secondItem="tPM-Z9-vDb" secondAttribute="centerY" constant="-0.5" id="rAp-b9-V7e"/>
+                                                    </constraints>
+                                                </view>
+                                            </subviews>
+                                            <color key="backgroundColor" red="0.87689393939393945" green="0.87689393939393945" blue="0.87689393939393945" alpha="1" colorSpace="calibratedRGB"/>
+                                            <constraints>
+                                                <constraint firstItem="1gk-Q3-vyy" firstAttribute="trailing" secondItem="Hzt-ID-Tps" secondAttribute="trailing" constant="-73" id="39F-MM-6Jq"/>
+                                                <constraint firstItem="4MO-Ei-8hC" firstAttribute="top" secondItem="ZTb-pp-v6f" secondAttribute="top" constant="18" id="3QY-eE-JzT"/>
+                                                <constraint firstAttribute="bottom" secondItem="xu2-im-KwS" secondAttribute="bottom" id="6BC-Mz-Odf"/>
+                                                <constraint firstAttribute="trailing" secondItem="xu2-im-KwS" secondAttribute="trailing" id="93M-vR-8P7"/>
+                                                <constraint firstItem="JKc-JE-ovg" firstAttribute="top" secondItem="1gk-Q3-vyy" secondAttribute="bottom" constant="8" id="AXj-PQ-TFt"/>
+                                                <constraint firstItem="VXd-kI-Fh0" firstAttribute="leading" secondItem="ZTb-pp-v6f" secondAttribute="leading" constant="28" id="GzV-uK-rtW"/>
+                                                <constraint firstItem="JKc-JE-ovg" firstAttribute="trailing" secondItem="Hzt-ID-Tps" secondAttribute="trailing" constant="-73" id="HMZ-4i-VhB"/>
+                                                <constraint firstItem="1gk-Q3-vyy" firstAttribute="top" secondItem="4MO-Ei-8hC" secondAttribute="bottom" constant="8" id="Kqj-2h-QS3"/>
+                                                <constraint firstAttribute="bottom" secondItem="Hzt-ID-Tps" secondAttribute="bottom" id="aky-Bh-WK0"/>
+                                                <constraint firstItem="4MO-Ei-8hC" firstAttribute="leading" secondItem="ZTb-pp-v6f" secondAttribute="leading" constant="28" id="epx-2w-nc9"/>
+                                                <constraint firstItem="VXd-kI-Fh0" firstAttribute="trailing" secondItem="Hzt-ID-Tps" secondAttribute="trailing" constant="-73" id="f4c-bP-tfT"/>
+                                                <constraint firstItem="Hzt-ID-Tps" firstAttribute="top" secondItem="ZTb-pp-v6f" secondAttribute="top" id="fh5-LC-viJ"/>
+                                                <constraint firstItem="JKc-JE-ovg" firstAttribute="leading" secondItem="ZTb-pp-v6f" secondAttribute="leading" constant="28" id="fwu-K1-jkf"/>
+                                                <constraint firstItem="xu2-im-KwS" firstAttribute="top" secondItem="ZTb-pp-v6f" secondAttribute="top" id="shz-c6-8Vf"/>
+                                                <constraint firstItem="1gk-Q3-vyy" firstAttribute="leading" secondItem="ZTb-pp-v6f" secondAttribute="leading" constant="28" id="sy4-FH-G1e"/>
+                                                <constraint firstItem="4MO-Ei-8hC" firstAttribute="trailing" secondItem="Hzt-ID-Tps" secondAttribute="trailing" constant="-73" id="uK4-En-4lr"/>
+                                                <constraint firstItem="Hzt-ID-Tps" firstAttribute="trailing" secondItem="xu2-im-KwS" secondAttribute="trailing" constant="-65" id="wjV-jR-cCT"/>
+                                                <constraint firstItem="VXd-kI-Fh0" firstAttribute="top" secondItem="JKc-JE-ovg" secondAttribute="bottom" constant="8" id="zdP-cf-eWu"/>
+                                            </constraints>
+                                        </view>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="ZTb-pp-v6f" firstAttribute="leading" secondItem="Pyi-eU-zT9" secondAttribute="leading" constant="16" id="5f2-Y7-Cwh"/>
+                                        <constraint firstAttribute="bottom" secondItem="ZTb-pp-v6f" secondAttribute="bottom" constant="8" id="U22-g6-4f6"/>
+                                        <constraint firstAttribute="trailing" secondItem="ZTb-pp-v6f" secondAttribute="trailing" constant="16" id="YPi-mm-pVb"/>
+                                        <constraint firstItem="ZTb-pp-v6f" firstAttribute="top" secondItem="Pyi-eU-zT9" secondAttribute="top" constant="8" id="eMK-H7-yGg"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="bgView" destination="ZTb-pp-v6f" id="dll-gL-eiK"/>
+                                    <outlet property="creditCount" destination="yPD-EZ-7ZZ" id="bXd-4e-X1c"/>
+                                    <outlet property="creditView" destination="xu2-im-KwS" id="dt9-Xq-79R"/>
+                                    <outlet property="sessionView" destination="Hzt-ID-Tps" id="Nfg-ec-5Ww"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="mqA-cc-meh" id="FyK-0N-YVX"/>
+                            <outlet property="delegate" destination="mqA-cc-meh" id="SB8-LK-KsH"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="61W-9u-OpP" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1920" y="2225"/>
         </scene>
     </scenes>
     <resources>

@@ -19,33 +19,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         // this line changes status bar text color from black to white
-        UIApplication.sharedApplication().setStatusBarStyle(UIStatusBarStyle.LightContent, animated: true)
-        
-        // register for user notification
-        // beware of ios 8 and ios 7, settings are not the same!
-        // register ios 8 notification setting
-        UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(forTypes: UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound, categories: nil))
-        UIApplication.sharedApplication().registerForRemoteNotifications()
-        
-        // determine if user logged in or not
-        // if user is not login, present login view to let user login
-        // first, get out user's settings
-        var ud = NSUserDefaults.standardUserDefaults()
-        // init window size
-        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
-        // get out main storyboard
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        // then detect if user is logged in.
-        if ud.objectForKey("isLogin") == nil {
-            // user not logged in condition
-            var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
-            self.window?.rootViewController = vc
-            self.window?.makeKeyAndVisible()
-        } else {
-            var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyService") as! SWRevealViewController
-            self.window?.rootViewController = vc
-            self.window?.makeKeyAndVisible()
-        }
+//        UIApplication.sharedApplication().setStatusBarStyle(UIStatusBarStyle.LightContent, animated: true)
+//        
+//        // register for user notification
+//        // beware of ios 8 and ios 7, settings are not the same!
+//        // register ios 8 notification setting
+//        UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(forTypes: UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound, categories: nil))
+//        UIApplication.sharedApplication().registerForRemoteNotifications()
+//        
+//        // determine if user logged in or not
+//        // if user is not login, present login view to let user login
+//        // first, get out user's settings
+//        var ud = NSUserDefaults.standardUserDefaults()
+//        // init window size
+//        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+//        // get out main storyboard
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        // then detect if user is logged in.
+//        if ud.objectForKey("isLogin") == nil {
+//            // user not logged in condition
+//            var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
+//            self.window?.rootViewController = vc
+//            self.window?.makeKeyAndVisible()
+//        } else {
+//            var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyService") as! SWRevealViewController
+//            self.window?.rootViewController = vc
+//            self.window?.makeKeyAndVisible()
+//        }
         
         
         
