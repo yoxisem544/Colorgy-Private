@@ -165,8 +165,6 @@ class ColorgyFBLoginViewController: UIViewController {
         self.colorgyLogo.center.x = self.view.center.x
         self.colorgyLogo.center.y = self.view.center.y * 0.6
         
-        self.view.backgroundColor = UIColor(red: 113/255.0, green: 112/255.0, blue: 113/255.0, alpha: 1)
-        
         self.view.addSubview(self.colorgyLogo)
     }
     
@@ -206,7 +204,7 @@ class ColorgyFBLoginViewController: UIViewController {
         } else if self.view.frame.height == 736 {
             // for 6+
             transDown = CGAffineTransformMakeTranslation(0, -261)
-        } else if self.view.frame.height == 480 {
+        } else if self.view.frame.height <= 480 {
             // for 4s
             transDown = CGAffineTransformMakeTranslation(0, -518)
         }
@@ -384,6 +382,8 @@ class ColorgyFBLoginViewController: UIViewController {
                 println("error post")
                 self.alertUserWithError("與 Colorgy Server 溝通時發生錯誤！")
                 // show switch if user got a error while login
+                
+                println(error)
                 self.loginSwitchButton.hidden = false
             })
     }
