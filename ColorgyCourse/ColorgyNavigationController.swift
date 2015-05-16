@@ -17,5 +17,10 @@ class ColorgyNavigationController: UINavigationController {
         
         self.navigationBar.barTintColor = self.colorgyDarkGray
         self.navigationBar.tintColor = UIColor.whiteColor()
+        
+        self.navigationBar.layer.shadowColor = UIColor.blackColor().CGColor
+        self.navigationBar.layer.shadowOpacity = 0.5
+        self.navigationBar.layer.shadowPath = UIBezierPath(rect: self.navigationBar.bounds).CGPath
+        self.navigationBar.layer.shadowOffset = CGSizeMake(0, 2)
     }
 }

@@ -25,7 +25,45 @@ class ColorgySideMenuViewController: UIViewController {
         
         self.setupButtonWith("選課", action: "pushSegueToselectCourse:", order: 1)
         self.setupButtonWith("課表", action: "pushSegueToTimetable:", order: 2)
-        self.setupButtonWith("關於我們", action: "kj", order: 3)
+        self.setupButtonWith("關於我們", action: "pushSegueToProfile:", order: 3)
+        
+        // setup logout btn
+        self.setupLogoutButton()
+    }
+    
+    func setupLogoutButton() {
+        
+        var logoutImg = UIImage(named: "fb_logout")
+        var logout = UIButton(frame: CGRectMake(30, 500, 50, 50))
+        
+        logout.setImage(logoutImg, forState: UIControlState.Normal)
+        logout.addTarget(self, action: "logout", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        self.view.addSubview(logout)
+    }
+    
+    func logout() {
+
+        var alert = UIAlertController(title: "登出", message: "確定登出嗎？\n登出之後所有資料將會被移除！", preferredStyle: UIAlertControllerStyle.Alert)
+        var ok = UIAlertAction(title: "登出", style: UIAlertActionStyle.Default, handler: {(alert:UIAlertAction!) -> Void in
+            
+                var ud = NSUserDefaults.standardUserDefaults()
+                ud.setObject(nil, forKey: "isLogin")
+                ud.synchronize()
+                
+                FBSession.activeSession().closeAndClearTokenInformation()
+            
+                var storyboard = UIStoryboard(name: "Main", bundle: nil)
+                var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
+                self.presentViewController(vc, animated: true, completion: nil)
+            })
+        var cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: nil)
+        
+        alert.addAction(ok)
+        alert.addAction(cancel)
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+        
         
     }
     
@@ -121,6 +159,11 @@ class ColorgySideMenuViewController: UIViewController {
     func pushSegueToselectCourse(sender: UIButton) {
         sender.alpha = 1.0
         performSegueWithIdentifier("selectCourse", sender: self)
+    }
+    
+    func pushSegueToProfile(sender: UIButton) {
+        sender.alpha = 1.0
+        performSegueWithIdentifier("profile", sender: self)
     }
 
     /*

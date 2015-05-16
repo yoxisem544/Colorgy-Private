@@ -42,7 +42,7 @@ class ColorgyFBLoginViewController: UIViewController {
         // setup logo and backgorun
         self.setupLogoAndBackgorund()
         self.hideLogoBackground(false)
-        self.showLogoAndBackground()
+        
         
         // password and account login
         self.setupUserPasswordAndAccount()
@@ -51,7 +51,7 @@ class ColorgyFBLoginViewController: UIViewController {
         
         self.setupFacebookLoginButton()
         self.hideFacebookButton()
-        self.showFacebookButton(1.3)
+        
         
         self.setupLoginSwitchButton()
         self.loginMode = "password"
@@ -61,7 +61,10 @@ class ColorgyFBLoginViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        
+        // always present animation after viewdidload
+        // present it in viewdidappear
+        self.showLogoAndBackground()
+        self.showFacebookButton(1.3)
     }
     
     // MARKL - setup switch login button

@@ -33,7 +33,54 @@ class ColorgyUserProfileViewController: UIViewController {
         self.setupBottomBar()
         
         self.view.backgroundColor = self.colorgyDarkGray
+        
+        self.fetchCourseDataFromServer()
     }
+    
+    // MARK: - fetch data from server
+    func fetchCourseDataFromServer() {
+        
+        var front_url = "https://colorgy.io:443/api/ccu/courses.json?per_page=9999&&&&&access_token="
+        var ud = NSUserDefaults.standardUserDefaults()
+        var token = ud.objectForKey("ColorgyAccessToken") as! String
+        let url = front_url + token
+        
+        println(url)
+        
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: url))
+        
+        afManager.requestSerializer = AFJSONRequestSerializer()
+        afManager.responseSerializer = AFJSONResponseSerializer()
+        
+        let params = []
+        
+        afManager.GET(url, parameters: params, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
+            
+            var resArr = responseObject as! NSArray
+            var parsedResData = NSMutableArray()
+            
+            var arcData = self.archive(resArr)
+            
+            var ud = NSUserDefaults.standardUserDefaults()
+            ud.setObject(arcData, forKey: "courseFromServer")
+            ud.synchronize()
+            }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
+                println("error post")
+        })
+    }
+    
+    // MARK: - compress data
+    
+    func archive(array: AnyObject) -> NSData {
+        let a = array as! NSArray
+        return NSKeyedArchiver.archivedDataWithRootObject(array)
+    }
+    
+    func unarchive(data: NSData) -> NSArray {
+        return NSKeyedUnarchiver.unarchiveObjectWithData(data) as! NSArray
+    }
+    
+    //MARK: - setup
     
     func setupUserPhotoWithPhoto(photo: UIImage!) {
         
@@ -47,7 +94,7 @@ class ColorgyUserProfileViewController: UIViewController {
         view.backgroundColor = self.colorgyLightOrange
         
         view.center.x = self.view.center.x
-        view.center.y = self.view.center.y * 0.7
+        view.center.y = self.view.center.y * 0.8
         
         var innerView = UIImageView(frame: CGRectMake(0, 0, view.frame.width - 40, view.frame.width - 40))
         innerView.image = photo
@@ -67,12 +114,15 @@ class ColorgyUserProfileViewController: UIViewController {
         view.backgroundColor = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 0.8)
         
         
-        view.center.y = self.view.frame.height * 0.647
+        view.center.y = self.view.frame.height * 0.7
         view.center.x = self.view.center.x
         
 //        view.layer.shadowColor = UIColor.blackColor().CGColor
         view.layer.shadowOpacity = 0.5
-        view.layer.shadowPath = UIBezierPath(rect: view.bounds).CGPath
+        // enlarge view.bounds first, in order to let shadow show in bottom
+        var bounds = view.bounds.size
+        bounds.height = bounds.height + 2
+        view.layer.shadowPath = UIBezierPath(rect: CGRectMake(view.bounds.origin.x + 3, view.bounds.origin.y + 3, bounds.width, bounds.height)).CGPath
 //        view.layer.shadowOffset = CGSizeMake(30, 30)    
         
         self.view.addSubview(view)

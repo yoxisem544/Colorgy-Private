@@ -2,12 +2,38 @@
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7549" systemVersion="14E17e" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Course" representedClassName="ColorgyCourse.Course" syncable="YES">
         <attribute name="credits" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="day_1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="day_2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="day_3" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="day_4" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="day_5" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="day_6" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="day_7" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="day_8" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="day_9" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lecturer" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="location_1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="location_2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="location_3" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="location_4" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="location_5" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="location_6" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="location_7" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="location_8" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="location_9" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="periods" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="period_1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="period_2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="period_3" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="period_4" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="period_5" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="period_6" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="period_7" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="period_8" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="period_9" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="uuid" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Course" positionX="-63" positionY="-18" width="128" height="120"/>
+        <element name="Course" positionX="-63" positionY="-18" width="128" height="510"/>
     </elements>
 </model>

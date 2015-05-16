@@ -33,6 +33,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     
     // MARK: - color
     var colorgyGreen: UIColor = UIColor(red: 228/255.0, green: 133/255.0, blue: 111/255.0, alpha: 1)
+    var colorgyDarkGray = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
 //    var colorgyGreen: UIColor = UIColor(red: 42/255.0, green: 171/255.0, blue: 147/255.0, alpha: 1)
     
     // MARK: - view
@@ -54,23 +55,26 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
 
         // tableview style
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
+        self.tableView.backgroundColor = self.colorgyDarkGray
         
         // get json file
-        let path = NSBundle.mainBundle().pathForResource("CCU_courses", ofType: "json")
+//        let path = NSBundle.mainBundle().pathForResource("CCU_courses", ofType: "json")
         var e: NSError?
-        var courseData = NSData(contentsOfFile: path!)
-
-        self.parsedCourseData = NSJSONSerialization.JSONObjectWithData(courseData!, options: nil, error: &e) as! NSArray
-        if e != nil {
-            println(e)
-        } else {
-            // parse json format to nsarray. easier to use
-            for c in self.parsedCourseData {
-                self.courseData.addObject( [c["name"] as! String, c["lecturer"] as! String, c["periods"] as! NSArray, c["credits"] as! Int, c["code"] as! String] )
+//        var courseData = NSData(contentsOfFile: path!)
+        
+        // fetch data
+        var ud = NSUserDefaults.standardUserDefaults()
+        // first init self.parsedCourseData
+        self.parsedCourseData = []
+        if ud.objectForKey("courseFromServer") != nil {
+            var courseData = NSData(data: ud.objectForKey("courseFromServer") as! NSData)
+            
+            self.parsedCourseData = self.unarchive(courseData)
+            if e != nil {
+                println(e)
             }
         }
-        // need test here
-        println(self.courseData)
+        
         
         // setup search controller and its style
         self.searchCourse = UISearchController(searchResultsController: nil)
@@ -109,10 +113,13 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         self.dimmer.hidden = true
     }
     
+    // MARK: - Fetch data from server
+    
+    
+    // MARK: - compare data
+    
     // check if course is already added to selected course
-    func isCourseAlreadyAddedToSelectedCourse(course: NSArray) -> Bool{
-        
-        var uuid = course[4] as! String
+    func isCourseAlreadyAddedToSelectedCourse(code: String) -> Bool{
         
         var courses = self.getDataFromDatabase()
         if courses != nil {
@@ -120,7 +127,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             var isRepeated: Bool = false
             for cc in courses! {
                 let c = cc as Course
-                if c.uuid == uuid {
+                if c.uuid == code {
                     isRepeated = true
                 }
             }
@@ -161,8 +168,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         return nil
     }
     
+    
     // this function help you to store data into db
-    func storeDataToDatabase(courseToAdd: NSArray) {
+    func storeDataToDatabase(name: String, lecturer: String, credits: Int, uuid: String, sessions: AnyObject) {
         
         println("store")
         // get out managedObjectContext
@@ -171,13 +179,41 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             // insert a new course, but not yet saved.
             var course = NSEntityDescription.insertNewObjectForEntityForName("Course", inManagedObjectContext: managedObjectContext) as! Course
             // assign its value to it's key
-            course.name = courseToAdd[0] as! String
-            course.lecturer = courseToAdd[1] as! String
-            course.periods = self.archive(courseToAdd[2])
-            course.credits = courseToAdd[3] as! Int
-            course.uuid = courseToAdd[4] as! String
+            course.name = name
+            course.lecturer = lecturer
+            course.credits = credits
+            course.uuid = uuid
             
-            println(course.name)
+            course.day_1 = sessions[0][0] as! String
+            course.day_2 = sessions[1][0] as! String
+            course.day_3 = sessions[2][0] as! String
+            course.day_4 = sessions[3][0] as! String
+            course.day_5 = sessions[4][0] as! String
+            course.day_6 = sessions[5][0] as! String
+            course.day_7 = sessions[6][0] as! String
+            course.day_8 = sessions[7][0] as! String
+            course.day_9 = sessions[8][0] as! String
+            
+            course.period_1 = sessions[0][1] as! String
+            course.period_2 = sessions[1][1] as! String
+            course.period_3 = sessions[2][1] as! String
+            course.period_4 = sessions[3][1] as! String
+            course.period_5 = sessions[4][1] as! String
+            course.period_6 = sessions[5][1] as! String
+            course.period_7 = sessions[6][1] as! String
+            course.period_8 = sessions[7][1] as! String
+            course.period_9 = sessions[8][1] as! String
+            
+            course.location_1 = sessions[0][2] as! String
+            course.location_2 = sessions[1][2] as! String
+            course.location_3 = sessions[2][2] as! String
+            course.location_4 = sessions[3][2] as! String
+            course.location_5 = sessions[4][2] as! String
+            course.location_6 = sessions[5][2] as! String
+            course.location_7 = sessions[6][2] as! String
+            course.location_8 = sessions[7][2] as! String
+            course.location_9 = sessions[8][2] as! String
+     
             var e: NSError?
             // to see if successfully store to db
             if managedObjectContext.save(&e) != true {
@@ -189,15 +225,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             }
         }
     }
-    
-    func archive(array: AnyObject) -> NSData {
-        let a = array as! NSArray
-        return NSKeyedArchiver.archivedDataWithRootObject(array)
-    }
-    
-    func unarchive(data: NSData) -> NSArray {
-        return NSKeyedUnarchiver.unarchiveObjectWithData(data) as! NSArray
-    }
+
     
     // fetch data and update view, this function will update selected course.
     // these data are from db
@@ -213,13 +241,67 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             self.coursesAddedToTimetable = NSMutableArray()
 
             for c in coursesFromDB {
-                self.coursesAddedToTimetable.addObject([c.name, c.lecturer, c.periods, c.credits, c.uuid])
+                let weekdays = ["Mon", "Tue", "wed", "Thu", "Fri"]
+                var location = ""
+                var period = ""
+                
+                if c.day_1 != "<null>" {
+                    period += weekdays[c.day_1.toInt()!] + c.period_1 + " "
+                    location += c.location_1 + " "
+                }
+                if c.day_2 != "<null>" {
+                    period += weekdays[c.day_2.toInt()!] + c.period_2 + " "
+                    location += c.location_2 + " "
+                }
+                if c.day_3 != "<null>" {
+                    period += weekdays[c.day_3.toInt()!] + c.period_3 + " "
+                    location += c.location_3 + " "
+                }
+                if c.day_4 != "<null>" {
+                    period += weekdays[c.day_4.toInt()!] + c.period_4 + " "
+                    location += c.location_4 + " "
+                }
+                if c.day_5 != "<null>" {
+                    period += weekdays[c.day_5.toInt()!] + c.period_5 + " "
+                    location += c.location_5 + " "
+                }
+                if c.day_6 != "<null>" {
+                    period += weekdays[c.day_6.toInt()!] + c.period_6 + " "
+                    location += c.location_6 + " "
+                }
+                if c.day_7 != "<null>" {
+                    period += weekdays[c.day_7.toInt()!] + c.period_7 + " "
+                    location += c.location_7 + " "
+                }
+                if c.day_8 != "<null>" {
+                    period += weekdays[c.day_8.toInt()!] + c.period_8 + " "
+                    location += c.location_8 + " "
+                }
+                if c.day_9 != "<null>" {
+                    period += weekdays[c.day_9.toInt()!] + c.period_9 + " "
+                    location += c.location_9 + " "
+                }
+                
+                
+                self.coursesAddedToTimetable.addObject([c.name, c.lecturer, c.credits, c.uuid, period, location])
             }
         }
         // after getting data from db
         // reload tableview
         self.tableView.reloadData()
     }
+    
+    // MARK: - compress data
+    
+    func archive(array: AnyObject) -> NSData {
+        let a = array as! NSArray
+        return NSKeyedArchiver.archivedDataWithRootObject(array)
+    }
+    
+    func unarchive(data: NSData) -> NSArray {
+        return NSKeyedUnarchiver.unarchiveObjectWithData(data) as! NSArray
+    }
+
     
     // MARK: - Search bar update and filter
     func updateSearchResultsForSearchController(searchController: UISearchController) {
@@ -265,14 +347,12 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         self.filteredCourse = []
         
         // loop through all course data
-        for data in self.courseData {
-            var d = data as! NSArray
-//            println(d)
-            var name = d[0] as! String
-            var lecturer = d[1] as! String
-            var periods = d[2] as! NSArray
-            var credits = "\(d[3])"
-            var uuid = d[4] as! String
+        for data in self.parsedCourseData {
+            var name = data["name"] as! String
+            var lecturer = data["lecturer"] as! String
+            let c = data["credits"]
+            var credits = "\(c)"
+            var uuid = data["code"] as! String
             
             var match: Bool! = false
             
@@ -317,6 +397,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                 // if there is nothing in it, fetch data from db
                 self.fetchDataAndUpdateSelectedCourses()
             }
+            println("count of add : " + "\(self.coursesAddedToTimetable.count)")
             return self.coursesAddedToTimetable.count
         }
     }
@@ -324,16 +405,17 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         if searchCourse.active && searchCourse.searchBar.text != "" {
-            var cell = tableView.dequeueReusableCellWithIdentifier("ColorgyCourseCell", forIndexPath: indexPath) as! ColorgyCourseCell
+            var cell = tableView.dequeueReusableCellWithIdentifier("ColorgyCourseCardCell", forIndexPath: indexPath) as! ColorgyCourseCardCell
 
-            cell.name.text = self.filteredCourse[indexPath.row][0] as! String
-            cell.teacher.text = self.filteredCourse[indexPath.row][1] as! String
-            cell.time.text = self.filteredCourse[indexPath.row][2][0] as! String
-            cell.location.text = "\(self.filteredCourse[indexPath.row][3])"
+//            cell.name.text = self.filteredCourse[indexPath.row]["name"] as! String
+//            cell.teacher.text = self.filteredCourse[indexPath.row]["lecturer"] as! String
+//            cell.time.text = self.filteredCourse[indexPath.row]["code"] as! String
+//            let s = self.filteredCourse[indexPath.row]["credits"]
+//            cell.location.text = "\(s)"
             
             return cell
         } else {
-            var cell = tableView.dequeueReusableCellWithIdentifier("ColorgyCourseCell", forIndexPath: indexPath) as! ColorgyCourseCell
+            var cell = tableView.dequeueReusableCellWithIdentifier("ColorgyCourseCardCell", forIndexPath: indexPath) as! ColorgyCourseCardCell
             
 //            cell.name.text = self.parsedCourseData[indexPath.row]["course_name"] as! String
 //            cell.teacher.text = self.parsedCourseData[indexPath.row]["teacher_name"] as! String
@@ -341,19 +423,19 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
 //            cell.location.text = self.parsedCourseData[indexPath.row]["classroom"] as! String
             
             cell.name.text = self.coursesAddedToTimetable[indexPath.row][0] as! String
-            cell.teacher.text = self.coursesAddedToTimetable[indexPath.row][1] as! String
-            cell.teacher.text = "老師：" + cell.teacher.text!
-            cell.time.text = "\(self.coursesAddedToTimetable[indexPath.row][3])"
-            cell.time.text = "時間：" + cell.time.text!
-            cell.location.text = self.coursesAddedToTimetable[indexPath.row][4] as! String
-            cell.location.text = "帶馬：" + cell.location.text!
+            cell.code.text = self.coursesAddedToTimetable[indexPath.row][3] as! String
+            var c = self.coursesAddedToTimetable[indexPath.row][2] as! Int
+            cell.credits.text = "\(c)"
+            cell.lecturer.text = self.coursesAddedToTimetable[indexPath.row][1] as! String
+            cell.period.text = self.coursesAddedToTimetable[indexPath.row][4] as! String
+            cell.location.text = self.coursesAddedToTimetable[indexPath.row][5] as! String
             
             return cell
         }
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 70
+        return 140
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -361,18 +443,25 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         if self.searchCourse.active {
             
             // get out all the data, easy to read.
-            let name = self.filteredCourse[indexPath.row][0] as! String
-            let teacher = self.filteredCourse[indexPath.row][1] as! String
-            let time = self.filteredCourse[indexPath.row][2] as! NSArray
-            let credits = self.filteredCourse[indexPath.row][3] as! Int
-            let uuid = self.filteredCourse[indexPath.row][4] as! String
+            let name = self.filteredCourse[indexPath.row]["name"] as! String
+            let lecturer = self.filteredCourse[indexPath.row]["lecturer"] as! String
+            let credits = self.filteredCourse[indexPath.row]["credits"] as! Int
+            let uuid = self.filteredCourse[indexPath.row]["code"] as! String
             
-            let optionMenu = UIAlertController(title: "\(name)", message: "\(teacher)\n\(time)\n\(credits)", preferredStyle: UIAlertControllerStyle.Alert)
+            let optionMenu = UIAlertController(title: "\(name)", message: "\(lecturer)\n\(credits)", preferredStyle: UIAlertControllerStyle.Alert)
             let ok = UIAlertAction(title: "加入課程", style: UIAlertActionStyle.Default, handler: { (action:UIAlertAction!) -> Void in
-                var packedCourseArray = [name , teacher, time, credits, uuid] as NSArray
-                if !self.isCourseAlreadyAddedToSelectedCourse(packedCourseArray) {
+                if !self.isCourseAlreadyAddedToSelectedCourse(self.filteredCourse[indexPath.row]["code"] as! String) {
                     // if this course is not selected...... add it
-                    self.storeDataToDatabase(packedCourseArray)
+                    var sessions = NSMutableArray()
+                    for i in 1...9 {
+                        let day = self.filteredCourse[indexPath.row]["day_" + "\(i)"]
+                        let session = self.filteredCourse[indexPath.row]["period_" + "\(i)"]
+                        let location = self.filteredCourse[indexPath.row]["location_" + "\(i)"]
+                        
+                        sessions.addObject(["\(day!!)", "\(session!!)", "\(location!!)"])
+                    }
+                    println(sessions)
+                    self.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions)
                 }
             })
             let cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: { (action:UIAlertAction!) -> Void in

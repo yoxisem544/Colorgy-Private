@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class ColorgyTimeTableViewController: UIViewController {
     
@@ -91,7 +92,7 @@ class ColorgyTimeTableViewController: UIViewController {
         
         // set its bounds
         var view = UIScrollView(frame: CGRectMake(0, 0, self.screenWidth, self.screenHeight))
-        view.backgroundColor = self.colorgyOrange
+        view.backgroundColor = self.colorgyDarkGray
         
         // set timetable scrollview's content size
         // width matches device width
@@ -105,8 +106,17 @@ class ColorgyTimeTableViewController: UIViewController {
         view.addSubview(self.ColorgyTimeTableRowSessionView("night"))
         
         // add course here
-        view.addSubview(self.CourseViewAtDay(1, session: "A"))
-        view.addSubview(self.CourseViewAtDay(2, session: "2"))
+//        view.addSubview(self.CourseViewAtDay(1, session: "A"))
+//        view.addSubview(self.CourseViewAtDay(2, session: "2"))
+        
+        // update timetableview
+        // this will return array of uiviews
+        if let views = self.updateTimetableCourse() {
+            for v in views {
+                view.addSubview(v)
+            }
+        }
+        
         
         return view as UIScrollView
     }
@@ -258,8 +268,97 @@ class ColorgyTimeTableViewController: UIViewController {
     }
     
     
-    
+    // MARK: - add course cell region
+    func addCourseWith(courseName: String, location: String, day: Int, session: Int) -> UIView {
+        
+        var view = UIView(frame: CGRectMake(0, 0, self.colorgyTimeTableCell.width - 1, self.colorgyTimeTableCell.height - 1))
+        var label = UILabel(frame: CGRectMake(0, 0, self.colorgyTimeTableCell.width - 1, self.colorgyTimeTableCell.height - 1))
+        
+        view.layer.cornerRadius = 5
+        view.backgroundColor = UIColor.blueColor()
+        
+        label.text = courseName + "\n" + location
+        label.font = UIFont(name: "Heiti TC", size: 13)
+        label.textAlignment = NSTextAlignment.Center
+        label.numberOfLines = 2
+        label.textColor = UIColor.whiteColor()
+        
+        view.addSubview(label)
+        
+        var x = self.timetableSpacing + self.sideBarWidth - self.colorgyTimeTableCell.width / 2 + CGFloat(day) * self.colorgyTimeTableCell.width
+        var y = self.timetableSpacing + self.headerHeight - self.colorgyTimeTableCell.width / 2 + CGFloat(session) * self.colorgyTimeTableCell.width
+        
+        view.center = CGPointMake(x, y)
+        
+        
+        
+        return view
+    }
 
+    // update timetable
+    func updateTimetableCourse() -> [UIView]? {
+        
+        var timetableViews = [UIView]()
+        var courses = self.getDataFromDatabase()
+        if courses == nil {
+            return nil
+        }
+        
+        for course in courses! {
+            if course.day_1 != "<null>" {
+                timetableViews.append(self.addCourseWith(course.name, location: course.location_1, day: course.day_1.toInt()!, session: course.period_1.toInt()!))
+            }
+            if course.day_2 != "<null>" {
+                timetableViews.append(self.addCourseWith(course.name, location: course.location_2, day: course.day_2.toInt()!, session: course.period_2.toInt()!))
+            }
+            if course.day_3 != "<null>" {
+                timetableViews.append(self.addCourseWith(course.name, location: course.location_3, day: course.day_3.toInt()!, session: course.period_3.toInt()!))
+            }
+            if course.day_4 != "<null>" {
+                timetableViews.append(self.addCourseWith(course.name, location: course.location_4, day: course.day_4.toInt()!, session: course.period_4.toInt()!))
+            }
+            if course.day_5 != "<null>" {
+                timetableViews.append(self.addCourseWith(course.name, location: course.location_5, day: course.day_5.toInt()!, session: course.period_5.toInt()!))
+            }
+            if course.day_6 != "<null>" {
+                timetableViews.append(self.addCourseWith(course.name, location: course.location_6, day: course.day_6.toInt()!, session: course.period_6.toInt()!))
+            }
+            if course.day_7 != "<null>" {
+                timetableViews.append(self.addCourseWith(course.name, location: course.location_7, day: course.day_7.toInt()!, session: course.period_7.toInt()!))
+            }
+            if course.day_8 != "<null>" {
+                timetableViews.append(self.addCourseWith(course.name, location: course.location_8, day: course.day_8.toInt()!, session: course.period_8.toInt()!))
+            }
+            if course.day_9 != "<null>" {
+                timetableViews.append(self.addCourseWith(course.name, location: course.location_9, day: course.day_9.toInt()!, session: course.period_9.toInt()!))
+            }
+        }
+        
+        return timetableViews
+    }
+    
+    //MARK:- db operation
+    func getDataFromDatabase() -> [Course]? {
+        
+        if let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext {
+            let fetchRequest = NSFetchRequest(entityName: "Course")
+            var e: NSError?
+            var course: [Course] = managedObjectContext.executeFetchRequest(fetchRequest, error: &e) as! [Course]
+            if e != nil {
+                println("something error")
+            } else {
+                println("ok count: \(course.count)")
+            }
+            
+            // if sucessfullly get the selected coruse data
+            // return it, as [Course] type
+            return course
+        }
+        
+        // if something wrong, return nil.
+        return nil
+    }
+    
     /*
     // MARK: - Navigation
 

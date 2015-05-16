@@ -29,6 +29,7 @@
 		63A29E781AF740E3000494DB /* ColorgyCourseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E771AF740E3000494DB /* ColorgyCourseCell.swift */; };
 		63A29E7A1AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E791AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift */; };
 		63C96ADE1AFE0CD9003ED287 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63C96ADD1AFE0CD9003ED287 /* FacebookSDK.framework */; };
+		63DD0DAE1B069F2700582DEF /* ColorgyCourseCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DD0DAD1B069F2700582DEF /* ColorgyCourseCardCell.swift */; };
 		BCB60EF032C3499020ABF860 /* libPods-ColorgyCourse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA6BD5834EC034FAA28A0DB4 /* libPods-ColorgyCourse.a */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +71,7 @@
 		63A29E771AF740E3000494DB /* ColorgyCourseCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyCourseCell.swift; sourceTree = "<group>"; };
 		63A29E791AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyViewAndAddCourseTableViewController.swift; sourceTree = "<group>"; };
 		63C96ADD1AFE0CD9003ED287 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
+		63DD0DAD1B069F2700582DEF /* ColorgyCourseCardCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyCourseCardCell.swift; sourceTree = "<group>"; };
 		8807EE0034D20B6587094B35 /* Pods-ColorgyCourse.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ColorgyCourse.release.xcconfig"; path = "Pods/Target Support Files/Pods-ColorgyCourse/Pods-ColorgyCourse.release.xcconfig"; sourceTree = "<group>"; };
 		AA6BD5834EC034FAA28A0DB4 /* libPods-ColorgyCourse.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ColorgyCourse.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -142,12 +144,13 @@
 				636FFF791AF9086D0012135C /* ColorgySideMenuViewController.swift */,
 				631008DE1AF771B7008A40E4 /* ColorgyNavigationController.swift */,
 				63A29E531AF722DF000494DB /* Main.storyboard */,
+				63DD0DAD1B069F2700582DEF /* ColorgyCourseCardCell.swift */,
 				6379F3C91AFF454F007686B5 /* ColorgyUserProfileViewController.swift */,
 				635F9FDD1AFE0369001907BA /* FBTestViewController.swift */,
 				630849AF1AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift */,
 				63A29E771AF740E3000494DB /* ColorgyCourseCell.swift */,
-				63A29E791AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift */,
 				63A29E561AF722DF000494DB /* Images.xcassets */,
+				63A29E791AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift */,
 				63A29E581AF722DF000494DB /* LaunchScreen.xib */,
 				63A29E751AF72E41000494DB /* Course.swift */,
 				63A29E731AF7246E000494DB /* ColorgySetupProfileViewController.swift */,
@@ -323,6 +326,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63DD0DAE1B069F2700582DEF /* ColorgyCourseCardCell.swift in Sources */,
 				635F9FDE1AFE0369001907BA /* FBTestViewController.swift in Sources */,
 				63A29E781AF740E3000494DB /* ColorgyCourseCell.swift in Sources */,
 				630849B01AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift in Sources */,
