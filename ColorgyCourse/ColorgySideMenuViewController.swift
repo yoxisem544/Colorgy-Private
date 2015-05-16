@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class ColorgySideMenuViewController: UIViewController {
     
@@ -49,8 +50,11 @@ class ColorgySideMenuViewController: UIViewController {
             
                 var ud = NSUserDefaults.standardUserDefaults()
                 ud.setObject(nil, forKey: "isLogin")
+                ud.setObject(nil, forKey: "courseFromServer")
                 ud.synchronize()
-                
+            
+                self.deleteDataFromDatabase()
+            
                 FBSession.activeSession().closeAndClearTokenInformation()
             
                 var storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -66,6 +70,31 @@ class ColorgySideMenuViewController: UIViewController {
         
         
     }
+    
+    // MARK: - db operation
+    func deleteDataFromDatabase() {
+        
+        if let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext {
+            let fetchRequest = NSFetchRequest(entityName: "Course")
+            var e: NSError?
+            var course: [Course] = managedObjectContext.executeFetchRequest(fetchRequest, error: &e) as! [Course]
+            if e != nil {
+                println("something error")
+            } else {
+                println("ok count: \(course.count)")
+            }
+            for c in course {
+                managedObjectContext.deleteObject(c)
+            }
+            
+            managedObjectContext.save(&e)
+            if e != nil {
+                println("error \(e)")
+            }
+        }
+    }
+    
+    // MARK: - setup
     
     func setupProfilePhoto() {
         
