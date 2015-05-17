@@ -138,7 +138,9 @@ class ColorgyFBLoginViewController: UIViewController {
         self.view.addSubview(self.loginBackground)
 
         // adding logo
-        var logo = UIImage(named: "ColorgyLogo")
+//        var logo = UIImage(named: "ColorgyLogo")
+        // taple
+        var logo = UIImage(named: "taple")
         w = logo?.size.width
         h = logo?.size.height
         
@@ -160,7 +162,7 @@ class ColorgyFBLoginViewController: UIViewController {
             h = h! * CGFloat(320 / 375.0)
         }
         
-        self.colorgyLogo = UIImageView(frame: CGRectMake(0, 0, w!, h!))
+        self.colorgyLogo = UIImageView(frame: CGRectMake(0, 0, w! * 0.6, h! * 0.6))
         self.colorgyLogo.image = logo
         self.colorgyLogo.center.x = self.view.center.x
         self.colorgyLogo.center.y = self.view.center.y * 0.6
