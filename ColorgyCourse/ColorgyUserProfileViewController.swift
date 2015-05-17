@@ -28,8 +28,12 @@ class ColorgyUserProfileViewController: UIViewController {
         //
 
         // Do any additional setup after loading the view.
-        self.setupUserPhotoWithPhoto(UIImage(named: "HoungYu"))
-        self.setupUserInfoViewWithName("", school: "", phone: "")
+        var ud = NSUserDefaults.standardUserDefaults()
+        var data = ud.objectForKey("bigFBProfilePhoto") as! NSData
+        self.setupUserPhotoWithPhoto(UIImage(data: data))
+
+        var name = ud.objectForKey("userFBName") as! String
+        self.setupUserInfoViewWithName(name, school: "臺灣科技大學", phone: "0900-000-000")
         self.setupBottomBar()
         
         self.view.backgroundColor = self.colorgyDarkGray
@@ -123,7 +127,40 @@ class ColorgyUserProfileViewController: UIViewController {
         var bounds = view.bounds.size
         bounds.height = bounds.height + 2
         view.layer.shadowPath = UIBezierPath(rect: CGRectMake(view.bounds.origin.x + 3, view.bounds.origin.y + 3, bounds.width, bounds.height)).CGPath
-//        view.layer.shadowOffset = CGSizeMake(30, 30)    
+//        view.layer.shadowOffset = CGSizeMake(30, 30)  
+        
+        // name label
+        var uname = UILabel(frame: CGRectMake(0, 30, self.view.frame.width * 0.8, 36))
+        uname.font = UIFont(name: "Heiti TC", size: 36)
+        uname.textColor = self.colorgyLightOrange
+        uname.textAlignment = NSTextAlignment.Center
+        uname.center.x = view.center.x
+        
+        uname.text = name
+        
+        view.addSubview(uname)
+        
+        // school label
+        var uschool = UILabel(frame: CGRectMake(0, 94, self.view.frame.width * 0.8, 17))
+        uschool.font = UIFont(name: "Heiti TC", size: 17)
+        uschool.textColor = UIColor.whiteColor()
+        uschool.textAlignment = NSTextAlignment.Center
+        uschool.center.x = view.center.x
+        
+        uschool.text = "學校： " + school
+        
+        view.addSubview(uschool)
+        
+        // tel label
+        var uphone = UILabel(frame: CGRectMake(0, 125, self.view.frame.width * 0.8, 17))
+        uphone.font = UIFont(name: "Heiti TC", size: 17)
+        uphone.textColor = UIColor.whiteColor()
+        uphone.textAlignment = NSTextAlignment.Center
+        uphone.center.x = view.center.x
+        
+        uphone.text = "電話： " + phone
+        
+        view.addSubview(uphone)
         
         self.view.addSubview(view)
     }

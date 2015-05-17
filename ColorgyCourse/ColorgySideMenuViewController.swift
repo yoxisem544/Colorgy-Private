@@ -14,13 +14,19 @@ class ColorgySideMenuViewController: UIViewController {
     var colorgyDarkGray: UIColor = UIColor(red: 59/255.0, green: 58/255.0, blue: 59/255.0, alpha: 1)
     var colorgyDimOrange: UIColor = UIColor(red: 228/255.0, green: 133/255.0, blue: 111/255.0, alpha: 1)
     
+    var scrollview: UIScrollView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         println("load")
         
-        self.view.backgroundColor = self.colorgyDarkGray
+        // wrap in scroll view
+        self.scrollview = UIScrollView(frame: self.view.frame)
+        self.scrollview.contentSize = CGSizeMake(self.view.frame.width, self.view.frame.height*2)
+        self.scrollview.backgroundColor = self.colorgyDarkGray
+        
         self.setupProfilePhoto()
         self.setupWave()
         
@@ -30,6 +36,8 @@ class ColorgySideMenuViewController: UIViewController {
         
         // setup logout btn
         self.setupLogoutButton()
+        
+        self.view.addSubview(self.scrollview)
     }
     
     func setupLogoutButton() {
@@ -40,7 +48,7 @@ class ColorgySideMenuViewController: UIViewController {
         logout.setImage(logoutImg, forState: UIControlState.Normal)
         logout.addTarget(self, action: "logout", forControlEvents: UIControlEvents.TouchUpInside)
         
-        self.view.addSubview(logout)
+        self.scrollview.addSubview(logout)
     }
     
     func logout() {
@@ -57,9 +65,14 @@ class ColorgySideMenuViewController: UIViewController {
             
                 FBSession.activeSession().closeAndClearTokenInformation()
             
-                var storyboard = UIStoryboard(name: "Main", bundle: nil)
-                var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
-                self.presentViewController(vc, animated: true, completion: nil)
+                self.logoutAnimation()
+            
+                var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                dispatch_after(delay, dispatch_get_main_queue()) {
+                    var storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
+                    self.presentViewController(vc, animated: true, completion: nil)
+                }
             })
         var cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: nil)
         
@@ -103,10 +116,13 @@ class ColorgySideMenuViewController: UIViewController {
         profile.layer.cornerRadius = 31
         profile.layer.borderWidth = 3
         profile.layer.borderColor = UIColor.whiteColor().CGColor
-        profile.image = UIImage(named: "HoungYu")
+        
+        var ud = NSUserDefaults.standardUserDefaults()
+        var data = ud.objectForKey("smallFBProfilePhoto") as! NSData
+        profile.image = UIImage(data: data)
         profile.layer.masksToBounds = true
         
-        self.view.addSubview(profile)
+        self.scrollview.addSubview(profile)
     }
     
     func setupWave() {
@@ -119,7 +135,7 @@ class ColorgySideMenuViewController: UIViewController {
         var wave = UIImageView(frame: CGRectMake(0, 150, w!, h!))
         wave.image = waveImg
         
-        self.view.addSubview(wave)
+        self.scrollview.addSubview(wave)
     }
     
     func setupButtonWith(title: String, action: String, order: Int) {
@@ -150,8 +166,13 @@ class ColorgySideMenuViewController: UIViewController {
         button.addTarget(self, action: "buttonTouchDragExit:", forControlEvents: UIControlEvents.TouchDragExit)
         button.addTarget(self, action: "buttonTouchDown:", forControlEvents: UIControlEvents.TouchDown)
         
+        // extend view
+        var extendView = UIView(frame: CGRectMake(140, offset, 140, 75))
+        extendView.backgroundColor = self.colorgyDimOrange
         
-        self.view.addSubview(button)
+        
+        self.scrollview.addSubview(extendView)
+        self.scrollview.addSubview(button)
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -193,6 +214,25 @@ class ColorgySideMenuViewController: UIViewController {
     func pushSegueToProfile(sender: UIButton) {
         sender.alpha = 1.0
         performSegueWithIdentifier("profile", sender: self)
+    }
+    
+    // MARK: - Animation
+    func logoutAnimation() {
+        var view = UIView(frame: CGRectMake(0, 0, 500, 500))
+        view.layer.cornerRadius = 250
+        view.backgroundColor = self.colorgyDimOrange
+        view.transform = CGAffineTransformMakeScale(0, 0)
+        
+        // position of view
+        view.center.x = self.revealViewController().view.center.x
+        view.center.y = self.view.center.y
+        
+//        self.view.addSubview(view)
+        self.revealViewController().view.addSubview(view)
+        
+        UIView.animateWithDuration(1, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+                view.transform = CGAffineTransformMakeScale(10, 10)
+            }, completion: nil)
     }
 
     /*

@@ -56,6 +56,8 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         // tableview style
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         self.tableView.backgroundColor = self.colorgyDarkGray
+        // navi style
+        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         
         // get json file
 //        let path = NSBundle.mainBundle().pathForResource("CCU_courses", ofType: "json")
@@ -84,7 +86,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         // i want to select tableview while searching
         self.searchCourse.dimsBackgroundDuringPresentation = false
         // change search abr color
-        self.searchCourse.searchBar.tintColor = self.colorgyGreen
+        self.searchCourse.searchBar.tintColor = UIColor.whiteColor()
         self.searchCourse.searchBar.barTintColor = UIColor(red: 113/255.0, green: 112/255.0, blue: 113/255.0, alpha: 1)
 //        self.searchCourse.searchBar.searchBarStyle = UISearchBarStyle.Minimal
         self.tableView.bounces = false
@@ -181,7 +183,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             // assign its value to it's key
             course.name = name
             course.lecturer = lecturer
-            course.credits = credits
+            course.credits = credits as Int
             course.uuid = uuid
             
             course.day_1 = sessions[0][0] as! String

@@ -327,9 +327,24 @@ class ColorgyFBLoginViewController: UIViewController {
                     self.alertUserWithError("登入FB時出錯囉！")
                 } else {
                     println("login fb success!")
-                    
-//                    println(session.accessTokenData.accessToken)
-//                    FBSession.activeSession().closeAndClearTokenInformation()
+                    var ud = NSUserDefaults.standardUserDefaults()
+                    // get user profile photo
+                    FBRequest.requestForMe().startWithCompletionHandler{
+                        (connection:FBRequestConnection!, result:AnyObject!, error:NSError!) -> Void in
+                        
+                        if result != nil {
+                            var id = result["id"] as! String
+                            println(result)
+                            let fName = result["first_name"] as! String
+                            let lName = result["last_name"] as! String
+                            ud.setObject(fName + lName, forKey: "userFBName")
+                            var smallProfilePhoto = NSData(contentsOfURL: NSURL(string: "https://graph.facebook.com/\(id)/picture?width=128&height=128")!)!
+                            var bigProfilePhoto = NSData(contentsOfURL: NSURL(string: "https://graph.facebook.com/\(id)/picture?width=640&height=640")!)!
+                            ud.setObject(smallProfilePhoto, forKey: "smallFBProfilePhoto")
+                            ud.setObject(bigProfilePhoto, forKey: "bigFBProfilePhoto")
+                            ud.synchronize()
+                        }
+                    }
                     if session.accessTokenData != nil {
                         self.requestColorgyOAuthAccessTokenWithFBToken(session.accessTokenData.accessToken)
                     } else {

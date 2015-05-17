@@ -264,10 +264,10 @@
                                                     <rect key="frame" x="438" y="0.0" width="65" height="123"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="老師" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tPM-Z9-vDb">
-                                                            <rect key="frame" x="11" y="2" width="42" height="120"/>
+                                                            <rect key="frame" x="0.0" y="2" width="65" height="120"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="120" id="KZL-TX-YAZ"/>
-                                                                <constraint firstAttribute="width" constant="42" id="z8t-p0-b3F"/>
+                                                                <constraint firstAttribute="width" constant="65" id="z8t-p0-b3F"/>
                                                             </constraints>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
