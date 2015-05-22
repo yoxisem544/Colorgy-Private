@@ -30,6 +30,10 @@ class ColorgyFBLoginViewController: UIViewController {
     var loginSwitchButton: UIButton!
     var loginMode: String!
     
+    // color
+    var colorgyGray = UIColor(red: 113/255.0, green: 112/255.0, blue: 113/255.0, alpha: 1)
+    var colorgyDimGray = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
+    
     // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,6 +102,13 @@ class ColorgyFBLoginViewController: UIViewController {
         }
     }
     
+    // MARK: - login switch tap handler
+    
+    func changeLoginSwitchAlpha(alpha: CGFloat) {
+        
+        self.loginSwitchButton.setTitleColor(UIColor(red: 1, green: 1, blue: 1, alpha: alpha), forState: UIControlState.Normal)
+    }
+    
     func loginSwitchTouchDown() {
         println("down")
         self.changeLoginSwitchAlpha(0.5)
@@ -118,10 +129,7 @@ class ColorgyFBLoginViewController: UIViewController {
         self.changeLoginSwitchAlpha(1)
     }
     
-    func changeLoginSwitchAlpha(alpha: CGFloat) {
-        
-        self.loginSwitchButton.setTitleColor(UIColor(red: 1, green: 1, blue: 1, alpha: alpha), forState: UIControlState.Normal)
-    }
+    
     
     // MARK: - setup Login backgorund and logo
     
@@ -145,21 +153,21 @@ class ColorgyFBLoginViewController: UIViewController {
         h = logo?.size.height
         
         // resize with varius screen
-        if self.view.frame.height == 667 {
-            // for iPhone 6
-            
-        } else if self.view.frame.height == 568 {
-            // for iPhone 5S
+        if self.view.frame.height <= 480 {
+            // iphone 4s
             w = w! * CGFloat(320 / 375.0)
             h = h! * CGFloat(320 / 375.0)
-        } else if self.view.frame.height == 736 {
+        } else if self.view.frame.height <= 568 {
+            // for 5 and 5s
+            w = w! * CGFloat(320 / 375.0)
+            h = h! * CGFloat(320 / 375.0)
+        } else if self.view.frame.height <= 667 {
+            // iphone 6
+            // nothing to do. stay the same.
+        } else {
             // for 6+
             w = w! * CGFloat(411 / 375.0)
             h = h! * CGFloat(411 / 375.0)
-        } else if self.view.frame.height == 480 {
-            // for 4s
-            w = w! * CGFloat(320 / 375.0)
-            h = h! * CGFloat(320 / 375.0)
         }
         
         self.colorgyLogo = UIImageView(frame: CGRectMake(0, 0, w! * 0.6, h! * 0.6))
@@ -177,19 +185,20 @@ class ColorgyFBLoginViewController: UIViewController {
         if animated {
             
         } else {
-            if self.view.frame.height == 667 {
-                // for iPhone 6
+            if self.view.frame.height <= 480 {
+                // iphone 4s
                 self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -850)
-            } else if self.view.frame.height == 568 {
-                // for iPhone 5S
+            } else if self.view.frame.height <= 568 {
+                // for 5 and 5s
                 self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -850)
-            } else if self.view.frame.height == 736 {
+            } else if self.view.frame.height <= 667 {
+                // iphone 6
+                self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -850)
+            } else {
                 // for 6+
                 self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -850)
-            } else if self.view.frame.height == 480 {
-                // for 4s
-                self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -850)
             }
+            
             self.colorgyLogo.transform = CGAffineTransformMakeScale(0, 0)
         }
     }
@@ -197,18 +206,19 @@ class ColorgyFBLoginViewController: UIViewController {
     func showLogoAndBackground() {
         
         var transDown: CGAffineTransform!
-        if self.view.frame.height == 667 {
-            // for iPhone 6
-            transDown = CGAffineTransformMakeTranslation(0, -330)
-        } else if self.view.frame.height == 568 {
-            // for iPhone 5S
+        
+        if self.view.frame.height <= 480 {
+            // iphone 4s
+            transDown = CGAffineTransformMakeTranslation(0, -518)
+        } else if self.view.frame.height <= 568 {
+            // for 5 and 5s
             transDown = CGAffineTransformMakeTranslation(0, -430)
-        } else if self.view.frame.height == 736 {
+        } else if self.view.frame.height <= 667 {
+            // iphone 6
+            transDown = CGAffineTransformMakeTranslation(0, -330)
+        } else {
             // for 6+
             transDown = CGAffineTransformMakeTranslation(0, -261)
-        } else if self.view.frame.height <= 480 {
-            // for 4s
-            transDown = CGAffineTransformMakeTranslation(0, -518)
         }
         
         UIView.animateWithDuration(1.0, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.1, options: nil, animations: {
@@ -251,18 +261,19 @@ class ColorgyFBLoginViewController: UIViewController {
     func setupUserPasswordAndAccount() {
         
         var textFieldWidth: CGFloat! = 250
-        if self.view.frame.height == 667 {
-            // for iPhone 6
-            textFieldWidth = textFieldWidth * (375 / 375)
-        } else if self.view.frame.height == 568 {
-            // for iPhone 5S
+        
+        if self.view.frame.height <= 480 {
+            // iphone 4s
             textFieldWidth = textFieldWidth * (320 / 375)
-        } else if self.view.frame.height == 736 {
+        } else if self.view.frame.height <= 568 {
+            // for 5 and 5s
+            textFieldWidth = textFieldWidth * (320 / 375)
+        } else if self.view.frame.height <= 667 {
+            // iphone 6
+            textFieldWidth = textFieldWidth * (375 / 375)
+        } else {
             // for 6+
             textFieldWidth = textFieldWidth * (414 / 375)
-        } else if self.view.frame.height == 480 {
-            // for 4s
-            textFieldWidth = textFieldWidth * (320 / 375)
         }
         
         // password login items
@@ -272,6 +283,8 @@ class ColorgyFBLoginViewController: UIViewController {
         self.userPassword.center.x = self.view.center.x
         self.userPassword.center.y = self.view.center.y + 50
         self.view.addSubview(self.userPassword)
+        // type => password
+        self.userPassword.secureTextEntry = true
         
         self.userAccount = UITextField(frame: CGRectMake(0, 0, textFieldWidth, 30))
         self.userAccount.borderStyle = UITextBorderStyle.RoundedRect
@@ -286,6 +299,12 @@ class ColorgyFBLoginViewController: UIViewController {
         self.passwordLoginButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
         self.passwordLoginButton.backgroundColor = UIColor.grayColor()
         self.passwordLoginButton.layer.cornerRadius = 10
+        
+        // password login tap setting
+        self.passwordLoginButton.addTarget(self, action: "passwordLoginButtonTouchDown", forControlEvents: UIControlEvents.TouchDown)
+        self.passwordLoginButton.addTarget(self, action: "passwordLoginButtonDragExit", forControlEvents: UIControlEvents.TouchDragExit)
+        self.passwordLoginButton.addTarget(self, action: "passwordLoginButtonDragEnter", forControlEvents: UIControlEvents.TouchDragEnter)
+        self.passwordLoginButton.addTarget(self, action: "passwordLoginButtonCancel", forControlEvents: UIControlEvents.TouchCancel)
 
         
         self.passwordLoginButton.center = CGPointMake(self.view.center.x, self.view.center.y + 130)
@@ -312,6 +331,59 @@ class ColorgyFBLoginViewController: UIViewController {
             }, completion: nil)
     }
     
+    // MARK:- user password tap handler
+    
+    func passwordLoginButtonTouchDown() {
+        println("down")
+        self.changePasswordLoginButtonAlpha(0.5)
+        self.changePasswordLoginButtonColor(self.colorgyDimGray)
+        
+        // login using password and account
+        let username = self.userAccount.text
+        let password = self.userPassword.text
+        if username != "" && password != ""{
+            if count(password) >= 8 {
+                // legal password must be more then 8 digits
+                self.requestColorgyOAuthAccessTokenWithUserName(username, password: password)
+            } else {
+                self.alertUserWithError("密碼必須大於8碼！！")
+            }
+        } else {
+            self.alertUserWithError("帳號或密碼不能為空！！")
+        }
+        
+    }
+    
+    func passwordLoginButtonDragExit() {
+        println("drag exit")
+        self.changePasswordLoginButtonAlpha(1)
+        self.changePasswordLoginButtonColor(self.colorgyGray)
+    }
+    
+    func passwordLoginButtonDragEnter() {
+        println("drag enter")
+        self.changePasswordLoginButtonAlpha(0.5)
+        self.changePasswordLoginButtonColor(self.colorgyDimGray)
+    }
+    
+    func passwordLoginButtonCancel() {
+        println("touch cancel")
+        self.changePasswordLoginButtonAlpha(1)
+        self.changePasswordLoginButtonColor(self.colorgyGray)
+    }
+    
+    func changePasswordLoginButtonAlpha(alpha: CGFloat) {
+    
+        self.passwordLoginButton.setTitleColor(UIColor(red: 1, green: 1, blue: 1, alpha: alpha), forState: UIControlState.Normal)
+    }
+    
+    func changePasswordLoginButtonColor(color: UIColor) {
+        
+        self.passwordLoginButton.backgroundColor = color
+    }
+
+
+
     // MARK: - facebook login helper function
     func LoginToFacebook() {
         
@@ -367,8 +439,9 @@ class ColorgyFBLoginViewController: UIViewController {
         
         let params = [
             "grant_type": "password",
-            "client_id": "de323349f404663158c5fbd8f149c126040371128cddbf4702b3d8d40206d29c",
-            "client_secret": "54178a05f5c0980f2a42ed41090e4dcce31c2a86787fa1d329c596afe1edacb2",
+            // 應用程式ID application id, in colorgy server
+            "client_id": "ad2d3492de7f83f0708b5b1db0ac7041f9179f78a168171013a4458959085ba4",
+            "client_secret": "d9de77450d6365ca8bd6717bbf8502dfb4a088e50962258d5d94e7f7211596a3",
             "username": "facebook:access_token",
             "password": token,
             "scope": "public account offline_access"
@@ -434,9 +507,7 @@ class ColorgyFBLoginViewController: UIViewController {
             // if user login error, close fbsession everytime.
             FBSession.activeSession().closeAndClearTokenInformation()
         })
-        errorAlert.dismissViewControllerAnimated(true, completion: {
-            
-        })
+
         errorAlert.addAction(dismiss)
         self.presentViewController(errorAlert, animated: true, completion: nil)
     }
@@ -447,18 +518,19 @@ class ColorgyFBLoginViewController: UIViewController {
         println("offff")
         
         var transDown: CGAffineTransform!
-        if self.view.frame.height == 667 {
-            // for iPhone 6
-            transDown = CGAffineTransformMakeTranslation(0, -330 + 30)
-        } else if self.view.frame.height == 568 {
-            // for iPhone 5S
+
+        if self.view.frame.height <= 480 {
+            // iphone 4s
+            transDown = CGAffineTransformMakeTranslation(0, -518 + 30)
+        } else if self.view.frame.height <= 568 {
+            // for 5 and 5s
             transDown = CGAffineTransformMakeTranslation(0, -430 + 30)
-        } else if self.view.frame.height == 736 {
+        } else if self.view.frame.height <= 667 {
+            // iphone 6
+            transDown = CGAffineTransformMakeTranslation(0, -330 + 30)
+        } else {
             // for 6+
             transDown = CGAffineTransformMakeTranslation(0, -261 + 30)
-        } else if self.view.frame.height == 480 {
-            // for 4s
-            transDown = CGAffineTransformMakeTranslation(0, -518 + 30)
         }
         
         // animate down
@@ -480,6 +552,9 @@ class ColorgyFBLoginViewController: UIViewController {
         UIView.animateWithDuration(0.5, animations: {
             self.loginSwitchButton.alpha = 0
             self.facebookLoginButton.alpha = 0
+            self.userAccount.alpha = 0
+            self.userPassword.alpha = 0
+            self.passwordLoginButton.alpha = 0
         })
     }
 
@@ -488,6 +563,54 @@ class ColorgyFBLoginViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    // MARK: - account password login regin
+    func requestColorgyOAuthAccessTokenWithUserName(username: String, password: String) {
+        
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        
+        afManager.requestSerializer = AFJSONRequestSerializer()
+        afManager.responseSerializer = AFJSONResponseSerializer()
+        
+        let params = [
+            "grant_type": "password",
+            // 應用程式ID application id, in colorgy server
+            "client_id": "ad2d3492de7f83f0708b5b1db0ac7041f9179f78a168171013a4458959085ba4",
+            "client_secret": "d9de77450d6365ca8bd6717bbf8502dfb4a088e50962258d5d94e7f7211596a3",
+            "username": username,
+            "password": password,
+            "scope": "public account offline_access"
+        ]
+        
+        // hide switch while posting
+        self.loginSwitchButton.hidden = true
+        
+        afManager.POST("https://colorgy.io/oauth/token", parameters: params, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+            println("succccc post")
+            println(responseObject)
+            
+            let access_token = responseObject["access_token"] as! String
+            let created_at = String(stringInterpolationSegment: responseObject["created_at"])
+            let expires_in = String(stringInterpolationSegment: responseObject["expires_in"])
+            let refresh_token = responseObject["refresh_token"] as! String
+            let token_type = responseObject["token_type"] as! String
+            
+            self.animateLogoOff()
+            
+            // wait for animation to finish, then store login info
+            var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+            dispatch_after(delay, dispatch_get_main_queue()) {
+                self.userSuccessfullyLoginToColorgyWithToken(access_token, created_at: created_at, expires_in: expires_in, refresh_token: refresh_token, token_type: token_type)
+            }
+            
+            }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
+                println("error post")
+                self.alertUserWithError("登入時發生錯誤！請確認帳號密碼無誤！")
+                // show switch if user got a error while login
+                
+                println(error)
+                self.loginSwitchButton.hidden = false
+        })
+    }
     
 
     /*

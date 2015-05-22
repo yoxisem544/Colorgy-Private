@@ -72,6 +72,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             var courseData = NSData(data: ud.objectForKey("courseFromServer") as! NSData)
             
             self.parsedCourseData = self.unarchive(courseData)
+            println("length is \(self.parsedCourseData.count)")
             if e != nil {
                 println(e)
             }
@@ -243,7 +244,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             self.coursesAddedToTimetable = NSMutableArray()
 
             for c in coursesFromDB {
-                let weekdays = ["Mon", "Tue", "wed", "Thu", "Fri"]
+                let weekdays = ["Mon", "Tue", "wed", "Thu", "Fri", "Sat", "Sun"]
                 var location = ""
                 var period = ""
                 
@@ -415,14 +416,15 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
 //            let s = self.filteredCourse[indexPath.row]["credits"]
 //            cell.location.text = "\(s)"
             
+            cell.name.text = self.filteredCourse[indexPath.row]["name"] as! String
+            cell.lecturer.text = self.filteredCourse[indexPath.row]["lecturer"] as! String
+            cell.code.text = self.filteredCourse[indexPath.row]["code"] as! String
+            var c = self.filteredCourse[indexPath.row]["credits"] as! Int
+            cell.credits.text = "\(c)"
+            
             return cell
         } else {
             var cell = tableView.dequeueReusableCellWithIdentifier("ColorgyCourseCardCell", forIndexPath: indexPath) as! ColorgyCourseCardCell
-            
-//            cell.name.text = self.parsedCourseData[indexPath.row]["course_name"] as! String
-//            cell.teacher.text = self.parsedCourseData[indexPath.row]["teacher_name"] as! String
-//            cell.time.text = self.parsedCourseData[indexPath.row]["time"] as! String
-//            cell.location.text = self.parsedCourseData[indexPath.row]["classroom"] as! String
             
             cell.name.text = self.coursesAddedToTimetable[indexPath.row][0] as! String
             cell.code.text = self.coursesAddedToTimetable[indexPath.row][3] as! String

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		63045EAD1B0EC5E10071555B /* SwitfyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63045EAC1B0EC5E10071555B /* SwitfyJSON.swift */; };
 		630849B01AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630849AF1AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift */; };
 		631008DF1AF771B7008A40E4 /* ColorgyNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631008DE1AF771B7008A40E4 /* ColorgyNavigationController.swift */; };
 		6311FD701B063A7A00FDDC78 /* NNTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6311FD6F1B063A7A00FDDC78 /* NNTableViewCell.swift */; };
@@ -26,7 +27,6 @@
 		63A29E721AF7236C000494DB /* ColorgyFBLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E711AF7236C000494DB /* ColorgyFBLoginViewController.swift */; };
 		63A29E741AF7246E000494DB /* ColorgySetupProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E731AF7246E000494DB /* ColorgySetupProfileViewController.swift */; };
 		63A29E761AF72E41000494DB /* Course.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E751AF72E41000494DB /* Course.swift */; };
-		63A29E781AF740E3000494DB /* ColorgyCourseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E771AF740E3000494DB /* ColorgyCourseCell.swift */; };
 		63A29E7A1AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E791AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift */; };
 		63C96ADE1AFE0CD9003ED287 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63C96ADD1AFE0CD9003ED287 /* FacebookSDK.framework */; };
 		63DD0DAE1B069F2700582DEF /* ColorgyCourseCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DD0DAD1B069F2700582DEF /* ColorgyCourseCardCell.swift */; };
@@ -45,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		572BB26BB0AC9A6CCD0BE10F /* Pods-ColorgyCourse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ColorgyCourse.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ColorgyCourse/Pods-ColorgyCourse.debug.xcconfig"; sourceTree = "<group>"; };
+		63045EAC1B0EC5E10071555B /* SwitfyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitfyJSON.swift; sourceTree = "<group>"; };
 		630849AF1AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = testingUSERDEFAULTTableViewController.swift; sourceTree = "<group>"; };
 		631008DE1AF771B7008A40E4 /* ColorgyNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyNavigationController.swift; sourceTree = "<group>"; };
 		6311FD6F1B063A7A00FDDC78 /* NNTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NNTableViewCell.swift; sourceTree = "<group>"; };
@@ -68,7 +69,6 @@
 		63A29E711AF7236C000494DB /* ColorgyFBLoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyFBLoginViewController.swift; sourceTree = "<group>"; };
 		63A29E731AF7246E000494DB /* ColorgySetupProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgySetupProfileViewController.swift; sourceTree = "<group>"; };
 		63A29E751AF72E41000494DB /* Course.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Course.swift; sourceTree = "<group>"; };
-		63A29E771AF740E3000494DB /* ColorgyCourseCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyCourseCell.swift; sourceTree = "<group>"; };
 		63A29E791AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyViewAndAddCourseTableViewController.swift; sourceTree = "<group>"; };
 		63C96ADD1AFE0CD9003ED287 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		63DD0DAD1B069F2700582DEF /* ColorgyCourseCardCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyCourseCardCell.swift; sourceTree = "<group>"; };
@@ -148,7 +148,6 @@
 				6379F3C91AFF454F007686B5 /* ColorgyUserProfileViewController.swift */,
 				635F9FDD1AFE0369001907BA /* FBTestViewController.swift */,
 				630849AF1AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift */,
-				63A29E771AF740E3000494DB /* ColorgyCourseCell.swift */,
 				63A29E561AF722DF000494DB /* Images.xcassets */,
 				63A29E791AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift */,
 				63A29E581AF722DF000494DB /* LaunchScreen.xib */,
@@ -164,6 +163,7 @@
 		63A29E4A1AF722DF000494DB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				63045EAC1B0EC5E10071555B /* SwitfyJSON.swift */,
 				634FD6201AF749A9003B627D /* NCKU_samll_course.json */,
 				635F9FDB1AFDE58E001907BA /* CCU_courses.json */,
 				63A29E4B1AF722DF000494DB /* Info.plist */,
@@ -328,7 +328,6 @@
 			files = (
 				63DD0DAE1B069F2700582DEF /* ColorgyCourseCardCell.swift in Sources */,
 				635F9FDE1AFE0369001907BA /* FBTestViewController.swift in Sources */,
-				63A29E781AF740E3000494DB /* ColorgyCourseCell.swift in Sources */,
 				630849B01AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift in Sources */,
 				6311FD701B063A7A00FDDC78 /* NNTableViewCell.swift in Sources */,
 				63A29E7A1AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift in Sources */,
@@ -338,6 +337,7 @@
 				63A29E501AF722DF000494DB /* ColorgyCourse.xcdatamodeld in Sources */,
 				636FFF7A1AF9086D0012135C /* ColorgySideMenuViewController.swift in Sources */,
 				63A29E721AF7236C000494DB /* ColorgyFBLoginViewController.swift in Sources */,
+				63045EAD1B0EC5E10071555B /* SwitfyJSON.swift in Sources */,
 				63A29E741AF7246E000494DB /* ColorgySetupProfileViewController.swift in Sources */,
 				63A29E4D1AF722DF000494DB /* AppDelegate.swift in Sources */,
 				631008DF1AF771B7008A40E4 /* ColorgyNavigationController.swift in Sources */,

@@ -44,7 +44,7 @@ class ColorgyUserProfileViewController: UIViewController {
     // MARK: - fetch data from server
     func fetchCourseDataFromServer() {
         
-        var front_url = "https://colorgy.io:443/api/ccu/courses.json?per_page=9999&&&&&access_token="
+        var front_url = "https://colorgy.io:443/api/test/courses.json?per_page=5000&&&&&access_token="
         var ud = NSUserDefaults.standardUserDefaults()
         var token = ud.objectForKey("ColorgyAccessToken") as! String
         let url = front_url + token
@@ -68,6 +68,7 @@ class ColorgyUserProfileViewController: UIViewController {
             var ud = NSUserDefaults.standardUserDefaults()
             ud.setObject(arcData, forKey: "courseFromServer")
             ud.synchronize()
+            println("get course from server")
             }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
                 println("error post")
         })
