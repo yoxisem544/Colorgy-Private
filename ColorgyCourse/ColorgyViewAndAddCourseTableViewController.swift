@@ -249,39 +249,39 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                 var period = ""
                 
                 if c.day_1 != "<null>" {
-                    period += weekdays[c.day_1.toInt()!] + c.period_1 + " "
+                    period += weekdays[c.day_1.toInt()! - 1] + c.period_1 + " "
                     location += c.location_1 + " "
                 }
                 if c.day_2 != "<null>" {
-                    period += weekdays[c.day_2.toInt()!] + c.period_2 + " "
+                    period += weekdays[c.day_2.toInt()! - 1] + c.period_2 + " "
                     location += c.location_2 + " "
                 }
                 if c.day_3 != "<null>" {
-                    period += weekdays[c.day_3.toInt()!] + c.period_3 + " "
+                    period += weekdays[c.day_3.toInt()! - 1] + c.period_3 + " "
                     location += c.location_3 + " "
                 }
                 if c.day_4 != "<null>" {
-                    period += weekdays[c.day_4.toInt()!] + c.period_4 + " "
+                    period += weekdays[c.day_4.toInt()! - 1] + c.period_4 + " "
                     location += c.location_4 + " "
                 }
                 if c.day_5 != "<null>" {
-                    period += weekdays[c.day_5.toInt()!] + c.period_5 + " "
+                    period += weekdays[c.day_5.toInt()! - 1] + c.period_5 + " "
                     location += c.location_5 + " "
                 }
                 if c.day_6 != "<null>" {
-                    period += weekdays[c.day_6.toInt()!] + c.period_6 + " "
+                    period += weekdays[c.day_6.toInt()! - 1] + c.period_6 + " "
                     location += c.location_6 + " "
                 }
                 if c.day_7 != "<null>" {
-                    period += weekdays[c.day_7.toInt()!] + c.period_7 + " "
+                    period += weekdays[c.day_7.toInt()! - 1] + c.period_7 + " "
                     location += c.location_7 + " "
                 }
                 if c.day_8 != "<null>" {
-                    period += weekdays[c.day_8.toInt()!] + c.period_8 + " "
+                    period += weekdays[c.day_8.toInt()! - 1] + c.period_8 + " "
                     location += c.location_8 + " "
                 }
                 if c.day_9 != "<null>" {
-                    period += weekdays[c.day_9.toInt()!] + c.period_9 + " "
+                    period += weekdays[c.day_9.toInt()! - 1] + c.period_9 + " "
                     location += c.location_9 + " "
                 }
                 

@@ -40,6 +40,14 @@ class ColorgyTimeTableViewController: UIViewController {
     // we got 11 + 4 = 15 courses
     var courseCount: Int = 15
     
+    // MARK: - course cell array
+    // use to track if user has conflict with their course
+    var coursesOnTimetable: NSMutableArray!
+    var conflictCourses: [[NSMutableArray]]!
+    
+    // MARK: - timetableview
+    var colorgyTimeTableView: UIScrollView!
+    
     // MARK: - color declaration
     // color region
     var colorgyOrange: UIColor = UIColor(red: 246/255.0, green: 150/255.0, blue: 114/255.0, alpha: 1)
@@ -74,16 +82,79 @@ class ColorgyTimeTableViewController: UIViewController {
         // also header bar width is equal to cell width
         self.headerWidth = cellWidth
         
-        self.view.addSubview(self.ColorgyTimeTableView())
+        self.colorgyTimeTableView = self.ColorgyTimeTableView()
+        self.view.addSubview(self.colorgyTimeTableView)
         
         // style of nav bar
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         self.navigationItem.title = "課表"
+        
+        println("=====================")
+        self.detectIfClassHasConflicts()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    //MARK: - handle conflict courses
+    func detectIfClassHasConflicts() {
+        
+        if self.coursesOnTimetable.count == 0 {
+            println("count is 0, no conflicts.")
+        } else {
+            self.getConflictTimetable()
+            self.animateConflictCourses()
+        }
+        
+    }
+    
+    func getConflictTimetable() {
+        
+        var conflictTimetable: [[NSMutableArray]] = [
+                                                        [[], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                                                        [[], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                                                        [[], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                                                        [[], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                                                        [[], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
+                                                    ]
+        
+        for course in self.coursesOnTimetable {
+            let position = self.getCoursePositionOnTimetable(course.frame)
+            conflictTimetable[position.day - 1][position.session - 1].addObject(course)
+        }
+        
+        self.conflictCourses = conflictTimetable
+    }
+    
+    func getCoursePositionOnTimetable(frame: CGRect!) -> (day: Int, session: Int) {
+        
+        var day = Int((frame.origin.x - self.sideBarWidth - self.timetableSpacing) / self.colorgyTimeTableCell.width) + 1
+        var session = Int((frame.origin.y - self.headerHeight - self.timetableSpacing) / self.colorgyTimeTableCell.height) + 1
+        
+        return (day, session)
+    }
+    
+    // handle conflict course animation
+    func animateConflictCourses() {
+        if self.conflictCourses != nil {
+            for day in self.conflictCourses {
+                for session in day {
+                    if session.count > 1 {
+                        // conflict courses, need animation to alert user.
+                        for course in session {
+                            let view = course as! UIView
+                            view.backgroundColor = UIColor.redColor()
+                            self.colorgyTimeTableView.bringSubviewToFront(view)
+                            UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.Repeat | UIViewAnimationOptions.Autoreverse, animations: {
+                                    view.transform = CGAffineTransformMakeScale(1.2, 1.2)
+                                }, completion: nil)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     
@@ -111,9 +182,12 @@ class ColorgyTimeTableViewController: UIViewController {
         
         // update timetableview
         // this will return array of uiviews
+        // before track courses position, init courseOnTimetable first
+        self.coursesOnTimetable = NSMutableArray()
         if let views = self.updateTimetableCourse() {
             for v in views {
                 view.addSubview(v)
+                coursesOnTimetable.addObject(v)
             }
         }
         

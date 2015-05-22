@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ColorgyFBLoginViewController: UIViewController {
+class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - declaration
     // this is background of login view
@@ -30,7 +30,12 @@ class ColorgyFBLoginViewController: UIViewController {
     var loginSwitchButton: UIButton!
     var loginMode: String!
     
-    // color
+    // MARK: - keyboard handler helper
+    // keyboard height
+    var keyboardHeight: CGFloat!
+    var screenHeight: CGFloat!
+    
+    // MARK: - color
     var colorgyGray = UIColor(red: 113/255.0, green: 112/255.0, blue: 113/255.0, alpha: 1)
     var colorgyDimGray = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
     
@@ -41,7 +46,7 @@ class ColorgyFBLoginViewController: UIViewController {
         // Do any additional setup after loading the view.
         
         // keyboard
-        
+        self.screenHeight = self.view.frame.height
         
         // setup logo and backgorun
         self.setupLogoAndBackgorund()
@@ -60,6 +65,18 @@ class ColorgyFBLoginViewController: UIViewController {
         self.setupLoginSwitchButton()
         self.loginMode = "password"
         println(self.view.frame)
+        
+        // 不要讓鍵盤show的時候太怪
+        self.extendBottomOfView()
+        // tap gesture recognizer
+        self.addTapGestureToDismissKeyboard()
+    }
+    
+    func extendBottomOfView() {
+        // extend bottom of view
+        var view = UIView(frame: CGRectMake(0, self.view.frame.height, self.view.frame.width, 37))
+        view.backgroundColor = UIColor.whiteColor()
+        self.view.addSubview(view)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -69,9 +86,55 @@ class ColorgyFBLoginViewController: UIViewController {
         // present it in viewdidappear
         self.showLogoAndBackground()
         self.showFacebookButton(1.3)
+        
+        // keyboard handler
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
     }
     
-    // MARKL - setup switch login button
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        // keyboard handler
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    // MARK: - keyboard handler
+    func keyboardWillShow(notification: NSNotification) {
+        println("keyboard will show")
+        
+        // get keyboard height
+        var userInfo = notification.userInfo as! NSDictionary
+        self.keyboardHeight = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().size.height
+
+        let curveInt = userInfo[UIKeyboardAnimationCurveUserInfoKey] as! NSNumber as Int
+        let curve = UIViewAnimationCurve(rawValue: curveInt)
+        
+        UIView.animateWithDuration(0.25, delay: 0, options: nil, animations: {
+                UIView.setAnimationCurve(curve!)
+                self.view.frame.origin.y = -self.keyboardHeight
+            }, completion: nil)
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        println("keyboard will show")
+        self.view.frame.origin.y = 0
+    }
+    
+    func addTapGestureToDismissKeyboard() {
+        
+        var tapGesture = UITapGestureRecognizer(target: self, action: "tapOnViewToDismissKeyboard")
+        tapGesture.numberOfTapsRequired = 1
+        self.view.addGestureRecognizer(tapGesture)
+    }
+    
+    func tapOnViewToDismissKeyboard() {
+        println("tap!")
+        self.view.endEditing(true)
+    }
+    
+    // MARK: - setup switch login button
     func setupLoginSwitchButton() {
         self.loginSwitchButton = UIButton(frame: CGRectMake(0, 0, 180, 20))
         self.loginSwitchButton.setTitle("hi", forState: UIControlState.Normal)
@@ -279,19 +342,23 @@ class ColorgyFBLoginViewController: UIViewController {
         // password login items
         self.userPassword = UITextField(frame: CGRectMake(0, 0, textFieldWidth, 30))
         self.userPassword.borderStyle = UITextBorderStyle.RoundedRect
-        self.userPassword.placeholder = "password"
+        self.userPassword.placeholder = "Password"
         self.userPassword.center.x = self.view.center.x
         self.userPassword.center.y = self.view.center.y + 50
         self.view.addSubview(self.userPassword)
         // type => password
         self.userPassword.secureTextEntry = true
+        // return button, set it to Go!
+        self.userPassword.returnKeyType = UIReturnKeyType.Go
         
         self.userAccount = UITextField(frame: CGRectMake(0, 0, textFieldWidth, 30))
         self.userAccount.borderStyle = UITextBorderStyle.RoundedRect
-        self.userAccount.placeholder = "account"
+        self.userAccount.placeholder = "Email"
         self.userAccount.center.x = self.view.center.x
         self.userAccount.center.y = self.view.center.y
         self.view.addSubview(self.userAccount)
+        // return button, set it to Next!
+        self.userAccount.returnKeyType = UIReturnKeyType.Next
         
         // button
         self.passwordLoginButton = UIButton(frame: CGRectMake(0, 0, 150, 45))
@@ -306,6 +373,10 @@ class ColorgyFBLoginViewController: UIViewController {
         self.passwordLoginButton.addTarget(self, action: "passwordLoginButtonDragEnter", forControlEvents: UIControlEvents.TouchDragEnter)
         self.passwordLoginButton.addTarget(self, action: "passwordLoginButtonCancel", forControlEvents: UIControlEvents.TouchCancel)
 
+        // delegate
+        self.userAccount.delegate = self
+        self.userPassword.delegate = self
+        
         
         self.passwordLoginButton.center = CGPointMake(self.view.center.x, self.view.center.y + 130)
         self.view.addSubview(self.passwordLoginButton)
@@ -331,7 +402,7 @@ class ColorgyFBLoginViewController: UIViewController {
             }, completion: nil)
     }
     
-    // MARK:- user password tap handler
+    // MARK:- password Login Button tap handler
     
     func passwordLoginButtonTouchDown() {
         println("down")
@@ -382,7 +453,16 @@ class ColorgyFBLoginViewController: UIViewController {
         self.passwordLoginButton.backgroundColor = color
     }
 
+    // MARK: - account password login view and keyboard handler
+    
+    func userTypingAccountAndPassword(userTyping: Bool) {
+        
+        if userTyping {
 
+        } else {
+
+        }
+    }
 
     // MARK: - facebook login helper function
     func LoginToFacebook() {
@@ -510,6 +590,18 @@ class ColorgyFBLoginViewController: UIViewController {
 
         errorAlert.addAction(dismiss)
         self.presentViewController(errorAlert, animated: true, completion: nil)
+    }
+    
+    // MARK: - textfield next responder
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        if textField == self.userAccount {
+            self.userPassword.becomeFirstResponder()
+        } else if textField == self.userPassword {
+            println("login GO!")
+            self.view.endEditing(true)
+        }
+        
+        return true
     }
     
     // MARK: - login animation
