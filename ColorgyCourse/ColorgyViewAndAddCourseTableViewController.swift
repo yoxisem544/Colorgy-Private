@@ -31,6 +31,12 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     // background dimmer view
     var dimmer: UIView!
     
+    // reloader
+    var reloader: NSTimer!
+    
+    // indicaotr
+    var indicator: UIActivityIndicatorView!
+    
     // MARK: - color
     var colorgyGreen: UIColor = UIColor(red: 228/255.0, green: 133/255.0, blue: 111/255.0, alpha: 1)
     var colorgyDarkGray = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
@@ -68,15 +74,18 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         var ud = NSUserDefaults.standardUserDefaults()
         // first init self.parsedCourseData
         self.parsedCourseData = []
-        if ud.objectForKey("courseFromServer") != nil {
-            var courseData = NSData(data: ud.objectForKey("courseFromServer") as! NSData)
-            
-            self.parsedCourseData = self.unarchive(courseData)
-            println("length is \(self.parsedCourseData.count)")
-            if e != nil {
-                println(e)
+        dispatch_async(dispatch_get_main_queue()) {
+            if ud.objectForKey("courseFromServer") != nil {
+                var courseData = NSData(data: ud.objectForKey("courseFromServer") as! NSData)
+                
+                self.parsedCourseData = self.unarchive(courseData)
+                println("length is \(self.parsedCourseData.count)")
+                if e != nil {
+                    println(e)
+                }
             }
         }
+        
         
         
         // setup search controller and its style
@@ -114,6 +123,13 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         self.dimmer.alpha = 0.5
         self.tableView.addSubview(self.dimmer)
         self.dimmer.hidden = true
+        
+        // indicator
+        self.indicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 40, 40))
+        self.indicator.tintColor = self.colorgyGreen
+        self.indicator.center = CGPointMake(self.view.center.x, 128)
+        self.indicator.startAnimating()
+        self.view.addSubview(self.indicator)
     }
     
     // MARK: - Fetch data from server
@@ -244,49 +260,52 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             self.coursesAddedToTimetable = NSMutableArray()
 
             for c in coursesFromDB {
-                let weekdays = ["Mon", "Tue", "wed", "Thu", "Fri", "Sat", "Sun"]
-                var location = ""
-                var period = ""
-                
-                if c.day_1 != "<null>" {
-                    period += weekdays[c.day_1.toInt()! - 1] + c.period_1 + " "
-                    location += c.location_1 + " "
+                dispatch_async(dispatch_get_main_queue()) {
+                    let weekdays = ["Mon", "Tue", "wed", "Thu", "Fri", "Sat", "Sun"]
+                    var location = ""
+                    var period = ""
+                    
+                    if c.day_1 != "<null>" {
+                        period += weekdays[c.day_1.toInt()! - 1] + c.period_1 + " "
+                        location += c.location_1 + " "
+                    }
+                    if c.day_2 != "<null>" {
+                        period += weekdays[c.day_2.toInt()! - 1] + c.period_2 + " "
+                        location += c.location_2 + " "
+                    }
+                    if c.day_3 != "<null>" {
+                        period += weekdays[c.day_3.toInt()! - 1] + c.period_3 + " "
+                        location += c.location_3 + " "
+                    }
+                    if c.day_4 != "<null>" {
+                        period += weekdays[c.day_4.toInt()! - 1] + c.period_4 + " "
+                        location += c.location_4 + " "
+                    }
+                    if c.day_5 != "<null>" {
+                        period += weekdays[c.day_5.toInt()! - 1] + c.period_5 + " "
+                        location += c.location_5 + " "
+                    }
+                    if c.day_6 != "<null>" {
+                        period += weekdays[c.day_6.toInt()! - 1] + c.period_6 + " "
+                        location += c.location_6 + " "
+                    }
+                    if c.day_7 != "<null>" {
+                        period += weekdays[c.day_7.toInt()! - 1] + c.period_7 + " "
+                        location += c.location_7 + " "
+                    }
+                    if c.day_8 != "<null>" {
+                        period += weekdays[c.day_8.toInt()! - 1] + c.period_8 + " "
+                        location += c.location_8 + " "
+                    }
+                    if c.day_9 != "<null>" {
+                        period += weekdays[c.day_9.toInt()! - 1] + c.period_9 + " "
+                        location += c.location_9 + " "
+                    }
+                    
+                    
+                    self.coursesAddedToTimetable.addObject([c.name, c.lecturer, c.credits, c.uuid, period, location])
+                    self.tableView.reloadData()
                 }
-                if c.day_2 != "<null>" {
-                    period += weekdays[c.day_2.toInt()! - 1] + c.period_2 + " "
-                    location += c.location_2 + " "
-                }
-                if c.day_3 != "<null>" {
-                    period += weekdays[c.day_3.toInt()! - 1] + c.period_3 + " "
-                    location += c.location_3 + " "
-                }
-                if c.day_4 != "<null>" {
-                    period += weekdays[c.day_4.toInt()! - 1] + c.period_4 + " "
-                    location += c.location_4 + " "
-                }
-                if c.day_5 != "<null>" {
-                    period += weekdays[c.day_5.toInt()! - 1] + c.period_5 + " "
-                    location += c.location_5 + " "
-                }
-                if c.day_6 != "<null>" {
-                    period += weekdays[c.day_6.toInt()! - 1] + c.period_6 + " "
-                    location += c.location_6 + " "
-                }
-                if c.day_7 != "<null>" {
-                    period += weekdays[c.day_7.toInt()! - 1] + c.period_7 + " "
-                    location += c.location_7 + " "
-                }
-                if c.day_8 != "<null>" {
-                    period += weekdays[c.day_8.toInt()! - 1] + c.period_8 + " "
-                    location += c.location_8 + " "
-                }
-                if c.day_9 != "<null>" {
-                    period += weekdays[c.day_9.toInt()! - 1] + c.period_9 + " "
-                    location += c.location_9 + " "
-                }
-                
-                
-                self.coursesAddedToTimetable.addObject([c.name, c.lecturer, c.credits, c.uuid, period, location])
             }
         }
         // after getting data from db
@@ -342,49 +361,50 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         
     }
     
-    
     func filterContentForSearchText(searchText: String) {
         
         // this function will filter data and display to user
         // first clear filtered course
         self.filteredCourse = []
         
+        
+        
         // loop through all course data
-        for data in self.parsedCourseData {
-            var name = data["name"] as! String
-            var lecturer = data["lecturer"] as! String
-            let c = data["credits"]
-            var credits = "\(c)"
-            var uuid = data["code"] as! String
+        if searchText != "" {
+            // start searching...
+            self.indicator.startAnimating()
             
-            var match: Bool! = false
-            
-            if name.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
-                match = true
-            }
-            if lecturer.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
-                match = true
-            }
-//            for p in periods {
-//                if let location = p[2]{
-//                    let loca = location as! String
-//                    if loca.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
+            for data in self.parsedCourseData {
+//                dispatch_after(0, dispatch_get_main_queue()) {
+                    println("asyncing!")
+                    var name = data["name"] as! String
+                    var lecturer = data["lecturer"] as! String
+//                    let c = data["credits"]
+//                    var credits = "\(c)"
+//                    var uuid = data["code"] as! String
+                    
+                    var match: Bool! = false
+                    
+                    if name.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
+                        match = true
+                    }
+                    if lecturer.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
+                        match = true
+                    }
+//                    if credits.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
 //                        match = true
 //                    }
-//                }
+                    
+                    // if match search text, add to filter course, ready to display to user
+                    if match! {
+                        self.filteredCourse.addObject(data)
+                    }
+                }
 //            }
-            if credits.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
-                match = true
-            }
-            
-            // if match search text, add to filter course, ready to display to user
-            if match! {
-                self.filteredCourse.addObject(data)
-            }
-
+            self.indicator.stopAnimating()
+            self.tableView.reloadData()
+            println(self.filteredCourse.count)
         }
-        
-        println(self.filteredCourse.count)
     }
     
     // MARK: - Table view region
@@ -398,6 +418,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         } else {
             if self.coursesAddedToTimetable == nil {
                 // if there is nothing in it, fetch data from db
+                println("fetching data...")
                 self.fetchDataAndUpdateSelectedCourses()
             }
             println("count of add : " + "\(self.coursesAddedToTimetable.count)")
