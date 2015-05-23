@@ -33,7 +33,6 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
     // MARK: - keyboard handler helper
     // keyboard height
     var keyboardHeight: CGFloat!
-    var screenHeight: CGFloat!
     
     // MARK: - color
     var colorgyGray = UIColor(red: 113/255.0, green: 112/255.0, blue: 113/255.0, alpha: 1)
@@ -45,12 +44,9 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
 
         // Do any additional setup after loading the view.
         
-        // keyboard
-        self.screenHeight = self.view.frame.height
-        
         // setup logo and backgorun
         self.setupLogoAndBackgorund()
-        self.hideLogoBackground(false)
+        self.hideLogoBackground()
         
         
         // password and account login
@@ -63,13 +59,13 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         
         
         self.setupLoginSwitchButton()
-        self.loginMode = "password"
-        println(self.view.frame)
+        self.loginMode = "fb"
         
-        // 不要讓鍵盤show的時候太怪
+        // make keyboard show animation more naturally
         self.extendBottomOfView()
-        // tap gesture recognizer
+        // gestures to dismiss keyboard
         self.addTapGestureToDismissKeyboard()
+        self.addSwipGestureToDismissKeyboard()
     }
     
     func extendBottomOfView() {
@@ -87,7 +83,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         self.showLogoAndBackground()
         self.showFacebookButton(1.3)
         
-        // keyboard handler
+        // register notification
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
     }
@@ -95,7 +91,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        // keyboard handler
+        // unregister notification
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
@@ -107,10 +103,11 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         // get keyboard height
         var userInfo = notification.userInfo as! NSDictionary
         self.keyboardHeight = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().size.height
-
+        // keyboard show/hide animation curve
         let curveInt = userInfo[UIKeyboardAnimationCurveUserInfoKey] as! NSNumber as Int
         let curve = UIViewAnimationCurve(rawValue: curveInt)
         
+        // animate view to proper position
         UIView.animateWithDuration(0.25, delay: 0, options: nil, animations: {
                 UIView.setAnimationCurve(curve!)
                 self.view.frame.origin.y = -self.keyboardHeight
@@ -123,8 +120,8 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     func addTapGestureToDismissKeyboard() {
-        
         var tapGesture = UITapGestureRecognizer(target: self, action: "tapOnViewToDismissKeyboard")
+        // need one finger tap to dismiss keyboard.
         tapGesture.numberOfTapsRequired = 1
         self.view.addGestureRecognizer(tapGesture)
     }
@@ -134,12 +131,25 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         self.view.endEditing(true)
     }
     
+    func addSwipGestureToDismissKeyboard() {
+        var swipeGesture = UISwipeGestureRecognizer(target: self, action: "swipeToDismissKeyboard")
+        swipeGesture.direction = UISwipeGestureRecognizerDirection.Down
+        self.view.addGestureRecognizer(swipeGesture)
+    }
+    
+    func swipeToDismissKeyboard() {
+        println("swipe!")
+        self.view.endEditing(true)
+    }
+    
     // MARK: - setup switch login button
     func setupLoginSwitchButton() {
+        // style of login switch button
         self.loginSwitchButton = UIButton(frame: CGRectMake(0, 0, 180, 20))
-        self.loginSwitchButton.setTitle("hi", forState: UIControlState.Normal)
+        self.loginSwitchButton.setTitle("帳號密碼登入", forState: UIControlState.Normal)
         self.loginSwitchButton.center = CGPointMake(self.view.center.x, self.view.center.y+200)
         
+        // targets of login switch button
         self.loginSwitchButton.addTarget(self, action: "loginSwitchTouchUpInside", forControlEvents: UIControlEvents.TouchUpInside)
         self.loginSwitchButton.addTarget(self, action: "loginSwitchTouchDown", forControlEvents: UIControlEvents.TouchDown)
         self.loginSwitchButton.addTarget(self, action: "loginSwitchTouchDragExit", forControlEvents: UIControlEvents.TouchDragExit)
@@ -152,24 +162,22 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
     func loginSwitchTouchUpInside() {
         println("touch")
         self.changeLoginSwitchAlpha(1)
+        // switch mode
         if self.loginMode == "password" {
+            // change to fb login
             self.loginMode = "fb"
-            self.loginSwitchButton.setTitle("password", forState: UIControlState.Normal)
+            self.loginSwitchButton.setTitle("帳號密碼登入", forState: UIControlState.Normal)
+            // hide keyboard.
+            self.view.endEditing(true)
             self.hideUserPasswordAndAccount()
             self.showFacebookButton(0)
         } else {
+            // change to password login
             self.loginMode = "password"
-            self.loginSwitchButton.setTitle("facebook", forState: UIControlState.Normal)
+            self.loginSwitchButton.setTitle("Facebook登入", forState: UIControlState.Normal)
             self.hideFacebookButton()
             self.showUserPasswordAndAccount(0)
         }
-    }
-    
-    // MARK: - login switch tap handler
-    
-    func changeLoginSwitchAlpha(alpha: CGFloat) {
-        
-        self.loginSwitchButton.setTitleColor(UIColor(red: 1, green: 1, blue: 1, alpha: alpha), forState: UIControlState.Normal)
     }
     
     func loginSwitchTouchDown() {
@@ -192,12 +200,13 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         self.changeLoginSwitchAlpha(1)
     }
     
-    
+    func changeLoginSwitchAlpha(alpha: CGFloat) {
+        self.loginSwitchButton.setTitleColor(UIColor(red: 1, green: 1, blue: 1, alpha: alpha), forState: UIControlState.Normal)
+    }
     
     // MARK: - setup Login backgorund and logo
     
     func setupLogoAndBackgorund() {
-        
         // setup backgorund
         var image = UIImage(named: "LoginBackground")
         var w = image?.size.width
@@ -209,13 +218,12 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         self.view.addSubview(self.loginBackground)
 
         // adding logo
-//        var logo = UIImage(named: "ColorgyLogo")
-        // taple
-        var logo = UIImage(named: "taple")
+        var logo = UIImage(named: "ColorgyLogo")
+        // w & h of logo
         w = logo?.size.width
         h = logo?.size.height
-        
-        // resize with varius screen
+
+        // resize with varius device
         if self.view.frame.height <= 480 {
             // iphone 4s
             w = w! * CGFloat(320 / 375.0)
@@ -233,6 +241,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
             h = h! * CGFloat(411 / 375.0)
         }
         
+        // set logo using logo image, set its position
         self.colorgyLogo = UIImageView(frame: CGRectMake(0, 0, w! * 0.6, h! * 0.6))
         self.colorgyLogo.image = logo
         self.colorgyLogo.center.x = self.view.center.x
@@ -243,31 +252,27 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
     
     
     
-    func hideLogoBackground(animated: Bool) {
+    func hideLogoBackground() {
         
-        if animated {
-            
+        if self.view.frame.height <= 480 {
+            // iphone 4s
+            self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -850)
+        } else if self.view.frame.height <= 568 {
+            // for 5 and 5s
+            self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -850)
+        } else if self.view.frame.height <= 667 {
+            // iphone 6
+            self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -850)
         } else {
-            if self.view.frame.height <= 480 {
-                // iphone 4s
-                self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -850)
-            } else if self.view.frame.height <= 568 {
-                // for 5 and 5s
-                self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -850)
-            } else if self.view.frame.height <= 667 {
-                // iphone 6
-                self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -850)
-            } else {
-                // for 6+
-                self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -850)
-            }
-            
-            self.colorgyLogo.transform = CGAffineTransformMakeScale(0, 0)
+            // for 6+
+            self.loginBackground.transform = CGAffineTransformMakeTranslation(0, -850)
         }
+        
+        self.colorgyLogo.transform = CGAffineTransformMakeScale(0, 0)
     }
     
     func showLogoAndBackground() {
-        
+        // when user enter this view, logo and background image need to animate from top to bottom.
         var transDown: CGAffineTransform!
         
         if self.view.frame.height <= 480 {
@@ -285,9 +290,11 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         }
         
         UIView.animateWithDuration(1.0, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.1, options: nil, animations: {
+                // first drop down background image.
                 self.loginBackground.transform = transDown
             }, completion: nil)
         UIView.animateWithDuration(0.7, delay: 0.7, usingSpringWithDamping: 0.6, initialSpringVelocity: 1.0, options: nil, animations: {
+                // then show logo
                 var makeAppear = CGAffineTransformMakeScale(1, 1)
                 self.colorgyLogo.transform = makeAppear
             }, completion: nil)
@@ -296,33 +303,34 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Facebook setup region
     func setupFacebookLoginButton() {
+        // style of facebook login button
         self.facebookLoginButton = UIButton(frame: CGRectMake(0, 0, 226, 48))
+        // button image.
         self.facebookLoginButton.setImage(UIImage(named: "FacebookLogin"), forState: UIControlState.Normal)
-        
+        // position
         self.facebookLoginButton.center = CGPointMake(self.view.center.x, self.view.center.y + 130)
         
         self.view.addSubview(self.facebookLoginButton)
         
         // add target to fb login button.
+        // what to do if user tap in this button
         self.facebookLoginButton.addTarget(self, action: "LoginToFacebook", forControlEvents: UIControlEvents.TouchUpInside)
     }
     
     
     
     func hideFacebookButton() {
-        
         self.facebookLoginButton.transform = CGAffineTransformMakeScale(0, 0)
     }
     
     func showFacebookButton(delay: NSTimeInterval) {
         UIView.animateWithDuration(0.3, delay: delay, usingSpringWithDamping: 0.8, initialSpringVelocity: 1.5, options: nil, animations: {
-            self.facebookLoginButton.transform = CGAffineTransformMakeScale(1, 1)
+                self.facebookLoginButton.transform = CGAffineTransformMakeScale(1, 1)
             }, completion: nil)
     }
     
-    // MARK: - setup up Account and Password
+    // MARK: - setup Account and Password
     func setupUserPasswordAndAccount() {
-        
         var textFieldWidth: CGFloat! = 250
         
         if self.view.frame.height <= 480 {
@@ -368,6 +376,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         self.passwordLoginButton.layer.cornerRadius = 10
         
         // password login tap setting
+        self.passwordLoginButton.addTarget(self, action: "passwordLoginButtonTouchUpInside", forControlEvents: UIControlEvents.TouchUpInside)
         self.passwordLoginButton.addTarget(self, action: "passwordLoginButtonTouchDown", forControlEvents: UIControlEvents.TouchDown)
         self.passwordLoginButton.addTarget(self, action: "passwordLoginButtonDragExit", forControlEvents: UIControlEvents.TouchDragExit)
         self.passwordLoginButton.addTarget(self, action: "passwordLoginButtonDragEnter", forControlEvents: UIControlEvents.TouchDragEnter)
@@ -377,44 +386,41 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         self.userAccount.delegate = self
         self.userPassword.delegate = self
         
-        
         self.passwordLoginButton.center = CGPointMake(self.view.center.x, self.view.center.y + 130)
         self.view.addSubview(self.passwordLoginButton)
     }
     
     func hideUserPasswordAndAccount() {
-
         self.userPassword.transform = CGAffineTransformMakeScale(0, 0)
         self.userAccount.transform = CGAffineTransformMakeScale(0, 0)
         self.passwordLoginButton.transform = CGAffineTransformMakeScale(0, 0)
     }
     
     func showUserPasswordAndAccount(delay: NSTimeInterval) {
-        
+        // animation to show textfields and button
         UIView.animateWithDuration(0.5, delay: delay, usingSpringWithDamping: 0.6, initialSpringVelocity: 1, options: nil, animations: {
-            self.userAccount.transform = CGAffineTransformMakeScale(1, 1)
+                self.userAccount.transform = CGAffineTransformMakeScale(1, 1)
             }, completion: nil)
         UIView.animateWithDuration(0.5, delay: delay+0.1, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: nil, animations: {
-            self.userPassword.transform = CGAffineTransformMakeScale(1, 1)
+                self.userPassword.transform = CGAffineTransformMakeScale(1, 1)
             }, completion: nil)
         UIView.animateWithDuration(0.5, delay: delay+0.2, usingSpringWithDamping: 0.8, initialSpringVelocity: 1, options: nil, animations: {
-            self.passwordLoginButton.transform = CGAffineTransformMakeScale(1, 1)
+                self.passwordLoginButton.transform = CGAffineTransformMakeScale(1, 1)
             }, completion: nil)
     }
     
     // MARK:- password Login Button tap handler
     
-    func passwordLoginButtonTouchDown() {
-        println("down")
-        self.changePasswordLoginButtonAlpha(0.5)
-        self.changePasswordLoginButtonColor(self.colorgyDimGray)
-        
+    func passwordLoginButtonTouchUpInside() {
+        self.changePasswordLoginButtonAlpha(1)
+        self.changePasswordLoginButtonColor(self.colorgyGray)
         // login using password and account
         let username = self.userAccount.text
         let password = self.userPassword.text
         if username != "" && password != ""{
             if count(password) >= 8 {
                 // legal password must be more then 8 digits
+                self.view.endEditing(true)
                 self.requestColorgyOAuthAccessTokenWithUserName(username, password: password)
             } else {
                 self.alertUserWithError("密碼必須大於8碼！！")
@@ -422,7 +428,12 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         } else {
             self.alertUserWithError("帳號或密碼不能為空！！")
         }
-        
+    }
+    
+    func passwordLoginButtonTouchDown() {
+        println("down")
+        self.changePasswordLoginButtonAlpha(0.5)
+        self.changePasswordLoginButtonColor(self.colorgyDimGray)
     }
     
     func passwordLoginButtonDragExit() {
@@ -444,29 +455,15 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     func changePasswordLoginButtonAlpha(alpha: CGFloat) {
-    
         self.passwordLoginButton.setTitleColor(UIColor(red: 1, green: 1, blue: 1, alpha: alpha), forState: UIControlState.Normal)
     }
     
     func changePasswordLoginButtonColor(color: UIColor) {
-        
         self.passwordLoginButton.backgroundColor = color
-    }
-
-    // MARK: - account password login view and keyboard handler
-    
-    func userTypingAccountAndPassword(userTyping: Bool) {
-        
-        if userTyping {
-
-        } else {
-
-        }
     }
 
     // MARK: - facebook login helper function
     func LoginToFacebook() {
-        
         if FBSession.activeSession().isOpen {
             // user is already login.
             // do somthing here
@@ -491,7 +488,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
                             println(result)
                             let fName = result["first_name"] as! String
                             let lName = result["last_name"] as! String
-                            ud.setObject(fName + lName, forKey: "userFBName")
+                            ud.setObject(lName + fName, forKey: "userFBName")
                             var smallProfilePhoto = NSData(contentsOfURL: NSURL(string: "https://graph.facebook.com/\(id)/picture?width=128&height=128")!)!
                             var bigProfilePhoto = NSData(contentsOfURL: NSURL(string: "https://graph.facebook.com/\(id)/picture?width=640&height=640")!)!
                             ud.setObject(smallProfilePhoto, forKey: "smallFBProfilePhoto")
@@ -503,6 +500,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
                         self.requestColorgyOAuthAccessTokenWithFBToken(session.accessTokenData.accessToken)
                     } else {
                         println("fuc!!!!!")
+                        self.alertUserWithError("FB登入出錯了！")
                     }
                 }
             })
@@ -594,6 +592,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - textfield next responder
     func textFieldShouldReturn(textField: UITextField) -> Bool {
+        
         if textField == self.userAccount {
             self.userPassword.becomeFirstResponder()
         } else if textField == self.userPassword {
