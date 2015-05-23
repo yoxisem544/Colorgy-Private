@@ -147,8 +147,9 @@ class ColorgyTimeTableViewController: UIViewController {
                             let view = course as! UIView
                             view.backgroundColor = UIColor.redColor()
                             self.colorgyTimeTableView.bringSubviewToFront(view)
-                            UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.Repeat | UIViewAnimationOptions.Autoreverse, animations: {
-                                    view.transform = CGAffineTransformMakeScale(1.2, 1.2)
+                            UIView.animateWithDuration(0.7, delay: 0, options: UIViewAnimationOptions.Repeat | UIViewAnimationOptions.Autoreverse | UIViewAnimationOptions.BeginFromCurrentState, animations: {
+                                    view.transform = CGAffineTransformMakeScale(1.1, 1.1)
+                                    view.transform = CGAffineTransformMakeRotation(-0.05)
                                 }, completion: nil)
                         }
                     }

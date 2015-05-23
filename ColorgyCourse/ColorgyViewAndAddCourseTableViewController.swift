@@ -128,7 +128,6 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         self.indicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 40, 40))
         self.indicator.tintColor = self.colorgyGreen
         self.indicator.center = CGPointMake(self.view.center.x, 128)
-        self.indicator.startAnimating()
         self.view.addSubview(self.indicator)
     }
     
@@ -328,7 +327,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     // MARK: - Search bar update and filter
     func updateSearchResultsForSearchController(searchController: UISearchController) {
         println("update!")
-        self.filterContentForSearchText(self.searchCourse.searchBar.text)
+        dispatch_async(dispatch_get_main_queue()) {
+            self.filterContentForSearchText(self.searchCourse.searchBar.text)
+        }
         self.tableView.reloadData()
         
         if self.searchCourse.active && self.searchCourse.searchBar.text != "" {
@@ -375,32 +376,29 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             self.indicator.startAnimating()
             
             for data in self.parsedCourseData {
-//                dispatch_after(0, dispatch_get_main_queue()) {
-                    println("asyncing!")
-                    var name = data["name"] as! String
-                    var lecturer = data["lecturer"] as! String
+                var name = data["name"] as! String
+                var lecturer = data["lecturer"] as! String
 //                    let c = data["credits"]
 //                    var credits = "\(c)"
 //                    var uuid = data["code"] as! String
-                    
-                    var match: Bool! = false
-                    
-                    if name.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
-                        match = true
-                    }
-                    if lecturer.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
-                        match = true
-                    }
+                
+                var match: Bool! = false
+                
+                if name.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
+                    match = true
+                }
+                if lecturer.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
+                    match = true
+                }
 //                    if credits.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
 //                        match = true
 //                    }
-                    
-                    // if match search text, add to filter course, ready to display to user
-                    if match! {
-                        self.filteredCourse.addObject(data)
-                    }
+                
+                // if match search text, add to filter course, ready to display to user
+                if match! {
+                    self.filteredCourse.addObject(data)
                 }
-//            }
+            }
             self.indicator.stopAnimating()
             self.tableView.reloadData()
             println(self.filteredCourse.count)
