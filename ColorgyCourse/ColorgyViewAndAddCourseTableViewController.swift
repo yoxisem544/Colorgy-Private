@@ -75,14 +75,16 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         // first init self.parsedCourseData
         self.parsedCourseData = []
         dispatch_async(dispatch_get_main_queue()) {
-            if ud.objectForKey("courseFromServer") != nil {
-                var courseData = NSData(data: ud.objectForKey("courseFromServer") as! NSData)
+            if ud.objectForKey("courseDataFromServer") != nil {
+                var courseData = NSData(data: ud.objectForKey("courseDataFromServer") as! NSData)
                 
                 self.parsedCourseData = self.unarchive(courseData)
                 println("length is \(self.parsedCourseData.count)")
                 if e != nil {
                     println(e)
                 }
+            } else {
+                
             }
         }
         
@@ -162,6 +164,18 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         
         // empty course
         return false
+    }
+    
+    func alertUserCourseIsEmpty() {
+        let alert = UIAlertController(title: "哦！出錯了！", message: "你的課程資料是空的！", preferredStyle: UIAlertControllerStyle.Alert)
+        let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Cancel, handler: {(action: UIAlertAction!) -> Void in
+            println("好！")
+            alert.dismissViewControllerAnimated(true, completion: nil)
+        })
+        alert.addAction(ok)
+        self.presentViewController(alert, animated: true, completion: {
+            self.searchCourse.active = false
+        })
     }
     
     // MARK: - operating database
@@ -345,6 +359,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             if self.searchCourse.active {
                 // if user is searching but not entering anything, dim the view
                 self.dimmerViewisOn(true)
+                if self.parsedCourseData == [] {
+                    self.alertUserCourseIsEmpty()
+                }
             } else {
                 // if user leave search, light up view
                 self.dimmerViewisOn(false)

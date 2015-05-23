@@ -29,11 +29,19 @@ class ColorgyUserProfileViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         var ud = NSUserDefaults.standardUserDefaults()
-        var data = ud.objectForKey("bigFBProfilePhoto") as! NSData
-        self.setupUserPhotoWithPhoto(UIImage(data: data))
-
-        var name = ud.objectForKey("userFBName") as! String
-        self.setupUserInfoViewWithName(name, school: "臺灣科技大學", phone: "0900-000-000")
+        if ud.objectForKey("loginType")! as! String == "fb" {
+            var data = ud.objectForKey("bigFBProfilePhoto") as! NSData
+            var name = ud.objectForKey("userFBName") as! String
+            
+            self.setupUserPhotoWithPhoto(UIImage(data: data))
+            self.setupUserInfoViewWithName(name, school: "臺灣科技大學", phone: "0900-000-000")
+        } else if ud.objectForKey("loginType")! as! String == "account" {
+            var name = "你四誰？"
+            
+            self.setupUserPhotoWithPhoto(UIImage(named: "cordova_big.png"))
+            self.setupUserInfoViewWithName(name, school: "未驗證使用者", phone: "？？？？？？？")
+        }
+        
         self.setupBottomBar()
         
         self.view.backgroundColor = self.colorgyDarkGray
@@ -66,7 +74,7 @@ class ColorgyUserProfileViewController: UIViewController {
             var arcData = self.archive(resArr)
             
             var ud = NSUserDefaults.standardUserDefaults()
-            ud.setObject(arcData, forKey: "courseFromServer")
+            ud.setObject(arcData, forKey: "courseDataFromServer")
             ud.synchronize()
             println("get course from server")
             }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in

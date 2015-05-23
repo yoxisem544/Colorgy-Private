@@ -543,7 +543,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
                 // wait for animation to finish, then store login info
                 var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
                 dispatch_after(delay, dispatch_get_main_queue()) {
-                    self.userSuccessfullyLoginToColorgyWithToken(access_token, created_at: created_at, expires_in: expires_in, refresh_token: refresh_token, token_type: token_type)
+                    self.userSuccessfullyLoginToColorgyWithToken(access_token, created_at: created_at, expires_in: expires_in, refresh_token: refresh_token, token_type: token_type, loginType: "fb")
                 }
     
             }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
@@ -556,7 +556,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
             })
     }
     
-    func userSuccessfullyLoginToColorgyWithToken(token: String, created_at: String, expires_in: String, refresh_token: String, token_type: String) {
+    func userSuccessfullyLoginToColorgyWithToken(token: String, created_at: String, expires_in: String, refresh_token: String, token_type: String, loginType: String) {
         
         var ud = NSUserDefaults.standardUserDefaults()
         ud.setObject(token, forKey: "ColorgyAccessToken")
@@ -565,8 +565,10 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         ud.setObject(refresh_token, forKey: "ColorgyRefreshToken")
         ud.setObject(token_type, forKey: "ColorgyTokenType")
         
-        // set user login type as fb
-        ud.setObject("fb", forKey: "isLogin")
+        // set user to login
+        ud.setObject("yes", forKey: "isLogin")
+        // set user login type
+        ud.setObject(loginType, forKey: "loginType")
         
         // sync setting
         ud.synchronize()
@@ -690,7 +692,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
             // wait for animation to finish, then store login info
             var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
             dispatch_after(delay, dispatch_get_main_queue()) {
-                self.userSuccessfullyLoginToColorgyWithToken(access_token, created_at: created_at, expires_in: expires_in, refresh_token: refresh_token, token_type: token_type)
+                self.userSuccessfullyLoginToColorgyWithToken(access_token, created_at: created_at, expires_in: expires_in, refresh_token: refresh_token, token_type: token_type, loginType: "account")
             }
             
             }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in

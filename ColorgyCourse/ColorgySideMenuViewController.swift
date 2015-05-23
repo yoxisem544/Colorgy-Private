@@ -58,7 +58,16 @@ class ColorgySideMenuViewController: UIViewController {
             
                 var ud = NSUserDefaults.standardUserDefaults()
                 ud.setObject(nil, forKey: "isLogin")
-                ud.setObject(nil, forKey: "courseFromServer")
+                ud.setObject(nil, forKey: "loginTpye")
+                ud.setObject(nil, forKey: "userFBName")
+                ud.setObject(nil, forKey: "smallFBProfilePhoto")
+                ud.setObject(nil, forKey: "bigFBProfilePhoto")
+                ud.setObject(nil, forKey: "ColorgyAccessToken")
+                ud.setObject(nil, forKey: "ColorgyCreatedTime")
+                ud.setObject(nil, forKey: "ColorgyExpireTime")
+                ud.setObject(nil, forKey: "ColorgyRefreshToken")
+                ud.setObject(nil, forKey: "ColorgyTokenType")
+                ud.setObject(nil, forKey: "courseDataFromServer")
                 ud.synchronize()
             
                 self.deleteDataFromDatabase()
@@ -118,8 +127,13 @@ class ColorgySideMenuViewController: UIViewController {
         profile.layer.borderColor = UIColor.whiteColor().CGColor
         
         var ud = NSUserDefaults.standardUserDefaults()
-        var data = ud.objectForKey("smallFBProfilePhoto") as! NSData
-        profile.image = UIImage(data: data)
+        if ud.objectForKey("loginType")! as! String == "fb" {
+            var data = ud.objectForKey("smallFBProfilePhoto") as! NSData
+            profile.image = UIImage(data: data)
+        } else if ud.objectForKey("loginType")! as! String == "account" {
+            profile.image = UIImage(named: "cordova_small.png")
+        }
+
         profile.layer.masksToBounds = true
         
         self.scrollview.addSubview(profile)
@@ -181,8 +195,22 @@ class ColorgySideMenuViewController: UIViewController {
     
     @IBAction func logout(sender: AnyObject) {
         var ud = NSUserDefaults.standardUserDefaults()
+        // clear user settings
         ud.setObject(nil, forKey: "isLogin")
+        ud.setObject(nil, forKey: "loginTpye")
+        ud.setObject(nil, forKey: "userFBName")
+        ud.setObject(nil, forKey: "smallFBProfilePhoto")
+        ud.setObject(nil, forKey: "bigFBProfilePhoto")
+        ud.setObject(nil, forKey: "ColorgyAccessToken")
+        ud.setObject(nil, forKey: "ColorgyCreatedTime")
+        ud.setObject(nil, forKey: "ColorgyExpireTime")
+        ud.setObject(nil, forKey: "ColorgyRefreshToken")
+        ud.setObject(nil, forKey: "ColorgyTokenType")
+        ud.setObject(nil, forKey: "courseDataFromServer")
+        
+        // clear fb token if user use fb to login
         FBSession.activeSession().closeAndClearTokenInformation()
+        // sync setting
         ud.synchronize()
     }
     

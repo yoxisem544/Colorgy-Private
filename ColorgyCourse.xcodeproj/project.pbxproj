@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		63038C651B10B58B008C8180 /* cordova_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 63038C641B10B58B008C8180 /* cordova_small.png */; };
+		63038C671B10B597008C8180 /* cordova_big.png in Resources */ = {isa = PBXBuildFile; fileRef = 63038C661B10B597008C8180 /* cordova_big.png */; };
 		63045EAD1B0EC5E10071555B /* SwitfyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63045EAC1B0EC5E10071555B /* SwitfyJSON.swift */; };
 		630849B01AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630849AF1AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift */; };
 		631008DF1AF771B7008A40E4 /* ColorgyNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631008DE1AF771B7008A40E4 /* ColorgyNavigationController.swift */; };
@@ -45,6 +47,8 @@
 
 /* Begin PBXFileReference section */
 		572BB26BB0AC9A6CCD0BE10F /* Pods-ColorgyCourse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ColorgyCourse.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ColorgyCourse/Pods-ColorgyCourse.debug.xcconfig"; sourceTree = "<group>"; };
+		63038C641B10B58B008C8180 /* cordova_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cordova_small.png; sourceTree = "<group>"; };
+		63038C661B10B597008C8180 /* cordova_big.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cordova_big.png; sourceTree = "<group>"; };
 		63045EAC1B0EC5E10071555B /* SwitfyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitfyJSON.swift; sourceTree = "<group>"; };
 		630849AF1AFB996900FDA850 /* testingUSERDEFAULTTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = testingUSERDEFAULTTableViewController.swift; sourceTree = "<group>"; };
 		631008DE1AF771B7008A40E4 /* ColorgyNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyNavigationController.swift; sourceTree = "<group>"; };
@@ -163,6 +167,8 @@
 		63A29E4A1AF722DF000494DB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				63038C661B10B597008C8180 /* cordova_big.png */,
+				63038C641B10B58B008C8180 /* cordova_small.png */,
 				63045EAC1B0EC5E10071555B /* SwitfyJSON.swift */,
 				634FD6201AF749A9003B627D /* NCKU_samll_course.json */,
 				635F9FDB1AFDE58E001907BA /* CCU_courses.json */,
@@ -273,7 +279,9 @@
 			files = (
 				63A29E551AF722DF000494DB /* Main.storyboard in Resources */,
 				63A29E5A1AF722DF000494DB /* LaunchScreen.xib in Resources */,
+				63038C651B10B58B008C8180 /* cordova_small.png in Resources */,
 				63A29E571AF722DF000494DB /* Images.xcassets in Resources */,
+				63038C671B10B597008C8180 /* cordova_big.png in Resources */,
 				634FD6211AF749A9003B627D /* NCKU_samll_course.json in Resources */,
 				635F9FDC1AFDE58E001907BA /* CCU_courses.json in Resources */,
 			);
