@@ -29,9 +29,9 @@ class ColorgySideMenuViewController: UIViewController {
         
         self.setupProfilePhoto()
         self.setupWave()
-        
-        self.setupButtonWith("選課", action: "pushSegueToselectCourse:", order: 1)
-        self.setupButtonWith("課表", action: "pushSegueToTimetable:", order: 2)
+
+        self.setupButtonWith("課表", action: "pushSegueToTimetable:", order: 1)
+        self.setupButtonWith("選課", action: "pushSegueToselectCourse:", order: 2)
         self.setupButtonWith("關於我們", action: "pushSegueToProfile:", order: 3)
         
         // setup logout btn
@@ -68,6 +68,7 @@ class ColorgySideMenuViewController: UIViewController {
                 ud.setObject(nil, forKey: "ColorgyRefreshToken")
                 ud.setObject(nil, forKey: "ColorgyTokenType")
                 ud.setObject(nil, forKey: "courseDataFromServer")
+                ud.setObject(nil, forKey: "userName")
                 ud.synchronize()
             
                 self.deleteDataFromDatabase()
@@ -162,6 +163,7 @@ class ColorgySideMenuViewController: UIViewController {
         titleLabel.text = title
         titleLabel.textAlignment = NSTextAlignment.Center
         titleLabel.textColor = UIColor.whiteColor()
+        titleLabel.font = UIFont(name: "Heiti TC", size: 17)
         
         var pinImg = UIImage(named: "Pin")
         var w = pinImg?.size.width

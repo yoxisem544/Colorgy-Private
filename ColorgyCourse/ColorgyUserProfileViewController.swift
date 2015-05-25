@@ -36,7 +36,7 @@ class ColorgyUserProfileViewController: UIViewController {
             self.setupUserPhotoWithPhoto(UIImage(data: data))
             self.setupUserInfoViewWithName(name, school: "臺灣科技大學", phone: "0900-000-000")
         } else if ud.objectForKey("loginType")! as! String == "account" {
-            var name = "你四誰？"
+            var name = ud.objectForKey("userName") as! String
             
             self.setupUserPhotoWithPhoto(UIImage(named: "cordova_big.png"))
             self.setupUserInfoViewWithName(name, school: "未驗證使用者", phone: "？？？？？？？")
@@ -52,10 +52,12 @@ class ColorgyUserProfileViewController: UIViewController {
     // MARK: - fetch data from server
     func fetchCourseDataFromServer() {
         
-        var front_url = "https://colorgy.io:443/api/test/courses.json?per_page=5000&&&&&access_token="
+        var front_url = "https://colorgy.io:443/api/"
+        var middle_url = "/courses.json?per_page=5000&&&&&access_token="
+        let school = "test"
         var ud = NSUserDefaults.standardUserDefaults()
         var token = ud.objectForKey("ColorgyAccessToken") as! String
-        let url = front_url + token
+        let url = front_url + school + middle_url + token
         
         println(url)
         
@@ -67,19 +69,18 @@ class ColorgyUserProfileViewController: UIViewController {
         let params = []
         
         afManager.GET(url, parameters: params, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
-            
-            var resArr = responseObject as! NSArray
-            var parsedResData = NSMutableArray()
-            
-            var arcData = self.archive(resArr)
-            
-            var ud = NSUserDefaults.standardUserDefaults()
-            ud.setObject(arcData, forKey: "courseDataFromServer")
-            ud.synchronize()
-            println("get course from server")
+                var resArr = responseObject as! NSArray
+                var parsedResData = NSMutableArray()
+                
+                var arcData = self.archive(resArr)
+                
+                var ud = NSUserDefaults.standardUserDefaults()
+                ud.setObject(arcData, forKey: "courseDataFromServer")
+                ud.synchronize()
+                println("get course from server")
             }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
                 println("error post")
-        })
+            })
     }
     
     // MARK: - compress data

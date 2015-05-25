@@ -55,6 +55,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // notification did successfully set.
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+        let ud = NSUserDefaults.standardUserDefaults()
+        ud.setObject(deviceToken, forKey: "PushNptificationToken")
+        ud.synchronize()
         println("notification set, user token : \(deviceToken)")
     }
     

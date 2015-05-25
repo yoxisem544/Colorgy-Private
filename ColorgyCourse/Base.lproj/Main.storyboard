@@ -277,30 +277,6 @@
             </objects>
             <point key="canvasLocation" x="1506" y="-847"/>
         </scene>
-        <!--Colorgy Setup Profile View Controller-->
-        <scene sceneID="mBE-XM-txw">
-            <objects>
-                <viewController id="VLm-43-TgE" customClass="ColorgySetupProfileViewController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="DAA-Pa-cyZ"/>
-                        <viewControllerLayoutGuide type="bottom" id="iM2-M3-CL7"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="fZk-lN-7Ic">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="ctD-di-7Od">
-                        <barButtonItem key="leftBarButtonItem" image="menu" id="hBh-a1-DLx"/>
-                    </navigationItem>
-                    <connections>
-                        <outlet property="revealMenuButton" destination="hBh-a1-DLx" id="2sk-7d-5DE"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="atJ-ct-XZV" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2218" y="-847"/>
-        </scene>
         <!--Colorgy Navigation Controller-->
         <scene sceneID="Y63-X2-RKf">
             <objects>

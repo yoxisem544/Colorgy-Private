@@ -33,6 +33,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
     // MARK: - keyboard handler helper
     // keyboard height
     var keyboardHeight: CGFloat!
+    var screenHeight: CGFloat!
     
     // MARK: - color
     var colorgyGray = UIColor(red: 113/255.0, green: 112/255.0, blue: 113/255.0, alpha: 1)
@@ -66,6 +67,8 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         // gestures to dismiss keyboard
         self.addTapGestureToDismissKeyboard()
         self.addSwipGestureToDismissKeyboard()
+        
+        self.screenHeight = self.view.frame.height
     }
     
     func extendBottomOfView() {
@@ -110,7 +113,13 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         // animate view to proper position
         UIView.animateWithDuration(0.25, delay: 0, options: nil, animations: {
                 UIView.setAnimationCurve(curve!)
-                self.view.frame.origin.y = -self.keyboardHeight
+                if self.userAccount.isFirstResponder() {
+                    var topOffset = (self.screenHeight - self.keyboardHeight) * 0.35
+                    self.view.frame.origin.y = -(self.userAccount.frame.origin.y - topOffset)
+                } else if self.userPassword.isFirstResponder() {
+                    var topOffset = (self.screenHeight - self.keyboardHeight) * 0.35
+                    self.view.frame.origin.y = -(self.userAccount.frame.origin.y - topOffset)
+                }
             }, completion: nil)
     }
     
@@ -592,7 +601,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         self.presentViewController(errorAlert, animated: true, completion: nil)
     }
     
-    // MARK: - textfield next responder
+    // MARK: - textfield delegate
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         
         if textField == self.userAccount {
@@ -694,6 +703,15 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
             dispatch_after(delay, dispatch_get_main_queue()) {
                 self.userSuccessfullyLoginToColorgyWithToken(access_token, created_at: created_at, expires_in: expires_in, refresh_token: refresh_token, token_type: token_type, loginType: "account")
             }
+            afManager.GET("https://colorgy.io/api/v1/me?access_token=" + access_token, parameters: nil, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+
+                    let name = responseObject["name"] as! String
+                    var ud = NSUserDefaults.standardUserDefaults()
+                    ud.setObject(name, forKey: "userName")
+                    ud.synchronize()
+                }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                    
+                })
             
             }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
                 println("error post")

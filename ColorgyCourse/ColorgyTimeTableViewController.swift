@@ -54,6 +54,63 @@ class ColorgyTimeTableViewController: UIViewController {
     var colorgyDarkGray: UIColor = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
     var timetableWhite: UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.6)
     
+    //MARK:- test refresh
+    func refreshAccessToken() {
+        
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        
+        afManager.requestSerializer = AFJSONRequestSerializer()
+        afManager.responseSerializer = AFJSONResponseSerializer()
+        
+        var ud = NSUserDefaults.standardUserDefaults()
+        let refresh_token = ud.objectForKey("ColorgyRefreshToken") as! String
+        println(refresh_token)
+        
+        let params = [
+            "grant_type": "refresh_token",
+            // 應用程式ID application id, in colorgy server
+            "client_id": "ad2d3492de7f83f0708b5b1db0ac7041f9179f78a168171013a4458959085ba4",
+            "client_secret": "d9de77450d6365ca8bd6717bbf8502dfb4a088e50962258d5d94e7f7211596a3",
+            "refresh_token": refresh_token
+        ]
+        
+        afManager.POST("https://colorgy.io/oauth/token?", parameters: params, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                println("ok! refresh!")
+                println(responseObject)
+                let token = responseObject["access_token"] as! String
+                let created_at = String(stringInterpolationSegment: responseObject["created_at"])
+                let expires_in = String(stringInterpolationSegment: responseObject["expires_in"])
+                let refresh_token = responseObject["refresh_token"] as! String
+                let token_type = responseObject["token_type"] as! String
+                
+                
+                ud.setObject(token, forKey: "ColorgyAccessToken")
+                ud.setObject(created_at, forKey: "ColorgyCreatedTime")
+                ud.setObject(expires_in, forKey: "ColorgyExpireTime")
+                ud.setObject(refresh_token, forKey: "ColorgyRefreshToken")
+                ud.setObject(token_type, forKey: "ColorgyTokenType")
+                ud.synchronize()
+            }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                println("error!!!")
+                var res = task.response as! NSHTTPURLResponse
+                
+                println(res.statusCode)
+            })
+        
+        afManager.GET("https://colorgy.io/api/v1/me?access_token=c7a0d4fe2f5c0be3ec66bddbce7a29c535b91cb0b4f30196bb672607f0bdc5480965a773177a7fcbd8fecffe7090af24d0d44f065c681d4fa2d9271a2122f59c", parameters: nil, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+            
+        }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+            println("hihihi")
+            var res = task.response as! NSHTTPURLResponse
+            
+            for field in res.allHeaderFields {
+                println(field)
+            }
+            var arr = res.allHeaderFields["Www-Authenticate"] as! NSString
+            println(res.allHeaderFields["Www-Authenticate"])
+        })
+    }
+    
     // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -91,6 +148,8 @@ class ColorgyTimeTableViewController: UIViewController {
         
         println("=====================")
         self.detectIfClassHasConflicts()
+        println("testREFRESH!")
+        self.refreshAccessToken()
     }
 
     override func didReceiveMemoryWarning() {
