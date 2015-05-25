@@ -156,7 +156,8 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         // style of login switch button
         self.loginSwitchButton = UIButton(frame: CGRectMake(0, 0, 180, 20))
         self.loginSwitchButton.setTitle("帳號密碼登入", forState: UIControlState.Normal)
-        self.loginSwitchButton.center = CGPointMake(self.view.center.x, self.view.center.y+200)
+        self.loginSwitchButton.titleLabel?.font = UIFont(name: "Heiti TC", size: 15)
+        self.loginSwitchButton.center = CGPointMake(self.view.center.x, self.view.center.y + 200)
         
         // targets of login switch button
         self.loginSwitchButton.addTarget(self, action: "loginSwitchTouchUpInside", forControlEvents: UIControlEvents.TouchUpInside)
@@ -251,10 +252,12 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         }
         
         // set logo using logo image, set its position
-        self.colorgyLogo = UIImageView(frame: CGRectMake(0, 0, w! * 0.6, h! * 0.6))
+        self.colorgyLogo = UIImageView(frame: CGRectMake(0, 0, w!, h!))
         self.colorgyLogo.image = logo
         self.colorgyLogo.center.x = self.view.center.x
         self.colorgyLogo.center.y = self.view.center.y * 0.6
+        
+        println(self.colorgyLogo)
         
         self.view.addSubview(self.colorgyLogo)
     }
@@ -379,7 +382,8 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         
         // button
         self.passwordLoginButton = UIButton(frame: CGRectMake(0, 0, 150, 45))
-        self.passwordLoginButton.setTitle("Login", forState: UIControlState.Normal)
+        self.passwordLoginButton.setTitle("登入", forState: UIControlState.Normal)
+        self.passwordLoginButton.titleLabel?.font = UIFont(name: "Heiti TC", size: 18)
         self.passwordLoginButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
         self.passwordLoginButton.backgroundColor = UIColor.grayColor()
         self.passwordLoginButton.layer.cornerRadius = 10
@@ -495,9 +499,6 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
                         if result != nil {
                             var id = result["id"] as! String
                             println(result)
-                            let fName = result["first_name"] as! String
-                            let lName = result["last_name"] as! String
-                            ud.setObject(lName + fName, forKey: "userFBName")
                             var smallProfilePhoto = NSData(contentsOfURL: NSURL(string: "https://graph.facebook.com/\(id)/picture?width=128&height=128")!)!
                             var bigProfilePhoto = NSData(contentsOfURL: NSURL(string: "https://graph.facebook.com/\(id)/picture?width=640&height=640")!)!
                             ud.setObject(smallProfilePhoto, forKey: "smallFBProfilePhoto")
@@ -547,8 +548,6 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
                 let refresh_token = responseObject["refresh_token"] as! String
                 let token_type = responseObject["token_type"] as! String
             
-                self.animateLogoOff()
-            
                 // wait for animation to finish, then store login info
                 var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
                 dispatch_after(delay, dispatch_get_main_queue()) {
@@ -582,10 +581,31 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         // sync setting
         ud.synchronize()
         
-        println("ready to switch view")
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyService") as! SWRevealViewController
-        self.presentViewController(vc, animated: true, completion: nil)
+        // get user name and  school
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        let access_token = ud.objectForKey("ColorgyAccessToken") as! String
+        afManager.GET("https://colorgy.io/api/v1/me?access_token=" + access_token, parameters: nil, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                let name = responseObject["name"] as! String
+                ud.setObject(name, forKey: "userName")
+                if let res = responseObject["organizations"] as? NSArray {
+                    ud.setObject(res[0] as! String, forKey: "userSchool")
+                    // if user is authed to Colorgy
+                    println("ready to switch view")
+                    self.animateLogoOff()
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyService") as! SWRevealViewController
+                    self.presentViewController(vc, animated: true, completion: nil)
+                } else {
+                    // if not, block this user.
+                    self.alertUserWithError("你必須在Colorgy上驗證學校信箱之後才能開始使用！")
+                    self.loginSwitchButton.hidden = false
+                }
+                ud.synchronize()
+            
+            
+            }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                
+            })
     }
     
     func alertUserWithError(error: String) {
@@ -593,9 +613,25 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         let errorAlert = UIAlertController(title: "哦！出錯了！😨", message: "\(error)", preferredStyle: UIAlertControllerStyle.Alert)
         let dismiss = UIAlertAction(title: "知道了！", style: UIAlertActionStyle.Cancel, handler: { (action:UIAlertAction!) -> Void in
             errorAlert.dismissViewControllerAnimated(true, completion: nil)
-            // if user login error, close fbsession everytime.
-            FBSession.activeSession().closeAndClearTokenInformation()
         })
+        
+        // if user login error, close fbsession everytime.
+        FBSession.activeSession().closeAndClearTokenInformation()
+        // clear settings
+        var ud = NSUserDefaults.standardUserDefaults()
+        ud.setObject(nil, forKey: "isLogin")
+        ud.setObject(nil, forKey: "loginTpye")
+        ud.setObject(nil, forKey: "smallFBProfilePhoto")
+        ud.setObject(nil, forKey: "bigFBProfilePhoto")
+        ud.setObject(nil, forKey: "ColorgyAccessToken")
+        ud.setObject(nil, forKey: "ColorgyCreatedTime")
+        ud.setObject(nil, forKey: "ColorgyExpireTime")
+        ud.setObject(nil, forKey: "ColorgyRefreshToken")
+        ud.setObject(nil, forKey: "ColorgyTokenType")
+        ud.setObject(nil, forKey: "courseDataFromServer")
+        ud.setObject(nil, forKey: "userName")
+        ud.setObject(nil, forKey: "userSchool")
+        ud.synchronize()
 
         errorAlert.addAction(dismiss)
         self.presentViewController(errorAlert, animated: true, completion: nil)
@@ -696,8 +732,6 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
             let refresh_token = responseObject["refresh_token"] as! String
             let token_type = responseObject["token_type"] as! String
             
-            self.animateLogoOff()
-            
             // wait for animation to finish, then store login info
             var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
             dispatch_after(delay, dispatch_get_main_queue()) {
@@ -720,7 +754,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
                 
                 println(error)
                 self.loginSwitchButton.hidden = false
-        })
+            })
     }
     
 

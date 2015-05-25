@@ -64,6 +64,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         self.tableView.backgroundColor = self.colorgyDarkGray
         // navi style
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        self.navigationItem.title = "選課"
         
         // get json file
 //        let path = NSBundle.mainBundle().pathForResource("CCU_courses", ofType: "json")

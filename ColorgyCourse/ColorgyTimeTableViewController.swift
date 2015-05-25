@@ -96,19 +96,6 @@ class ColorgyTimeTableViewController: UIViewController {
                 
                 println(res.statusCode)
             })
-        
-        afManager.GET("https://colorgy.io/api/v1/me?access_token=c7a0d4fe2f5c0be3ec66bddbce7a29c535b91cb0b4f30196bb672607f0bdc5480965a773177a7fcbd8fecffe7090af24d0d44f065c681d4fa2d9271a2122f59c", parameters: nil, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
-            
-        }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
-            println("hihihi")
-            var res = task.response as! NSHTTPURLResponse
-            
-            for field in res.allHeaderFields {
-                println(field)
-            }
-            var arr = res.allHeaderFields["Www-Authenticate"] as! NSString
-            println(res.allHeaderFields["Www-Authenticate"])
-        })
     }
     
     // MARK: - view
@@ -149,7 +136,7 @@ class ColorgyTimeTableViewController: UIViewController {
         println("=====================")
         self.detectIfClassHasConflicts()
         println("testREFRESH!")
-        self.refreshAccessToken()
+//        self.refreshAccessToken()
     }
 
     override func didReceiveMemoryWarning() {
@@ -180,19 +167,22 @@ class ColorgyTimeTableViewController: UIViewController {
                                                     ]
         
         for course in self.coursesOnTimetable {
-            let position = self.getCoursePositionOnTimetable(course.frame)
+            let position = self.getCoursePositionOnTimetable(course.center)!
             conflictTimetable[position.day - 1][position.session - 1].addObject(course)
         }
         
         self.conflictCourses = conflictTimetable
     }
     
-    func getCoursePositionOnTimetable(frame: CGRect!) -> (day: Int, session: Int) {
+    func getCoursePositionOnTimetable(point: CGPoint?) -> (day: Int, session: Int)? {
         
-        var day = Int((frame.origin.x - self.sideBarWidth - self.timetableSpacing) / self.colorgyTimeTableCell.width) + 1
-        var session = Int((frame.origin.y - self.headerHeight - self.timetableSpacing) / self.colorgyTimeTableCell.height) + 1
-        
-        return (day, session)
+        if point != nil {
+            var day = Int((point!.x - self.timetableSpacing - self.sideBarWidth - self.colorgyTimeTableCell.width / 2) / self.colorgyTimeTableCell.width) + 1
+            var session = Int((point!.y - self.timetableSpacing - self.headerHeight - self.colorgyTimeTableCell.width / 2) / self.colorgyTimeTableCell.height) + 1
+            return (day, session)
+        } else {
+            return nil
+        }
     }
     
     // handle conflict course animation
@@ -206,9 +196,8 @@ class ColorgyTimeTableViewController: UIViewController {
                             let view = course as! UIView
                             view.backgroundColor = UIColor.redColor()
                             self.colorgyTimeTableView.bringSubviewToFront(view)
-                            UIView.animateWithDuration(0.7, delay: 0, options: UIViewAnimationOptions.Repeat | UIViewAnimationOptions.Autoreverse | UIViewAnimationOptions.BeginFromCurrentState, animations: {
+                            UIView.animateWithDuration(0.7, delay: 0, options: UIViewAnimationOptions.Repeat | UIViewAnimationOptions.Autoreverse | UIViewAnimationOptions.AllowUserInteraction, animations: {
                                     view.transform = CGAffineTransformMakeScale(1.1, 1.1)
-                                    view.transform = CGAffineTransformMakeRotation(-0.05)
                                 }, completion: nil)
                         }
                     }
@@ -244,8 +233,13 @@ class ColorgyTimeTableViewController: UIViewController {
         // this will return array of uiviews
         // before track courses position, init courseOnTimetable first
         self.coursesOnTimetable = NSMutableArray()
+        // prepare gesture
         if let views = self.updateTimetableCourse() {
             for v in views {
+                let tap = UITapGestureRecognizer()
+                tap.numberOfTouchesRequired = 1
+                tap.addTarget(self, action: "tapOnCourseCellView:")
+                v.addGestureRecognizer(tap)
                 view.addSubview(v)
                 coursesOnTimetable.addObject(v)
             }
@@ -253,6 +247,40 @@ class ColorgyTimeTableViewController: UIViewController {
         
         
         return view as UIScrollView
+    }
+    
+    func tapOnCourseCellView(gesture: UITapGestureRecognizer) {
+        println("tapppp")
+        println(gesture.view?.frame)
+        let position = self.getCoursePositionOnTimetable(gesture.view?.center)
+        if position != nil {
+            self.showCourseOnDay(position!.day, session: position!.session)
+        }
+    }
+    
+    func showCourseOnDay(day: Int, session: Int) {
+        let courses = self.conflictCourses[day - 1][session - 1]
+        println(courses.count)
+        var message = ""
+        var title = "好"
+        if courses.count > 1 {
+            title = "幹選那麼多是要死喔？"
+        }
+        for course in courses {
+            let c = course as! UIView
+            println(c.subviews)
+            for subview in c.subviews {
+                if subview.isKindOfClass(UILabel) {
+                    let label = subview as! UILabel
+                    message += "課程名稱：" + label.text! + "\n"
+                }
+            }
+        }
+        
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Cancel, handler: nil)
+        alert.addAction(ok)
+        self.presentViewController(alert, animated: true, completion: nil)
     }
     
     func ColorgyTimeTableColumnView() -> UIView {

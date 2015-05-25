@@ -24,7 +24,7 @@ class ColorgySideMenuViewController: UIViewController {
         
         // wrap in scroll view
         self.scrollview = UIScrollView(frame: self.view.frame)
-        self.scrollview.contentSize = CGSizeMake(self.view.frame.width, self.view.frame.height*2)
+        self.scrollview.contentSize = CGSizeMake(self.view.frame.width, 700)
         self.scrollview.backgroundColor = self.colorgyDarkGray
         
         self.setupProfilePhoto()
@@ -59,7 +59,6 @@ class ColorgySideMenuViewController: UIViewController {
                 var ud = NSUserDefaults.standardUserDefaults()
                 ud.setObject(nil, forKey: "isLogin")
                 ud.setObject(nil, forKey: "loginTpye")
-                ud.setObject(nil, forKey: "userFBName")
                 ud.setObject(nil, forKey: "smallFBProfilePhoto")
                 ud.setObject(nil, forKey: "bigFBProfilePhoto")
                 ud.setObject(nil, forKey: "ColorgyAccessToken")
@@ -69,6 +68,7 @@ class ColorgySideMenuViewController: UIViewController {
                 ud.setObject(nil, forKey: "ColorgyTokenType")
                 ud.setObject(nil, forKey: "courseDataFromServer")
                 ud.setObject(nil, forKey: "userName")
+                ud.setObject(nil, forKey: "userSchool")
                 ud.synchronize()
             
                 self.deleteDataFromDatabase()
@@ -200,7 +200,6 @@ class ColorgySideMenuViewController: UIViewController {
         // clear user settings
         ud.setObject(nil, forKey: "isLogin")
         ud.setObject(nil, forKey: "loginTpye")
-        ud.setObject(nil, forKey: "userFBName")
         ud.setObject(nil, forKey: "smallFBProfilePhoto")
         ud.setObject(nil, forKey: "bigFBProfilePhoto")
         ud.setObject(nil, forKey: "ColorgyAccessToken")

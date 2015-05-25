@@ -9,9 +9,15 @@
 import UIKit
 
 class ColorgyUserProfileViewController: UIViewController {
-
+    
     var colorgyLightOrange: UIColor = UIColor(red: 228/255.0, green: 133/255.0, blue: 111/255.0, alpha: 1)
     var colorgyDarkGray: UIColor = UIColor(red: 59/255.0, green: 58/255.0, blue: 59/255.0, alpha: 1)
+    var colorgyDimYellow: UIColor = UIColor(red: 245/255.0, green: 166/255.0, blue: 35/255.0, alpha: 1)
+    var colorgyLightYellow: UIColor = UIColor(red: 244/255.0, green: 188/255.0, blue: 94/255.0, alpha: 1)
+    
+    var backgroundImage: UIImageView!
+    var profilePhotoImageView: UIImageView!
+    var userInformationCard: UIView!
     
     @IBOutlet weak var revealMenuButton: UIBarButtonItem!
     
@@ -26,27 +32,36 @@ class ColorgyUserProfileViewController: UIViewController {
         }
         self.revealViewController().rearViewRevealWidth = 140
         //
-
+        
+        // style of nav bar
+        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        self.navigationItem.title = "個人資料"
+        
+        // setup background
+        self.setupBackgorund()
+        
         // Do any additional setup after loading the view.
         var ud = NSUserDefaults.standardUserDefaults()
         if ud.objectForKey("loginType")! as! String == "fb" {
             var data = ud.objectForKey("bigFBProfilePhoto") as! NSData
-            var name = ud.objectForKey("userFBName") as! String
+            var name = ud.objectForKey("userName") as! String
+            var school = ud.objectForKey("userSchool") as! String
+            self.setupUserInformationWithName(name, school: school)
+            self.setupUserPorfilePhotoWithImage(UIImage(data: data)!)
             
-            self.setupUserPhotoWithPhoto(UIImage(data: data))
-            self.setupUserInfoViewWithName(name, school: "臺灣科技大學", phone: "0900-000-000")
         } else if ud.objectForKey("loginType")! as! String == "account" {
             var name = ud.objectForKey("userName") as! String
-            
-            self.setupUserPhotoWithPhoto(UIImage(named: "cordova_big.png"))
-            self.setupUserInfoViewWithName(name, school: "未驗證使用者", phone: "？？？？？？？")
+            var school = ud.objectForKey("userSchool") as! String
+            self.setupUserInformationWithName(name, school: school)
+            self.setupUserPorfilePhotoWithImage(UIImage(named: "cordova_big.png")!)
         }
-        
-        self.setupBottomBar()
-        
-        self.view.backgroundColor = self.colorgyDarkGray
-        
+        self.setupProfilePhotoOuterFrame()
         self.fetchCourseDataFromServer()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        self.animateBackground()
     }
     
     // MARK: - fetch data from server
@@ -69,18 +84,18 @@ class ColorgyUserProfileViewController: UIViewController {
         let params = []
         
         afManager.GET(url, parameters: params, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
-                var resArr = responseObject as! NSArray
-                var parsedResData = NSMutableArray()
-                
-                var arcData = self.archive(resArr)
-                
-                var ud = NSUserDefaults.standardUserDefaults()
-                ud.setObject(arcData, forKey: "courseDataFromServer")
-                ud.synchronize()
-                println("get course from server")
+            var resArr = responseObject as! NSArray
+            var parsedResData = NSMutableArray()
+            
+            var arcData = self.archive(resArr)
+            
+            var ud = NSUserDefaults.standardUserDefaults()
+            ud.setObject(arcData, forKey: "courseDataFromServer")
+            ud.synchronize()
+            println("get course from server")
             }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
                 println("error post")
-            })
+        })
     }
     
     // MARK: - compress data
@@ -95,131 +110,143 @@ class ColorgyUserProfileViewController: UIViewController {
     }
     
     //MARK: - setup
-    
-    func setupUserPhotoWithPhoto(photo: UIImage!) {
-        
-        var w = self.view.frame.width * 0.826
-        var view = UIView(frame: CGRectMake(0, 0, w, w))
-        
-        view.layer.borderColor = UIColor.whiteColor().CGColor
-        view.layer.borderWidth = 9
-        view.layer.cornerRadius = w / 2
-        
-        view.backgroundColor = self.colorgyLightOrange
-        
-        view.center.x = self.view.center.x
-        view.center.y = self.view.center.y * 0.8
-        
-        var innerView = UIImageView(frame: CGRectMake(0, 0, view.frame.width - 40, view.frame.width - 40))
-        innerView.image = photo
-        innerView.layer.cornerRadius = innerView.frame.width / 2
-        innerView.layer.masksToBounds = true
-        innerView.center = view.center
+    func setupProfilePhotoOuterFrame() {
+        var view = UIImageView(image: UIImage(named: "profileOuterFrame"))
+        view.center = CGPointMake(self.profilePhotoImageView.center.x + 33/2, self.profilePhotoImageView.center.y - 57/2)
         
         self.view.addSubview(view)
-        self.view.addSubview(innerView)
-    }
-    
-    func setupUserInfoViewWithName(name: String, school: String, phone: String) {
+        self.view.sendSubviewToBack(view)
+        self.view.sendSubviewToBack(self.backgroundImage)
         
-        var h = self.view.frame.height * 0.27
-        var view = UIView(frame: CGRectMake(0, 0, self.view.frame.width, h))
-        
-        view.backgroundColor = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 0.8)
-        
-        
-        view.center.y = self.view.frame.height * 0.7
-        view.center.x = self.view.center.x
-        
-//        view.layer.shadowColor = UIColor.blackColor().CGColor
-        view.layer.shadowOpacity = 0.5
-        // enlarge view.bounds first, in order to let shadow show in bottom
-        var bounds = view.bounds.size
-        bounds.height = bounds.height + 2
-        view.layer.shadowPath = UIBezierPath(rect: CGRectMake(view.bounds.origin.x + 3, view.bounds.origin.y + 3, bounds.width, bounds.height)).CGPath
-//        view.layer.shadowOffset = CGSizeMake(30, 30)  
-        
-        // name label
-        var uname = UILabel(frame: CGRectMake(0, 30, self.view.frame.width * 0.8, 36))
-        uname.font = UIFont(name: "Heiti TC", size: 36)
-        uname.textColor = self.colorgyLightOrange
-        uname.textAlignment = NSTextAlignment.Center
-        uname.center.x = view.center.x
-        
-        uname.text = name
-        
-        view.addSubview(uname)
-        
-        // school label
-        var uschool = UILabel(frame: CGRectMake(0, 94, self.view.frame.width * 0.8, 17))
-        uschool.font = UIFont(name: "Heiti TC", size: 17)
-        uschool.textColor = UIColor.whiteColor()
-        uschool.textAlignment = NSTextAlignment.Center
-        uschool.center.x = view.center.x
-        
-        uschool.text = "學校： " + school
-        
-        view.addSubview(uschool)
-        
-        // tel label
-        var uphone = UILabel(frame: CGRectMake(0, 125, self.view.frame.width * 0.8, 17))
-        uphone.font = UIFont(name: "Heiti TC", size: 17)
-        uphone.textColor = UIColor.whiteColor()
-        uphone.textAlignment = NSTextAlignment.Center
-        uphone.center.x = view.center.x
-        
-        uphone.text = "電話： " + phone
-        
-        view.addSubview(uphone)
-        
-        self.view.addSubview(view)
-    }
-    
-    func setupBottomBar() {
-        
-        var img1 = UIImage(named: "profileBottom1")
-        var img2 = UIImage(named: "profileBottom2")
-        
-        let w1 = img1?.size.width
-        let h1 = img1?.size.height
-        let w2 = img2?.size.width
-        let h2 = img2?.size.height
-        
-        var v1 = UIImageView(frame: CGRectMake(0, 0, w1!, h1!))
-        var v2 = UIImageView(frame: CGRectMake(0, 0, w2!, h2!))
-        
-        v1.image = img1
-        v2.image = img2
-        
-        v1.center = CGPointMake(self.view.center.x, self.view.frame.height - 20)
-        v2.center = CGPointMake(self.view.center.x, self.view.frame.height - 25)
-        
-        self.view.addSubview(v1)
-        self.view.addSubview(v2)
-        
-        UIView.animateWithDuration(20, delay: 0, options: UIViewAnimationOptions.Repeat | UIViewAnimationOptions.Autoreverse, animations: {
-            v1.transform = CGAffineTransformMakeTranslation(200, 0)
-        }, completion: nil)
-        
-        UIView.animateWithDuration(15, delay: 0, options: UIViewAnimationOptions.Repeat | UIViewAnimationOptions.Autoreverse, animations: {
-            v2.transform = CGAffineTransformMakeTranslation(200, 0)
+        UIView.animateWithDuration(1, delay: 0, options: UIViewAnimationOptions.Autoreverse | UIViewAnimationOptions.Repeat, animations: {
+                view.transform = CGAffineTransformMakeScale(0.95, 0.95)
             }, completion: nil)
     }
+    
+    func setupUserPorfilePhotoWithImage(image: UIImage) {
+        // photo
+        self.profilePhotoImageView = UIImageView(frame: CGRectMake(0, 0, 150, 150))
+        self.profilePhotoImageView.layer.cornerRadius = self.profilePhotoImageView.frame.width / 2
+        self.profilePhotoImageView.layer.borderColor = UIColor.whiteColor().CGColor
+        self.profilePhotoImageView.layer.borderWidth = 9
+        self.profilePhotoImageView.image = image
+        self.profilePhotoImageView.center = self.userInformationCard.center
+        self.profilePhotoImageView.center.y = self.userInformationCard.frame.origin.y - 5
+        self.profilePhotoImageView.layer.masksToBounds = true
+        self.view.addSubview(self.profilePhotoImageView)
+    }
+    
+    func setupUserInformationWithName(name: String, school: String) {
+        
+        var view = UIView(frame: CGRectMake(0, 0, 287, 222))
+        var shadowView = UIView(frame: CGRectMake(0, 0, 287, 222))
+        self.userInformationCard = shadowView
+        view.backgroundColor = UIColor.whiteColor()
+        view.layer.cornerRadius = 3
+        view.layer.masksToBounds = true
+        
+        // user name text
+        var nameLabel = UILabel(frame: CGRectMake(0, 0, 287, 30))
+        nameLabel.textAlignment = NSTextAlignment.Center
+        nameLabel.textColor = self.colorgyLightOrange
+        nameLabel.center = view.center
+        nameLabel.text = name
+        nameLabel.font = UIFont(name: "Heiti TC", size: 30)
+        view.addSubview(nameLabel)
+        println(view.subviews)
+        
+        // school text.....
+        var schoolTitleView = UIView(frame: CGRectMake(0, 0, 98, 64))
+        var schoolTitleLable = UILabel(frame: CGRectMake(0, 0, schoolTitleView.frame.width, 14))
+        schoolTitleLable.center = schoolTitleView.center
+        schoolTitleView.addSubview(schoolTitleLable)
+        schoolTitleView.backgroundColor = self.colorgyDimYellow
+        schoolTitleView.frame.origin.y = view.frame.height - schoolTitleView.frame.height
+        schoolTitleLable.text = "學校"
+        schoolTitleLable.textAlignment = NSTextAlignment.Center
+        schoolTitleLable.textColor = UIColor.whiteColor()
+        schoolTitleLable.font = UIFont(name: "Heiti TC", size: 14)
+        view.addSubview(schoolTitleView)
+        
+        var schoolNameView = UIView(frame: CGRectMake(0, 0, view.frame.width - schoolTitleView.frame.width, 64))
+        var schoolNameLable = UILabel(frame: CGRectMake(0, 0, schoolNameView.frame.width, 14))
+        schoolNameLable.center = schoolNameView.center
+        schoolNameView.addSubview(schoolNameLable)
+        schoolNameView.backgroundColor = self.colorgyLightYellow
+        schoolNameView.frame.origin.y = view.frame.height - schoolNameView.frame.height
+        schoolNameView.frame.origin.x = schoolTitleView.frame.width
+        schoolNameLable.text = school
+        schoolNameLable.textAlignment = NSTextAlignment.Center
+        schoolNameLable.textColor = UIColor.whiteColor()
+        schoolNameLable.font = UIFont(name: "Heiti TC", size: 14)
+        view.addSubview(schoolNameView)
 
+        // shadow
+        shadowView.layer.shadowPath = UIBezierPath(rect: CGRectMake(view.bounds.origin.x, view.bounds.origin.y, view.bounds.width + 2, view.bounds.height + 2)).CGPath
+        shadowView.layer.shadowColor = UIColor.blackColor().CGColor
+        shadowView.layer.shadowOpacity = 0.5
+        shadowView.layer.shadowRadius = 3
+        shadowView.layer.shadowOffset = CGSizeMake(-1, 1)
+        
+        shadowView.center = self.view.center
+        shadowView.addSubview(view)
+        
+        self.view.addSubview(shadowView)
+    }
+    
+    func setupBackgorund() {
+        // setup backgorund
+        var image = UIImage(named: "LoginBackground")
+        var w = image?.size.width
+        var h = image?.size.height
+        self.backgroundImage = UIImageView(frame: CGRectMake(0, 0, w!, h!))
+        self.backgroundImage.center.x = self.view.center.x
+        self.backgroundImage.image = image
+        
+        self.view.addSubview(self.backgroundImage)
+    }
+    
+    func animateBackground() {
+        // when user enter this view, logo and background image need to animate from top to bottom.
+        // initial state
+        self.backgroundImage.transform = CGAffineTransformMakeTranslation(0, -850)
+        
+        var transDown: CGAffineTransform!
+        
+        if self.view.frame.height <= 480 {
+            // iphone 4s
+            transDown = CGAffineTransformMakeTranslation(0, -518)
+        } else if self.view.frame.height <= 568 {
+            // for 5 and 5s
+            transDown = CGAffineTransformMakeTranslation(0, -430)
+        } else if self.view.frame.height <= 667 {
+            // iphone 6
+            transDown = CGAffineTransformMakeTranslation(0, -330)
+        } else {
+            // for 6+
+            transDown = CGAffineTransformMakeTranslation(0, -261)
+        }
+        
+        UIView.animateWithDuration(1.0, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.1, options: nil, animations: {
+            // first drop down background image.
+            self.backgroundImage.transform = transDown
+            }, completion: nil)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-
+    
     /*
     // MARK: - Navigation
-
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    // Get the new view controller using segue.destinationViewController.
+    // Pass the selected object to the new view controller.
     }
     */
-
+    
 }
