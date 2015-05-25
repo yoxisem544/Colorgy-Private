@@ -113,13 +113,8 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         // animate view to proper position
         UIView.animateWithDuration(0.25, delay: 0, options: nil, animations: {
                 UIView.setAnimationCurve(curve!)
-                if self.userAccount.isFirstResponder() {
-                    var topOffset = (self.screenHeight - self.keyboardHeight) * 0.35
-                    self.view.frame.origin.y = -(self.userAccount.frame.origin.y - topOffset)
-                } else if self.userPassword.isFirstResponder() {
-                    var topOffset = (self.screenHeight - self.keyboardHeight) * 0.35
-                    self.view.frame.origin.y = -(self.userAccount.frame.origin.y - topOffset)
-                }
+                var topOffset = (self.screenHeight - self.keyboardHeight) * 0.35
+                self.view.frame.origin.y = -(self.userAccount.frame.origin.y - topOffset)
             }, completion: nil)
     }
     
@@ -155,7 +150,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
     func setupLoginSwitchButton() {
         // style of login switch button
         self.loginSwitchButton = UIButton(frame: CGRectMake(0, 0, 180, 20))
-        self.loginSwitchButton.setTitle("帳號密碼登入", forState: UIControlState.Normal)
+        self.loginSwitchButton.setTitle("Email 登入", forState: UIControlState.Normal)
         self.loginSwitchButton.titleLabel?.font = UIFont(name: "Heiti TC", size: 15)
         self.loginSwitchButton.center = CGPointMake(self.view.center.x, self.view.center.y + 200)
         
@@ -176,7 +171,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         if self.loginMode == "password" {
             // change to fb login
             self.loginMode = "fb"
-            self.loginSwitchButton.setTitle("帳號密碼登入", forState: UIControlState.Normal)
+            self.loginSwitchButton.setTitle("Email 登入", forState: UIControlState.Normal)
             // hide keyboard.
             self.view.endEditing(true)
             self.hideUserPasswordAndAccount()
@@ -184,7 +179,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         } else {
             // change to password login
             self.loginMode = "password"
-            self.loginSwitchButton.setTitle("Facebook登入", forState: UIControlState.Normal)
+            self.loginSwitchButton.setTitle("Facebook 登入", forState: UIControlState.Normal)
             self.hideFacebookButton()
             self.showUserPasswordAndAccount(0)
         }
@@ -436,7 +431,8 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
                 self.view.endEditing(true)
                 self.requestColorgyOAuthAccessTokenWithUserName(username, password: password)
             } else {
-                self.alertUserWithError("密碼必須大於8碼！！")
+                self.alertUserWithError("密碼必須大於等於8碼！！")
+                self.userPassword.becomeFirstResponder()
             }
         } else {
             self.alertUserWithError("帳號或密碼不能為空！！")
@@ -645,6 +641,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         } else if textField == self.userPassword {
             println("login GO!")
             self.view.endEditing(true)
+            NSTimer.scheduledTimerWithTimeInterval(0, target: self, selector: "passwordLoginButtonTouchUpInside", userInfo: nil, repeats: false)
         }
         
         return true
@@ -749,7 +746,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
             
             }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
                 println("error post")
-                self.alertUserWithError("登入時發生錯誤！請確認帳號密碼無誤！")
+                self.alertUserWithError("登入時發生錯誤！請確認帳號密碼無誤！如果忘記帳號與密碼，請到\nhttp://colorgy.io\n查詢。")
                 // show switch if user got a error while login
                 
                 println(error)
