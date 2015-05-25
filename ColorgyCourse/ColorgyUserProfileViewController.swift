@@ -57,6 +57,13 @@ class ColorgyUserProfileViewController: UIViewController {
         }
         self.setupProfilePhotoOuterFrame()
         self.fetchCourseDataFromServer()
+        
+        // bar frame change nitification
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "barChange", name: UIApplicationDidChangeStatusBarFrameNotification, object: nil)
+    }
+    
+    func barChange() {
+        viewDidLoad()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -151,7 +158,7 @@ class ColorgyUserProfileViewController: UIViewController {
         nameLabel.textColor = self.colorgyLightOrange
         nameLabel.center = view.center
         nameLabel.text = name
-        nameLabel.font = UIFont(name: "Heiti TC", size: 30)
+        nameLabel.font = UIFont(name: "STHeitiTC-Medium", size: 30)
         view.addSubview(nameLabel)
         println(view.subviews)
         
@@ -165,7 +172,7 @@ class ColorgyUserProfileViewController: UIViewController {
         schoolTitleLable.text = "學校"
         schoolTitleLable.textAlignment = NSTextAlignment.Center
         schoolTitleLable.textColor = UIColor.whiteColor()
-        schoolTitleLable.font = UIFont(name: "Heiti TC", size: 14)
+        schoolTitleLable.font = UIFont(name: "STHeitiTC-Medium", size: 14)
         view.addSubview(schoolTitleView)
         
         var schoolNameView = UIView(frame: CGRectMake(0, 0, view.frame.width - schoolTitleView.frame.width, 64))
@@ -178,7 +185,7 @@ class ColorgyUserProfileViewController: UIViewController {
         schoolNameLable.text = school
         schoolNameLable.textAlignment = NSTextAlignment.Center
         schoolNameLable.textColor = UIColor.whiteColor()
-        schoolNameLable.font = UIFont(name: "Heiti TC", size: 14)
+        schoolNameLable.font = UIFont(name: "STHeitiTC-Medium", size: 14)
         view.addSubview(schoolNameView)
 
         // shadow
@@ -190,6 +197,20 @@ class ColorgyUserProfileViewController: UIViewController {
         
         shadowView.center = self.view.center
         shadowView.addSubview(view)
+
+        if self.view.frame.height <= 480 {
+            // iphone 4s
+            shadowView.frame.origin.y += 90
+        } else if self.view.frame.height <= 568 {
+            // for 5 and 5s
+            shadowView.frame.origin.y += 70
+        } else if self.view.frame.height <= 667 {
+            // iphone 6
+            shadowView.frame.origin.y += 40
+        } else {
+            // for 6+
+            shadowView.frame.origin.y += 20
+        }
         
         self.view.addSubview(shadowView)
     }

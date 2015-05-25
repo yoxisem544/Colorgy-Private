@@ -78,7 +78,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         noti.fireDate = NSDate().dateByAddingTimeInterval(3)
         noti.alertBody = "testing!!"
         UIApplication.sharedApplication().scheduleLocalNotification(noti)
-        UIApplication.sharedApplication().cancelAllLocalNotifications()
     }
 
     func applicationWillEnterForeground(application: UIApplication) {

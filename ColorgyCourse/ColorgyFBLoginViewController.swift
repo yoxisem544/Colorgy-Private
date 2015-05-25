@@ -38,6 +38,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
     // MARK: - color
     var colorgyGray = UIColor(red: 113/255.0, green: 112/255.0, blue: 113/255.0, alpha: 1)
     var colorgyDimGray = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
+    var colorgyLightGray = UIColor(red: 238/255.0, green: 231/255.0, blue: 231/255.0, alpha: 1)
     
     // MARK: - view
     override func viewDidLoad() {
@@ -90,7 +91,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
     }
-    
+
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
@@ -151,7 +152,8 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         // style of login switch button
         self.loginSwitchButton = UIButton(frame: CGRectMake(0, 0, 180, 20))
         self.loginSwitchButton.setTitle("Email 登入", forState: UIControlState.Normal)
-        self.loginSwitchButton.titleLabel?.font = UIFont(name: "Heiti TC", size: 15)
+        self.loginSwitchButton.titleLabel?.font = UIFont(name: "STHeitiTC-Medium", size: 15)
+        self.loginSwitchButton.setTitleColor(self.colorgyLightGray, forState: UIControlState.Normal)
         self.loginSwitchButton.center = CGPointMake(self.view.center.x, self.view.center.y + 200)
         
         // targets of login switch button
@@ -206,7 +208,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     func changeLoginSwitchAlpha(alpha: CGFloat) {
-        self.loginSwitchButton.setTitleColor(UIColor(red: 1, green: 1, blue: 1, alpha: alpha), forState: UIControlState.Normal)
+        self.loginSwitchButton.alpha = alpha
     }
     
     // MARK: - setup Login backgorund and logo
@@ -378,7 +380,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         // button
         self.passwordLoginButton = UIButton(frame: CGRectMake(0, 0, 150, 45))
         self.passwordLoginButton.setTitle("登入", forState: UIControlState.Normal)
-        self.passwordLoginButton.titleLabel?.font = UIFont(name: "Heiti TC", size: 18)
+        self.passwordLoginButton.titleLabel?.font = UIFont(name: "STHeitiTC-Medium", size: 18)
         self.passwordLoginButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
         self.passwordLoginButton.backgroundColor = UIColor.grayColor()
         self.passwordLoginButton.layer.cornerRadius = 10
@@ -588,9 +590,15 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
                     // if user is authed to Colorgy
                     println("ready to switch view")
                     self.animateLogoOff()
-                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                    var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyService") as! SWRevealViewController
-                    self.presentViewController(vc, animated: true, completion: nil)
+                    // wait for animate logo off to finish
+                    var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                    dispatch_after(delay, dispatch_get_main_queue()) {
+                        println("fire!")
+                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyService") as! SWRevealViewController
+                        self.presentViewController(vc, animated: true, completion: nil)
+                    }
+                    
                 } else {
                     // if not, block this user.
                     self.alertUserWithError("你必須在Colorgy上驗證學校信箱之後才能開始使用！")

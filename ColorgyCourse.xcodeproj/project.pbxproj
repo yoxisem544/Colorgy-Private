@@ -11,6 +11,7 @@
 		63038C671B10B597008C8180 /* cordova_big.png in Resources */ = {isa = PBXBuildFile; fileRef = 63038C661B10B597008C8180 /* cordova_big.png */; };
 		63045EAD1B0EC5E10071555B /* SwitfyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63045EAC1B0EC5E10071555B /* SwitfyJSON.swift */; };
 		631008DF1AF771B7008A40E4 /* ColorgyNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631008DE1AF771B7008A40E4 /* ColorgyNavigationController.swift */; };
+		6324DA921B13696C00DF2F6C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6324DA911B13696C00DF2F6C /* CoreData.framework */; };
 		634FD6211AF749A9003B627D /* NCKU_samll_course.json in Resources */ = {isa = PBXBuildFile; fileRef = 634FD6201AF749A9003B627D /* NCKU_samll_course.json */; };
 		635F9FDC1AFDE58E001907BA /* CCU_courses.json in Resources */ = {isa = PBXBuildFile; fileRef = 635F9FDB1AFDE58E001907BA /* CCU_courses.json */; };
 		636FFF7A1AF9086D0012135C /* ColorgySideMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636FFF791AF9086D0012135C /* ColorgySideMenuViewController.swift */; };
@@ -46,6 +47,7 @@
 		63038C661B10B597008C8180 /* cordova_big.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cordova_big.png; sourceTree = "<group>"; };
 		63045EAC1B0EC5E10071555B /* SwitfyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitfyJSON.swift; sourceTree = "<group>"; };
 		631008DE1AF771B7008A40E4 /* ColorgyNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyNavigationController.swift; sourceTree = "<group>"; };
+		6324DA911B13696C00DF2F6C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		634FD6201AF749A9003B627D /* NCKU_samll_course.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NCKU_samll_course.json; sourceTree = "<group>"; };
 		635F9FDB1AFDE58E001907BA /* CCU_courses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = CCU_courses.json; sourceTree = "<group>"; };
 		636FFF791AF9086D0012135C /* ColorgySideMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgySideMenuViewController.swift; sourceTree = "<group>"; };
@@ -75,6 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6324DA921B13696C00DF2F6C /* CoreData.framework in Frameworks */,
 				BCB60EF032C3499020ABF860 /* libPods-ColorgyCourse.a in Frameworks */,
 				63C96ADE1AFE0CD9003ED287 /* FacebookSDK.framework in Frameworks */,
 			);
@@ -102,6 +105,7 @@
 		4D876CEB43146647A3289BCE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6324DA911B13696C00DF2F6C /* CoreData.framework */,
 				63C96ADD1AFE0CD9003ED287 /* FacebookSDK.framework */,
 				AA6BD5834EC034FAA28A0DB4 /* libPods-ColorgyCourse.a */,
 			);
@@ -133,17 +137,17 @@
 			children = (
 				63A29E4C1AF722DF000494DB /* AppDelegate.swift */,
 				63A29E4E1AF722DF000494DB /* ColorgyCourse.xcdatamodeld */,
-				636FFF791AF9086D0012135C /* ColorgySideMenuViewController.swift */,
+				63A29E751AF72E41000494DB /* Course.swift */,
+				63DD0DAD1B069F2700582DEF /* ColorgyCourseCardCell.swift */,
 				631008DE1AF771B7008A40E4 /* ColorgyNavigationController.swift */,
 				63A29E531AF722DF000494DB /* Main.storyboard */,
-				63DD0DAD1B069F2700582DEF /* ColorgyCourseCardCell.swift */,
-				6379F3C91AFF454F007686B5 /* ColorgyUserProfileViewController.swift */,
 				63A29E561AF722DF000494DB /* Images.xcassets */,
-				63A29E791AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift */,
-				63A29E581AF722DF000494DB /* LaunchScreen.xib */,
-				63A29E751AF72E41000494DB /* Course.swift */,
 				63A29E711AF7236C000494DB /* ColorgyFBLoginViewController.swift */,
+				636FFF791AF9086D0012135C /* ColorgySideMenuViewController.swift */,
 				63A29E6F1AF72332000494DB /* ColorgyTimeTableViewController.swift */,
+				63A29E791AF7436D000494DB /* ColorgyViewAndAddCourseTableViewController.swift */,
+				6379F3C91AFF454F007686B5 /* ColorgyUserProfileViewController.swift */,
+				63A29E581AF722DF000494DB /* LaunchScreen.xib */,
 				63A29E4A1AF722DF000494DB /* Supporting Files */,
 			);
 			path = ColorgyCourse;
@@ -459,7 +463,7 @@
 			baseConfigurationReference = 572BB26BB0AC9A6CCD0BE10F /* Pods-ColorgyCourse.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Lin Li-Ying (NFF58M6TTS)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -474,6 +478,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = ./Header.h;
 				TARGETED_DEVICE_FAMILY = 1;
+				VALID_ARCHS = "arm64 armv7s armv7";
 			};
 			name = Debug;
 		};
@@ -482,7 +487,7 @@
 			baseConfigurationReference = 8807EE0034D20B6587094B35 /* Pods-ColorgyCourse.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Lin Li-Ying (NFF58M6TTS)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -493,10 +498,12 @@
 				INFOPLIST_FILE = ColorgyCourse/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = ./Header.h;
 				TARGETED_DEVICE_FAMILY = 1;
+				VALID_ARCHS = "arm64 armv7s armv7";
 			};
 			name = Release;
 		};

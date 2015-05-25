@@ -136,13 +136,36 @@ class ColorgyTimeTableViewController: UIViewController {
         println("=====================")
         self.detectIfClassHasConflicts()
         println("testREFRESH!")
-//        self.refreshAccessToken()
+        
+        // status bar frame change notification
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "barChange", name: UIApplicationDidChangeStatusBarFrameNotification, object: nil)
+        
+        // notify
+        self.setupNotification()
+    }
+    
+    func barChange() {
+        viewDidLoad()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    // MARK:- register local notification
+    func setupNotification() {
+        println("setting notify")
+        for i in 1...10 {
+            println("setting \(i)")
+            var noti = UILocalNotification()
+            var hi = NSTimeInterval(i + 5)
+            noti.fireDate = NSDate().dateByAddingTimeInterval(hi)
+            noti.alertBody = "testing!!"
+            UIApplication.sharedApplication().scheduleLocalNotification(noti)
+        }
+    }
+    
     
     //MARK: - handle conflict courses
     func detectIfClassHasConflicts() {
@@ -439,7 +462,7 @@ class ColorgyTimeTableViewController: UIViewController {
         view.layer.cornerRadius = 5
         
         label.text = courseName + "\n" + location
-        label.font = UIFont(name: "Heiti TC", size: 13)
+        label.font = UIFont(name: "STHeitiTC-Medium", size: 13)
         label.textAlignment = NSTextAlignment.Center
         label.numberOfLines = 2
         label.textColor = UIColor.whiteColor()

@@ -38,7 +38,10 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     var indicator: UIActivityIndicatorView!
     
     // MARK: - color
-    var colorgyGreen: UIColor = UIColor(red: 228/255.0, green: 133/255.0, blue: 111/255.0, alpha: 1)
+    var colorgyDimOrange: UIColor = UIColor(red: 226/255.0, green: 109/255.0, blue: 90/255.0, alpha: 1)
+    var colorgyLightOrange: UIColor = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
+    var colorgyDimYellow: UIColor = UIColor(red: 245/255.0, green: 166/255.0, blue: 35/255.0, alpha: 1)
+    var colorgyLightYellow: UIColor = UIColor(red: 244/255.0, green: 188/255.0, blue: 94/255.0, alpha: 1)
     var colorgyDarkGray = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
 //    var colorgyGreen: UIColor = UIColor(red: 42/255.0, green: 171/255.0, blue: 147/255.0, alpha: 1)
     
@@ -129,7 +132,6 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         
         // indicator
         self.indicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 40, 40))
-        self.indicator.tintColor = self.colorgyGreen
         self.indicator.center = CGPointMake(self.view.center.x, 128)
         self.view.addSubview(self.indicator)
     }
@@ -459,6 +461,12 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             var c = self.filteredCourse[indexPath.row]["credits"] as! Int
             cell.credits.text = "\(c)"
             
+            if indexPath.row % 2 == 1 {
+                cell.lecturerBackgorundView.backgroundColor = self.colorgyDimYellow
+                cell.cardBackgroundView.backgroundColor = self.colorgyLightYellow
+            }
+            
+            
             return cell
         } else {
             var cell = tableView.dequeueReusableCellWithIdentifier("ColorgyCourseCardCell", forIndexPath: indexPath) as! ColorgyCourseCardCell
@@ -470,6 +478,11 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             cell.lecturer.text = self.coursesAddedToTimetable[indexPath.row][1] as! String
             cell.period.text = self.coursesAddedToTimetable[indexPath.row][4] as! String
             cell.location.text = self.coursesAddedToTimetable[indexPath.row][5] as! String
+            
+            if indexPath.row % 2 == 1 {
+                cell.lecturerBackgorundView.backgroundColor = self.colorgyDimYellow
+                cell.cardBackgroundView.backgroundColor = self.colorgyLightYellow
+            }
             
             return cell
         }

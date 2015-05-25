@@ -11,7 +11,7 @@ import CoreData
 
 class ColorgySideMenuViewController: UIViewController {
     
-    var colorgyDarkGray: UIColor = UIColor(red: 59/255.0, green: 58/255.0, blue: 59/255.0, alpha: 1)
+    var colorgyBlack: UIColor = UIColor(red: 59/255.0, green: 58/255.0, blue: 59/255.0, alpha: 1)
     var colorgyDimOrange: UIColor = UIColor(red: 228/255.0, green: 133/255.0, blue: 111/255.0, alpha: 1)
     
     var scrollview: UIScrollView!
@@ -25,30 +25,60 @@ class ColorgySideMenuViewController: UIViewController {
         // wrap in scroll view
         self.scrollview = UIScrollView(frame: self.view.frame)
         self.scrollview.contentSize = CGSizeMake(self.view.frame.width, 700)
-        self.scrollview.backgroundColor = self.colorgyDarkGray
+        self.scrollview.backgroundColor = self.colorgyBlack
         
         self.setupProfilePhoto()
         self.setupWave()
 
         self.setupButtonWith("課表", action: "pushSegueToTimetable:", order: 1)
         self.setupButtonWith("選課", action: "pushSegueToselectCourse:", order: 2)
-        self.setupButtonWith("關於我們", action: "pushSegueToProfile:", order: 3)
+        self.setupButtonWith("個人資料", action: "pushSegueToProfile:", order: 3)
         
         // setup logout btn
         self.setupLogoutButton()
+        // goto fan page
+        self.setupGotoFanPageButton()
         
         self.view.addSubview(self.scrollview)
     }
     
+    func setupGotoFanPageButton() {
+        
+        var gotoFanPageImage = UIImage(named: "fb_logo")
+        var gotoFanPageButton = UIButton(frame: CGRectMake(30, 470, 50, 50))
+        gotoFanPageButton.center.x = 70
+        
+        gotoFanPageButton.setImage(gotoFanPageImage, forState: UIControlState.Normal)
+        gotoFanPageButton.addTarget(self, action: "gotoFanPage", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        self.scrollview.addSubview(gotoFanPageButton)
+    }
+    
+    func gotoFanPage() {
+        let alert = UIAlertController(title: "你正準備離開ColorgyTable", message: "你現在要前往我們的粉絲專頁！\n如果喜歡這個App，請幫我們按讚加油打氣！", preferredStyle: UIAlertControllerStyle.Alert)
+        let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+                if UIApplication.sharedApplication().canOpenURL(NSURL(string: "fb://profile/1529686803975150")!) {
+                    UIApplication.sharedApplication().openURL(NSURL(string: "fb://profile/1529686803975150")!)
+                } else {
+                    UIApplication.sharedApplication().openURL(NSURL(string: "https://www.facebook.com/1529686803975150")!)
+                }
+            })
+        let cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: nil)
+        alert.addAction(ok)
+        alert.addAction(cancel)
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
     func setupLogoutButton() {
         
-        var logoutImg = UIImage(named: "fb_logout")
-        var logout = UIButton(frame: CGRectMake(30, 500, 50, 50))
+        var logoutImage = UIImage(named: "logout")
+        var logoutButton = UIButton(frame: CGRectMake(30, 550, 50, 50))
+        logoutButton.center.x = 70
         
-        logout.setImage(logoutImg, forState: UIControlState.Normal)
-        logout.addTarget(self, action: "logout", forControlEvents: UIControlEvents.TouchUpInside)
+        logoutButton.setImage(logoutImage, forState: UIControlState.Normal)
+        logoutButton.addTarget(self, action: "logout", forControlEvents: UIControlEvents.TouchUpInside)
         
-        self.scrollview.addSubview(logout)
+        self.scrollview.addSubview(logoutButton)
     }
     
     func logout() {
@@ -163,7 +193,7 @@ class ColorgySideMenuViewController: UIViewController {
         titleLabel.text = title
         titleLabel.textAlignment = NSTextAlignment.Center
         titleLabel.textColor = UIColor.whiteColor()
-        titleLabel.font = UIFont(name: "Heiti TC", size: 17)
+        titleLabel.font = UIFont(name: "STHeitiTC-Medium", size: 17)
         
         var pinImg = UIImage(named: "Pin")
         var w = pinImg?.size.width
