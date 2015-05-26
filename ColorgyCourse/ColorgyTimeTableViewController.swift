@@ -101,7 +101,6 @@ class ColorgyTimeTableViewController: UIViewController {
     // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         //reveal region
         if self.revealViewController() != nil {
             revealMenuButton.target = self.revealViewController()
@@ -126,12 +125,16 @@ class ColorgyTimeTableViewController: UIViewController {
         // also header bar width is equal to cell width
         self.headerWidth = cellWidth
         
-        self.colorgyTimeTableView = self.ColorgyTimeTableView()
-        self.view.addSubview(self.colorgyTimeTableView)
-        
         // style of nav bar
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         self.navigationItem.title = "課表"
+        // never adjust this for me.....fuck
+        self.automaticallyAdjustsScrollViewInsets = false
+        
+        self.colorgyTimeTableView = self.ColorgyTimeTableView()
+        self.view.addSubview(self.colorgyTimeTableView)
+        
+        
         
         println("=====================")
         self.detectIfClassHasConflicts()
@@ -153,6 +156,119 @@ class ColorgyTimeTableViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    // MARK:- update data
+    
+    @IBAction func updateFromCloud(sender: AnyObject) {
+        println("from cloud!!")
+        self.updateCourseFromServer()
+    }
+    
+    func updateCourseFromServer() {
+        
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: ""))
+        
+        var ud = NSUserDefaults.standardUserDefaults()
+        var front_url = "https://colorgy.io:443/api/"
+        var middle_url = "/courses.json?per_page=5000&&&&&access_token="
+        let school = ud.objectForKey("userSchool") as! String
+        var token = ud.objectForKey("ColorgyAccessToken") as! String
+        let url = front_url + "test".lowercaseString + middle_url + token
+        
+        afManager.requestSerializer = AFJSONRequestSerializer()
+        afManager.responseSerializer = AFJSONResponseSerializer()
+        
+        // block when updating...
+        let alert = UIAlertController(title: "更新中", message: "課程資料更新中，\n過程中請不要離開程式！\n\n", preferredStyle: UIAlertControllerStyle.Alert)
+        let indicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 150, 150))
+        alert.view.addSubview(indicator)
+        indicator.center = CGPointMake(134, 100)
+        indicator.color = self.colorgyOrange
+        indicator.startAnimating()
+        self.presentViewController(alert, animated: true, completion: nil)
+        
+        afManager.GET(url, parameters: nil, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
+            println(responseObject.count)
+            // check db and new course data, update old db data
+            var vc = ColorgyViewAndAddCourseTableViewController()
+            var coursesInDB = vc.getDataFromDatabase()
+            // if get update course, archive it and replace it.
+            let archiveData = vc.archive(responseObject)
+            ud.setObject(archiveData, forKey: "courseDataFromServer")
+            ud.synchronize()
+            // update only if there is data in db.
+            var userCourses = NSMutableArray()
+            // collect user course uuid
+            if coursesInDB != nil {
+                for course: Course in coursesInDB! {
+                    userCourses.addObject(course.uuid)
+                }
+            }
+            // clear db
+            var sidevc = ColorgySideMenuViewController()
+            sidevc.deleteDataFromDatabase()
+            // get courses back using new data.
+            if userCourses.count != 0 {
+                // this vc help us to store data to db
+                let vc = ColorgyViewAndAddCourseTableViewController()
+                // loop through new course data
+                for newCourse in responseObject as! NSArray {
+                    // check if any course match.
+                    for uc in userCourses {
+                        if newCourse["code"] as! String == uc as! String {
+                            println("有！ \(uc)")
+                            // get out all the data, easy to use.
+                            let name = newCourse["name"] as! String
+                            let lecturer = newCourse["lecturer"] as! String
+                            let credits = Int32(newCourse["credits"] as! Int)
+                            let uuid = newCourse["code"] as! String
+                            // year, term, id, type
+                            let year = Int32(newCourse["year"] as! Int)
+                            let term = Int32(newCourse["term"] as! Int)
+                            let id = Int32(newCourse["id"] as! Int)
+                            let type = newCourse["_type"] as! String
+                            // sessions.
+                            var sessions = NSMutableArray()
+                            for i in 1...9 {
+                                let day = newCourse["day_" + "\(i)"]
+                                let session = newCourse["period_" + "\(i)"]
+                                let location = newCourse["location_" + "\(i)"]
+                                
+                                sessions.addObject(["\(day!!)", "\(session!!)", "\(location!!)"])
+                            }
+                            // store it
+                            vc.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
+                            // if match, remove from lists and break.
+                            userCourses.removeObject(uc)
+                            break
+                        }
+                    }
+                }
+            }
+            println("update success")
+            alert.dismissViewControllerAnimated(true, completion: nil)
+            self.viewDidLoad()
+            var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 0.3 * Double(NSEC_PER_SEC)))
+            dispatch_after(delay, dispatch_get_main_queue()) {
+                // after update, load view again
+                let success = UIAlertController(title: "更新成功", message: "✅yeah!", preferredStyle: UIAlertControllerStyle.Alert)
+                self.presentViewController(success, animated: true, completion: nil)
+                delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1.5 * Double(NSEC_PER_SEC)))
+                dispatch_after(delay, dispatch_get_main_queue()) {
+                    success.dismissViewControllerAnimated(true, completion: nil)
+                }
+            }
+            }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
+                println("error post")
+                alert.dismissViewControllerAnimated(true, completion: nil)
+                var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                dispatch_after(delay, dispatch_get_main_queue()) {
+                    let err = UIAlertController(title: "錯誤", message: "更新失敗，" + school + "可能尚未開通使用！", preferredStyle: UIAlertControllerStyle.Alert)
+                    let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: nil)
+                    err.addAction(ok)
+                    self.presentViewController(err, animated: true, completion: nil)
+                }
+            })
+    }
     // MARK:- register local notification
     func setupNotification() {
         println("setting notify")
@@ -241,6 +357,8 @@ class ColorgyTimeTableViewController: UIViewController {
         // width matches device width
         // height is headerBarHeight and coursescount height and some spacing
         view.contentSize = CGSizeMake(self.screenWidth, self.headerHeight + self.colorgyTimeTableCell.height * CGFloat(self.courseCount) + CGFloat(2) * self.timetableSpacing)
+        view.contentInset.top = 64
+        view.contentOffset.y = -64
         
         // add grid view
         view.addSubview(self.ColorgyTimeTableColumnView())

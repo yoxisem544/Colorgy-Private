@@ -64,6 +64,11 @@
                     </view>
                     <navigationItem key="navigationItem" id="BcY-gl-ur3">
                         <barButtonItem key="leftBarButtonItem" image="menu" id="gOK-Kc-Dse"/>
+                        <barButtonItem key="rightBarButtonItem" image="cloud" id="6z4-xK-3SV">
+                            <connections>
+                                <action selector="updateFromCloud:" destination="itp-Zr-oHo" id="FUe-v3-JUt"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="revealMenuButton" destination="gOK-Kc-Dse" id="ZPm-uZ-WLn"/>
@@ -231,6 +236,11 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="課表" id="doZ-4e-ijb">
                         <barButtonItem key="leftBarButtonItem" image="menu" id="126-i7-NCf"/>
+                        <barButtonItem key="rightBarButtonItem" image="cloud" id="5xQ-V4-njD">
+                            <connections>
+                                <action selector="updateFromCloud:" destination="zc5-9Q-oJx" id="LTQ-oS-RAY"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="revealMenuButon" destination="126-i7-NCf" id="qhH-DY-e1H"/>
@@ -339,6 +349,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="cloud" width="28" height="27"/>
         <image name="menu" width="26" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>

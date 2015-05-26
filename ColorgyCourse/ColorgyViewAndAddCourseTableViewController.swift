@@ -136,6 +136,12 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         self.view.addSubview(self.indicator)
     }
     
+    //MARK:- update from cloud
+    @IBAction func updateFromCloud(sender: AnyObject) {
+        println("from cloud!!")
+        viewDidLoad()
+    }
+    
     // MARK: - Fetch data from server
     
     
