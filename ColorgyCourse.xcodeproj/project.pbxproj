@@ -475,7 +475,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "7688dd21-accf-4269-bfe9-004706ed879e";
+				PROVISIONING_PROFILE = "bb767a10-57cf-4de3-9f77-1f53ffcf3e1f";
 				SWIFT_OBJC_BRIDGING_HEADER = ./Header.h;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "arm64 armv7s armv7";
@@ -500,7 +500,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "7688dd21-accf-4269-bfe9-004706ed879e";
+				PROVISIONING_PROFILE = "bb767a10-57cf-4de3-9f77-1f53ffcf3e1f";
 				SWIFT_OBJC_BRIDGING_HEADER = ./Header.h;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "arm64 armv7s armv7";

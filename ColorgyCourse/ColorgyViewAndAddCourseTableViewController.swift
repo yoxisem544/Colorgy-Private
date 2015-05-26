@@ -479,6 +479,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             if indexPath.row % 2 == 1 {
                 cell.lecturerBackgorundView.backgroundColor = self.colorgyDimYellow
                 cell.cardBackgroundView.backgroundColor = self.colorgyLightYellow
+            } else {
+                cell.lecturerBackgorundView.backgroundColor = self.colorgyDimOrange
+                cell.cardBackgroundView.backgroundColor = self.colorgyLightOrange
             }
             
             
@@ -494,10 +497,13 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             cell.period.text = self.coursesAddedToTimetable[indexPath.row][4] as! String
             cell.location.text = self.coursesAddedToTimetable[indexPath.row][5] as! String
             
-//            if indexPath.row % 2 == 1 {
-//                cell.lecturerBackgorundView.backgroundColor = self.colorgyDimYellow
-//                cell.cardBackgroundView.backgroundColor = self.colorgyLightYellow
-//            }
+            if indexPath.row % 2 == 1 {
+                cell.lecturerBackgorundView.backgroundColor = self.colorgyDimYellow
+                cell.cardBackgroundView.backgroundColor = self.colorgyLightYellow
+            } else {
+                cell.lecturerBackgorundView.backgroundColor = self.colorgyDimOrange
+                cell.cardBackgroundView.backgroundColor = self.colorgyLightOrange
+            }
             
             return cell
         }
@@ -536,6 +542,8 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                     }
                     println(sessions)
                     self.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
+                    // user add their course, set coursesAddedToTimetable to nil
+                    self.coursesAddedToTimetable = nil
                 }
             })
             let cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: { (action:UIAlertAction!) -> Void in
