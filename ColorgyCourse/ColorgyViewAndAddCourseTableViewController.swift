@@ -205,7 +205,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     
     
     // this function help you to store data into db
-    func storeDataToDatabase(name: String, lecturer: String, credits: Int, uuid: String, sessions: AnyObject) {
+    func storeDataToDatabase(name: String, lecturer: String, credits: Int32, uuid: String, sessions: AnyObject, year: Int32, term: Int32, id: Int32, type: String) {
         
         println("store")
         // get out managedObjectContext
@@ -216,8 +216,13 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             // assign its value to it's key
             course.name = name
             course.lecturer = lecturer
-            course.credits = credits as Int
+            course.credits = credits
             course.uuid = uuid
+            
+            course.id = id
+            course.type = type
+            course.year = year
+            course.term = term
             
             course.day_1 = sessions[0][0] as! String
             course.day_2 = sessions[1][0] as! String
@@ -265,68 +270,72 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     // fetch data and update view, this function will update selected course.
     // these data are from db
     func fetchDataAndUpdateSelectedCourses() {
-        
+        println("幹")
         // first get out the data from db
-        if let coursesFromDB = self.getDataFromDatabase() {
-            // if successfully get course data, parse it.
+        if self.coursesAddedToTimetable == nil {
+            if let coursesFromDB = self.getDataFromDatabase() {
+                // if successfully get course data, parse it.
 
-            // if courseaddedtotimetable is nil, alloc it.
-            // or if there are some data in it re alloc it to make it a clean table.
-            // then get data from db again
-            self.coursesAddedToTimetable = NSMutableArray()
-
-            for c in coursesFromDB {
-                dispatch_async(dispatch_get_main_queue()) {
-                    let weekdays = ["Mon", "Tue", "wed", "Thu", "Fri", "Sat", "Sun"]
-                    var location = ""
-                    var period = ""
-                    
-                    if c.day_1 != "<null>" {
-                        period += weekdays[c.day_1.toInt()! - 1] + c.period_1 + " "
-                        location += c.location_1 + " "
+                // if courseaddedtotimetable is nil, alloc it.
+                // or if there are some data in it re alloc it to make it a clean table.
+                // then get data from db again
+                self.coursesAddedToTimetable = NSMutableArray()
+                
+                if !self.coursesAddedToTimetable.isEqual(nil) {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        for c in coursesFromDB {
+                            let weekdays = ["Mon", "Tue", "wed", "Thu", "Fri", "Sat", "Sun"]
+                            var location = ""
+                            var period = ""
+                            
+                            if c.day_1 != "<null>" {
+                                period += weekdays[c.day_1.toInt()! - 1] + c.period_1 + " "
+                                location += c.location_1 + " "
+                            }
+                            if c.day_2 != "<null>" {
+                                period += weekdays[c.day_2.toInt()! - 1] + c.period_2 + " "
+                                location += c.location_2 + " "
+                            }
+                            if c.day_3 != "<null>" {
+                                period += weekdays[c.day_3.toInt()! - 1] + c.period_3 + " "
+                                location += c.location_3 + " "
+                            }
+                            if c.day_4 != "<null>" {
+                                period += weekdays[c.day_4.toInt()! - 1] + c.period_4 + " "
+                                location += c.location_4 + " "
+                            }
+                            if c.day_5 != "<null>" {
+                                period += weekdays[c.day_5.toInt()! - 1] + c.period_5 + " "
+                                location += c.location_5 + " "
+                            }
+                            if c.day_6 != "<null>" {
+                                period += weekdays[c.day_6.toInt()! - 1] + c.period_6 + " "
+                                location += c.location_6 + " "
+                            }
+                            if c.day_7 != "<null>" {
+                                period += weekdays[c.day_7.toInt()! - 1] + c.period_7 + " "
+                                location += c.location_7 + " "
+                            }
+                            if c.day_8 != "<null>" {
+                                period += weekdays[c.day_8.toInt()! - 1] + c.period_8 + " "
+                                location += c.location_8 + " "
+                            }
+                            if c.day_9 != "<null>" {
+                                period += weekdays[c.day_9.toInt()! - 1] + c.period_9 + " "
+                                location += c.location_9 + " "
+                            }
+                            
+                            var object = [c.name, c.lecturer, Int(c.credits), c.uuid, period, location]
+                            self.coursesAddedToTimetable.addObject(object)
+                        }
+                        self.tableView.reloadData()
                     }
-                    if c.day_2 != "<null>" {
-                        period += weekdays[c.day_2.toInt()! - 1] + c.period_2 + " "
-                        location += c.location_2 + " "
-                    }
-                    if c.day_3 != "<null>" {
-                        period += weekdays[c.day_3.toInt()! - 1] + c.period_3 + " "
-                        location += c.location_3 + " "
-                    }
-                    if c.day_4 != "<null>" {
-                        period += weekdays[c.day_4.toInt()! - 1] + c.period_4 + " "
-                        location += c.location_4 + " "
-                    }
-                    if c.day_5 != "<null>" {
-                        period += weekdays[c.day_5.toInt()! - 1] + c.period_5 + " "
-                        location += c.location_5 + " "
-                    }
-                    if c.day_6 != "<null>" {
-                        period += weekdays[c.day_6.toInt()! - 1] + c.period_6 + " "
-                        location += c.location_6 + " "
-                    }
-                    if c.day_7 != "<null>" {
-                        period += weekdays[c.day_7.toInt()! - 1] + c.period_7 + " "
-                        location += c.location_7 + " "
-                    }
-                    if c.day_8 != "<null>" {
-                        period += weekdays[c.day_8.toInt()! - 1] + c.period_8 + " "
-                        location += c.location_8 + " "
-                    }
-                    if c.day_9 != "<null>" {
-                        period += weekdays[c.day_9.toInt()! - 1] + c.period_9 + " "
-                        location += c.location_9 + " "
-                    }
-                    
-                    
-                    self.coursesAddedToTimetable.addObject([c.name, c.lecturer, c.credits, c.uuid, period, location])
-                    self.tableView.reloadData()
                 }
             }
         }
         // after getting data from db
         // reload tableview
-        self.tableView.reloadData()
+//        self.tableView.reloadData()
     }
     
     // MARK: - compress data
@@ -479,10 +488,10 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             cell.period.text = self.coursesAddedToTimetable[indexPath.row][4] as! String
             cell.location.text = self.coursesAddedToTimetable[indexPath.row][5] as! String
             
-            if indexPath.row % 2 == 1 {
-                cell.lecturerBackgorundView.backgroundColor = self.colorgyDimYellow
-                cell.cardBackgroundView.backgroundColor = self.colorgyLightYellow
-            }
+//            if indexPath.row % 2 == 1 {
+//                cell.lecturerBackgorundView.backgroundColor = self.colorgyDimYellow
+//                cell.cardBackgroundView.backgroundColor = self.colorgyLightYellow
+//            }
             
             return cell
         }
@@ -499,8 +508,13 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             // get out all the data, easy to read.
             let name = self.filteredCourse[indexPath.row]["name"] as! String
             let lecturer = self.filteredCourse[indexPath.row]["lecturer"] as! String
-            let credits = self.filteredCourse[indexPath.row]["credits"] as! Int
+            let credits = Int32(self.filteredCourse[indexPath.row]["credits"] as! Int)
             let uuid = self.filteredCourse[indexPath.row]["code"] as! String
+            // year, term, id, type
+            let year = Int32(self.filteredCourse[indexPath.row]["year"] as! Int)
+            let term = Int32(self.filteredCourse[indexPath.row]["term"] as! Int)
+            let id = Int32(self.filteredCourse[indexPath.row]["id"] as! Int)
+            let type = self.filteredCourse[indexPath.row]["_type"] as! String
             
             let optionMenu = UIAlertController(title: "\(name)", message: "\(lecturer)\n\(credits)", preferredStyle: UIAlertControllerStyle.Alert)
             let ok = UIAlertAction(title: "加入課程", style: UIAlertActionStyle.Default, handler: { (action:UIAlertAction!) -> Void in
@@ -515,7 +529,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                         sessions.addObject(["\(day!!)", "\(session!!)", "\(location!!)"])
                     }
                     println(sessions)
-                    self.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions)
+                    self.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
                 }
             })
             let cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: { (action:UIAlertAction!) -> Void in

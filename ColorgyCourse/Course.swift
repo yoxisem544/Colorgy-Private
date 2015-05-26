@@ -13,8 +13,13 @@ class Course: NSManagedObject {
    
     @NSManaged var name: String!
     @NSManaged var lecturer: String!
-    @NSManaged var credits: Int
+    @NSManaged var credits: Int32
     @NSManaged var uuid: String!
+    
+    @NSManaged var id: Int32
+    @NSManaged var type: String
+    @NSManaged var year: Int32
+    @NSManaged var term: Int32
     
     @NSManaged var day_1: String!
     @NSManaged var day_2: String!

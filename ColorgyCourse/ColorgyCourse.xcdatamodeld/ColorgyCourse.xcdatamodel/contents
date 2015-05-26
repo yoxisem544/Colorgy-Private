@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7549" systemVersion="14E17e" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7701" systemVersion="14E17e" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Course" representedClassName="ColorgyCourse.Course" syncable="YES">
         <attribute name="credits" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="day_1" optional="YES" attributeType="String" syncable="YES"/>
@@ -11,6 +11,7 @@
         <attribute name="day_7" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="day_8" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="day_9" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="id" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="lecturer" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="location_1" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="location_2" optional="YES" attributeType="String" syncable="YES"/>
@@ -31,9 +32,12 @@
         <attribute name="period_7" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="period_8" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="period_9" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="term" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="uuid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="year" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Course" positionX="-63" positionY="-18" width="128" height="510"/>
+        <element name="Course" positionX="-63" positionY="-18" width="128" height="570"/>
     </elements>
 </model>
