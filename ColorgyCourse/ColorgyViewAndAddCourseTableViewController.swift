@@ -270,9 +270,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     // fetch data and update view, this function will update selected course.
     // these data are from db
     func fetchDataAndUpdateSelectedCourses() {
-        println("幹")
         // first get out the data from db
         if self.coursesAddedToTimetable == nil {
+            // this if again is to prevent duplicate tableview data....
             if let coursesFromDB = self.getDataFromDatabase() {
                 // if successfully get course data, parse it.
 

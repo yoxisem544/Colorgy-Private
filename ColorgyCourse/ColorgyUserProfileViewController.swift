@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class ColorgyUserProfileViewController: UIViewController {
     
@@ -60,6 +61,9 @@ class ColorgyUserProfileViewController: UIViewController {
         
         // bar frame change nitification
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "barChange", name: UIApplicationDidChangeStatusBarFrameNotification, object: nil)
+        
+        //testing
+        self.updateCourseFromServer()
     }
     
     func barChange() {
@@ -74,12 +78,12 @@ class ColorgyUserProfileViewController: UIViewController {
     // MARK: - fetch data from server
     func fetchCourseDataFromServer() {
         
+        var ud = NSUserDefaults.standardUserDefaults()
         var front_url = "https://colorgy.io:443/api/"
         var middle_url = "/courses.json?per_page=5000&&&&&access_token="
-        let school = "test"
-        var ud = NSUserDefaults.standardUserDefaults()
+        let school = ud.objectForKey("userSchool") as! String
         var token = ud.objectForKey("ColorgyAccessToken") as! String
-        let url = front_url + school + middle_url + token
+        let url = front_url + school.lowercaseString + middle_url + token
         
         println(url)
         
@@ -88,9 +92,7 @@ class ColorgyUserProfileViewController: UIViewController {
         afManager.requestSerializer = AFJSONRequestSerializer()
         afManager.responseSerializer = AFJSONResponseSerializer()
         
-        let params = []
-        
-        afManager.GET(url, parameters: params, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
+        afManager.GET(url, parameters: nil, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
             var resArr = responseObject as! NSArray
             var parsedResData = NSMutableArray()
             
@@ -103,6 +105,83 @@ class ColorgyUserProfileViewController: UIViewController {
             }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
                 println("error post")
         })
+    }
+    
+    func updateCourseFromServer() {
+        
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: ""))
+        
+        var ud = NSUserDefaults.standardUserDefaults()
+        var front_url = "https://colorgy.io:443/api/"
+        var middle_url = "/courses.json?per_page=5000&&&&&access_token="
+        let school = ud.objectForKey("userSchool") as! String
+        var token = ud.objectForKey("ColorgyAccessToken") as! String
+        let url = front_url + "TEST".lowercaseString + middle_url + token
+        
+        afManager.requestSerializer = AFJSONRequestSerializer()
+        afManager.responseSerializer = AFJSONResponseSerializer()
+        
+        afManager.GET(url, parameters: nil, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
+            println(responseObject.count)
+            // if get update course, archive it and replace it.
+            let archiveData = self.archive(responseObject)
+            ud.setObject(archiveData, forKey: "courseDataFromServer")
+            ud.synchronize()
+            // check db and new course data, update old db data
+            var vc = ColorgyViewAndAddCourseTableViewController()
+            var coursesInDB = vc.getDataFromDatabase()
+            // update only if there is data in db.
+            var userCourses = NSMutableArray()
+            // collect user course uuid
+            if coursesInDB != nil {
+                for course: Course in coursesInDB! {
+                    userCourses.addObject(course.uuid)
+                }
+            }
+            // clear db
+            // do something here....
+            // get courses back using new data.
+            if userCourses.count != 0 {
+                // this vc help us to store data to db
+                let vc = ColorgyViewAndAddCourseTableViewController()
+                // loop through new course data
+                for newCourse in responseObject as! NSArray {
+                    // check if any course match.
+                    for uc in userCourses {
+                        if newCourse["code"] as! String == uc as! String {
+                            println("有！ \(uc)")
+                            // get out all the data, easy to use.
+                            let name = newCourse["name"] as! String
+                            let lecturer = newCourse["lecturer"] as! String
+                            let credits = Int32(newCourse["credits"] as! Int)
+                            let uuid = newCourse["code"] as! String
+                            // year, term, id, type
+                            let year = Int32(newCourse["year"] as! Int)
+                            let term = Int32(newCourse["term"] as! Int)
+                            let id = Int32(newCourse["id"] as! Int)
+                            let type = newCourse["_type"] as! String
+                            // sessions.
+                            var sessions = NSMutableArray()
+                            for i in 1...9 {
+                                let day = newCourse["day_" + "\(i)"]
+                                let session = newCourse["period_" + "\(i)"]
+                                let location = newCourse["location_" + "\(i)"]
+                                
+                                sessions.addObject(["\(day!!)", "\(session!!)", "\(location!!)"])
+                            }
+                            // store it
+                            vc.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
+                            // if match, remove from lists and break.
+                            userCourses.removeObject(uc)
+                            break
+                        }
+                    }
+                }
+            }
+            println(userCourses)
+            }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
+                println("error post")
+            })
     }
     
     // MARK: - compress data
