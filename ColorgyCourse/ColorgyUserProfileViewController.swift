@@ -19,6 +19,7 @@ class ColorgyUserProfileViewController: UIViewController {
     var backgroundImage: UIImageView!
     var profilePhotoImageView: UIImageView!
     var userInformationCard: UIView!
+    var outerFrame: UIView!
     
     @IBOutlet weak var revealMenuButton: UIBarButtonItem!
     
@@ -61,13 +62,21 @@ class ColorgyUserProfileViewController: UIViewController {
         
         // bar frame change nitification
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "barChange", name: UIApplicationDidChangeStatusBarFrameNotification, object: nil)
-        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "youRBack", name: UIApplicationDidBecomeActiveNotification, object: nil)
         //testing
 //        self.updateCourseFromServer()
     }
     
     func barChange() {
         viewDidLoad()
+    }
+    
+    func youRBack() {
+        // every time user come back to app, start animating.
+        // cause this is always the very first scene, so just animate views here.
+        // but if this view is not your first view, always animate once in viewdidload.
+        println("user p 回來")
+        self.animateOuterFrame()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -199,15 +208,23 @@ class ColorgyUserProfileViewController: UIViewController {
     //MARK: - setup
     func setupProfilePhotoOuterFrame() {
         var view = UIImageView(image: UIImage(named: "profileOuterFrame"))
+        self.outerFrame = view
         view.center = CGPointMake(self.profilePhotoImageView.center.x + 33/2, self.profilePhotoImageView.center.y - 57/2)
         
         self.view.addSubview(view)
         self.view.sendSubviewToBack(view)
         self.view.sendSubviewToBack(self.backgroundImage)
         
+        self.animateOuterFrame()
+    }
+    
+    func animateOuterFrame() {
+        
         UIView.animateWithDuration(1, delay: 0, options: UIViewAnimationOptions.Autoreverse | UIViewAnimationOptions.Repeat, animations: {
-                view.transform = CGAffineTransformMakeScale(0.95, 0.95)
-            }, completion: nil)
+                self.outerFrame.transform = CGAffineTransformMakeScale(0.95, 0.95)
+            }, completion: { (isFinished: Bool) in
+                self.outerFrame.transform = CGAffineTransformMakeScale(1, 1)
+            })
     }
     
     func setupUserPorfilePhotoWithImage(image: UIImage) {

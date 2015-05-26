@@ -47,6 +47,7 @@ class ColorgyTimeTableViewController: UIViewController {
     
     // MARK: - timetableview
     var colorgyTimeTableView: UIScrollView!
+    var isAnimating: Bool!
     
     // MARK: - color declaration
     // color region
@@ -142,9 +143,28 @@ class ColorgyTimeTableViewController: UIViewController {
         
         // status bar frame change notification
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "barChange", name: UIApplicationDidChangeStatusBarFrameNotification, object: nil)
-        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "youRBack", name: UIApplicationDidBecomeActiveNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "youGo", name: UIApplicationDidEnterBackgroundNotification, object: nil)
         // notify
         self.setupNotification()
+        // animate conflict courses
+        self.isAnimating = true
+        self.animateConflictCourses()
+    }
+    
+    func youRBack() {
+        // every time user come back to app, start animating.
+        // cause this is always the very first scene, so just animate views here.
+        // but if this view is not your first view, always animate once in viewdidload.
+        println("大師兄你回來惹QAQQQQQQ")
+        if !self.isAnimating {
+            self.animateConflictCourses()
+            self.isAnimating = true
+        }
+    }
+    
+    func youGo() {
+        self.isAnimating = false
     }
     
     func barChange() {
@@ -290,7 +310,6 @@ class ColorgyTimeTableViewController: UIViewController {
             println("count is 0, no conflicts.")
         } else {
             self.getConflictTimetable()
-            self.animateConflictCourses()
         }
         
     }
@@ -337,7 +356,10 @@ class ColorgyTimeTableViewController: UIViewController {
                             self.colorgyTimeTableView.bringSubviewToFront(view)
                             UIView.animateWithDuration(0.7, delay: 0, options: UIViewAnimationOptions.Repeat | UIViewAnimationOptions.Autoreverse | UIViewAnimationOptions.AllowUserInteraction, animations: {
                                     view.transform = CGAffineTransformMakeScale(1.1, 1.1)
-                                }, completion: nil)
+                                }, completion: { (isFinished: Bool) in
+                                    println("animation fiifsh")
+                                    view.transform = CGAffineTransformMakeScale(1, 1)
+                                })
                         }
                     }
                 }

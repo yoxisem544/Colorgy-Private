@@ -554,6 +554,39 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             optionMenu.addAction(cancel)
             
             self.presentViewController(optionMenu, animated: true, completion: nil)
+        } else if !self.searchCourse.active {
+            println("you tap \(indexPath.row)")
+            let name = self.coursesAddedToTimetable[indexPath.row][0] as! String
+            var alert = UIAlertController(title: "刪除課程", message: "確定翻除" + name + "這堂課嗎？", preferredStyle: UIAlertControllerStyle.Alert)
+            var ok = UIAlertAction(title: "刪除", style: UIAlertActionStyle.Cancel, handler: {(action: UIAlertAction!) in
+                let uuid = self.coursesAddedToTimetable[indexPath.row][3] as! String
+                self.deleteCourseWithUUID(uuid)
+            })
+            var cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Default, handler: nil)
+            alert.addAction(ok)
+            alert.addAction(cancel)
+            dispatch_async(dispatch_get_main_queue()) {
+                self.presentViewController(alert, animated: true, completion: nil)
+            }
         }
+    }
+    
+    func deleteCourseWithUUID(uuid: String) {
+        var courses = self.getDataFromDatabase()
+        if let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext {
+            for course in courses! {
+                if course.uuid == uuid {
+                    managedObjectContext.deleteObject(course)
+                    var e: NSError?
+                    managedObjectContext.save(&e)
+                    if e != nil {
+                        println("something wrong while deleting course")
+                    }
+                    break
+                }
+            }
+        }
+        self.coursesAddedToTimetable = nil
+        self.tableView.reloadData()
     }
 }
