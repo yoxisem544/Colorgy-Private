@@ -93,10 +93,58 @@ class ColorgyTimeTableViewController: UIViewController {
                 ud.synchronize()
             }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
                 println("error!!!")
-                var res = task.response as! NSHTTPURLResponse
+                let alert = UIAlertController(title: "錯誤", message: "與伺服器驗證過期，請重新登入！", preferredStyle: UIAlertControllerStyle.Alert)
+                let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+                    
+                    var ud = NSUserDefaults.standardUserDefaults()
+                    ud.setObject(nil, forKey: "isLogin")
+                    ud.setObject(nil, forKey: "loginTpye")
+                    ud.setObject(nil, forKey: "smallFBProfilePhoto")
+                    ud.setObject(nil, forKey: "bigFBProfilePhoto")
+                    ud.setObject(nil, forKey: "ColorgyAccessToken")
+                    ud.setObject(nil, forKey: "ColorgyCreatedTime")
+                    ud.setObject(nil, forKey: "ColorgyExpireTime")
+                    ud.setObject(nil, forKey: "ColorgyRefreshToken")
+                    ud.setObject(nil, forKey: "ColorgyTokenType")
+//                    ud.setObject(nil, forKey: "courseDataFromServer")
+                    ud.setObject(nil, forKey: "userName")
+                    ud.setObject(nil, forKey: "userSchool")
+                    ud.synchronize()
+                    
+                    FBSession.activeSession().closeAndClearTokenInformation()
+                    
+                    self.logoutAnimation()
+
+                    var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                    dispatch_after(delay, dispatch_get_main_queue()) {
+                        var storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
+                        self.presentViewController(vc, animated: true, completion: nil)
+                    }
+                })
                 
-                println(res.statusCode)
+                alert.addAction(ok)
+                self.presentViewController(alert, animated: true, completion: nil)
             })
+    }
+    
+    func logoutAnimation() {
+        
+        var view = UIView(frame: CGRectMake(0, 0, 500, 500))
+        view.layer.cornerRadius = 250
+        view.backgroundColor = self.colorgyOrange
+        view.transform = CGAffineTransformMakeScale(0, 0)
+        
+        // position of view
+        view.center.x = self.revealViewController().view.center.x
+        view.center.y = self.view.center.y
+        
+        //        self.view.addSubview(view)
+        self.revealViewController().view.addSubview(view)
+        
+        UIView.animateWithDuration(1, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+            view.transform = CGAffineTransformMakeScale(10, 10)
+            }, completion: nil)
     }
     
     // MARK: - view
@@ -193,6 +241,8 @@ class ColorgyTimeTableViewController: UIViewController {
         let school = ud.objectForKey("userSchool") as! String
         var token = ud.objectForKey("ColorgyAccessToken") as! String
         let url = front_url + school.lowercaseString + middle_url + token
+        println("安安\n")
+        println(url)
 
         afManager.requestSerializer = AFJSONRequestSerializer()
         afManager.responseSerializer = AFJSONResponseSerializer()
@@ -237,15 +287,27 @@ class ColorgyTimeTableViewController: UIViewController {
                         if newCourse["code"] as! String == uc as! String {
                             println("有！ \(uc)")
                             // get out all the data, easy to use.
-                            let name = newCourse["name"] as! String
-                            let lecturer = newCourse["lecturer"] as! String
-                            let credits = Int32(newCourse["credits"] as! Int)
-                            let uuid = newCourse["code"] as! String
+                            let name = newCourse["name"] as? String
+                            let lecturer = newCourse["lecturer"] as? String
+                            var credits = Int32()
+                            if let c = newCourse["credits"] as? Int {
+                                credits = Int32(c)
+                            }
+                            let uuid = newCourse["code"] as? String
                             // year, term, id, type
-                            let year = Int32(newCourse["year"] as! Int)
-                            let term = Int32(newCourse["term"] as! Int)
-                            let id = Int32(newCourse["id"] as! Int)
-                            let type = newCourse["_type"] as! String
+                            var year = Int32(newCourse["year"] as! Int)
+                            if let y = newCourse["year"] as? Int {
+                                year = Int32(y)
+                            }
+                            var term = Int32()
+                            if let t = newCourse["year"] as? Int {
+                                term = Int32(t)
+                            }
+                            var id = Int32()
+                            if let i = newCourse["id"] as? Int {
+                                id = Int32(i)
+                            }
+                            let type = newCourse["_type"] as? String
                             // sessions.
                             var sessions = NSMutableArray()
                             for i in 1...9 {
@@ -270,7 +332,7 @@ class ColorgyTimeTableViewController: UIViewController {
             var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 0.3 * Double(NSEC_PER_SEC)))
             dispatch_after(delay, dispatch_get_main_queue()) {
                 // after update, load view again
-                let success = UIAlertController(title: "更新成功", message: "✅yeah!", preferredStyle: UIAlertControllerStyle.Alert)
+                let success = UIAlertController(title: "更新成功", message: "✅ yeah!", preferredStyle: UIAlertControllerStyle.Alert)
                 self.presentViewController(success, animated: true, completion: nil)
                 delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1.5 * Double(NSEC_PER_SEC)))
                 dispatch_after(delay, dispatch_get_main_queue()) {
@@ -282,6 +344,7 @@ class ColorgyTimeTableViewController: UIViewController {
                 alert.dismissViewControllerAnimated(true, completion: nil)
                 var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
                 dispatch_after(delay, dispatch_get_main_queue()) {
+                    self.refreshAccessToken()
                     let err = UIAlertController(title: "錯誤", message: "更新失敗，" + school + "可能尚未開通使用！", preferredStyle: UIAlertControllerStyle.Alert)
                     let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: nil)
                     err.addAction(ok)
@@ -325,8 +388,13 @@ class ColorgyTimeTableViewController: UIViewController {
                                                     ]
         
         for course in self.coursesOnTimetable {
+            println(course.center)
+            println(course.subviews)
             let position = self.getCoursePositionOnTimetable(course.center)!
-            conflictTimetable[position.day - 1][position.session - 1].addObject(course)
+            if position.day > 0 && position.session > 0 {
+                // some session or day are smaller then 1
+                conflictTimetable[position.day - 1][position.session - 1].addObject(course)
+            }
         }
         
         self.conflictCourses = conflictTimetable
@@ -427,7 +495,7 @@ class ColorgyTimeTableViewController: UIViewController {
         var message = ""
         var title = "好"
         if courses.count > 1 {
-            title = "幹選那麼多是要死喔？"
+            title = "衝堂囉！"
         }
         for course in courses {
             let c = course as! UIView
@@ -438,6 +506,10 @@ class ColorgyTimeTableViewController: UIViewController {
                     message += "課程名稱：" + label.text! + "\n"
                 }
             }
+            println("以上課程衝堂！")
+        }
+        if courses.count > 1 {
+            message += "以上課程衝堂！"
         }
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
@@ -615,7 +687,8 @@ class ColorgyTimeTableViewController: UIViewController {
         view.center = CGPointMake(x, y)
         
         
-        if day < 6 {
+        if day < 6 && day > 0 && session > 0 {
+            // some day and session are smaller then 0
             return view
         } else {
             return nil

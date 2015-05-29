@@ -111,6 +111,8 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
 
         // add search bar to top of tableview
         self.tableView.tableHeaderView = self.searchCourse.searchBar
+        // search keyboard dismissmode
+        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.OnDrag
         
         //style fo search bar
         //if you dont add this, status bar will be ruin by the search
@@ -139,11 +141,223 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     //MARK:- update from cloud
     @IBAction func updateFromCloud(sender: AnyObject) {
         println("from cloud!!")
-        viewDidLoad()
+        self.updateCourseFromServer()
     }
     
     // MARK: - Fetch data from server
+    func updateCourseFromServer() {
+        
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: ""))
+        
+        var ud = NSUserDefaults.standardUserDefaults()
+        var front_url = "https://colorgy.io:443/api/"
+        var middle_url = "/courses.json?per_page=5000&&&&&access_token="
+        let school = ud.objectForKey("userSchool") as! String
+        var token = ud.objectForKey("ColorgyAccessToken") as! String
+        let url = front_url + school.lowercaseString + middle_url + token
+        println("安安\n")
+        println(url)
+        
+        afManager.requestSerializer = AFJSONRequestSerializer()
+        afManager.responseSerializer = AFJSONResponseSerializer()
+        
+        // block when updating...
+        let alert = UIAlertController(title: "更新中", message: "課程資料更新中，\n過程中請不要離開程式！\n\n", preferredStyle: UIAlertControllerStyle.Alert)
+        let indicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 150, 150))
+        alert.view.addSubview(indicator)
+        indicator.center = CGPointMake(134, 100)
+        indicator.color = self.colorgyLightOrange
+        indicator.startAnimating()
+        self.presentViewController(alert, animated: true, completion: nil)
+        
+        afManager.GET(url, parameters: nil, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
+            println(responseObject.count)
+            // check db and new course data, update old db data
+            var vc = ColorgyViewAndAddCourseTableViewController()
+            var coursesInDB = vc.getDataFromDatabase()
+            // if get update course, archive it and replace it.
+            let archiveData = vc.archive(responseObject)
+            ud.setObject(archiveData, forKey: "courseDataFromServer")
+            ud.synchronize()
+            // update only if there is data in db.
+            var userCourses = NSMutableArray()
+            // collect user course uuid
+            if coursesInDB != nil {
+                for course: Course in coursesInDB! {
+                    userCourses.addObject(course.uuid)
+                }
+            }
+            // clear db
+            var sidevc = ColorgySideMenuViewController()
+            sidevc.deleteDataFromDatabase()
+            // get courses back using new data.
+            if userCourses.count != 0 {
+                // this vc help us to store data to db
+                let vc = ColorgyViewAndAddCourseTableViewController()
+                // loop through new course data
+                for newCourse in responseObject as! NSArray {
+                    // check if any course match.
+                    for uc in userCourses {
+                        if newCourse["code"] as! String == uc as! String {
+                            println("有！ \(uc)")
+                            // get out all the data, easy to use.
+                            let name = newCourse["name"] as? String
+                            let lecturer = newCourse["lecturer"] as? String
+                            var credits = Int32()
+                            if let c = newCourse["credits"] as? Int {
+                                credits = Int32(c)
+                            }
+                            let uuid = newCourse["code"] as? String
+                            // year, term, id, type
+                            var year = Int32(newCourse["year"] as! Int)
+                            if let y = newCourse["year"] as? Int {
+                                year = Int32(y)
+                            }
+                            var term = Int32()
+                            if let t = newCourse["year"] as? Int {
+                                term = Int32(t)
+                            }
+                            var id = Int32()
+                            if let i = newCourse["id"] as? Int {
+                                id = Int32(i)
+                            }
+                            let type = newCourse["_type"] as? String
+                            // sessions.
+                            var sessions = NSMutableArray()
+                            for i in 1...9 {
+                                let day = newCourse["day_" + "\(i)"]
+                                let session = newCourse["period_" + "\(i)"]
+                                let location = newCourse["location_" + "\(i)"]
+                                
+                                sessions.addObject(["\(day!!)", "\(session!!)", "\(location!!)"])
+                            }
+                            // store it
+                            vc.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
+                            // if match, remove from lists and break.
+                            userCourses.removeObject(uc)
+                            break
+                        }
+                    }
+                }
+            }
+            println("update success")
+            alert.dismissViewControllerAnimated(true, completion: nil)
+            self.viewDidLoad()
+            var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 0.3 * Double(NSEC_PER_SEC)))
+            dispatch_after(delay, dispatch_get_main_queue()) {
+                // after update, load view again
+                let success = UIAlertController(title: "更新成功", message: "✅yeah!", preferredStyle: UIAlertControllerStyle.Alert)
+                self.presentViewController(success, animated: true, completion: nil)
+                delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1.5 * Double(NSEC_PER_SEC)))
+                dispatch_after(delay, dispatch_get_main_queue()) {
+                    success.dismissViewControllerAnimated(true, completion: nil)
+                    self.tableView.reloadData()
+                }
+            }
+            }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
+                println("error post")
+                alert.dismissViewControllerAnimated(true, completion: nil)
+                var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                dispatch_after(delay, dispatch_get_main_queue()) {
+                    self.refreshAccessToken()
+                    let err = UIAlertController(title: "錯誤", message: "更新失敗，" + school + "可能尚未開通使用！", preferredStyle: UIAlertControllerStyle.Alert)
+                    let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: nil)
+                    err.addAction(ok)
+                    self.presentViewController(err, animated: true, completion: nil)
+                }
+        })
+    }
     
+    func refreshAccessToken() {
+        
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        
+        afManager.requestSerializer = AFJSONRequestSerializer()
+        afManager.responseSerializer = AFJSONResponseSerializer()
+        
+        var ud = NSUserDefaults.standardUserDefaults()
+        let refresh_token = ud.objectForKey("ColorgyRefreshToken") as! String
+        println(refresh_token)
+        
+        let params = [
+            "grant_type": "refresh_token",
+            // 應用程式ID application id, in colorgy server
+            "client_id": "ad2d3492de7f83f0708b5b1db0ac7041f9179f78a168171013a4458959085ba4",
+            "client_secret": "d9de77450d6365ca8bd6717bbf8502dfb4a088e50962258d5d94e7f7211596a3",
+            "refresh_token": refresh_token
+        ]
+        
+        afManager.POST("https://colorgy.io/oauth/token?", parameters: params, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+            println("ok! refresh!")
+            println(responseObject)
+            let token = responseObject["access_token"] as! String
+            let created_at = String(stringInterpolationSegment: responseObject["created_at"])
+            let expires_in = String(stringInterpolationSegment: responseObject["expires_in"])
+            let refresh_token = responseObject["refresh_token"] as! String
+            let token_type = responseObject["token_type"] as! String
+            
+            
+            ud.setObject(token, forKey: "ColorgyAccessToken")
+            ud.setObject(created_at, forKey: "ColorgyCreatedTime")
+            ud.setObject(expires_in, forKey: "ColorgyExpireTime")
+            ud.setObject(refresh_token, forKey: "ColorgyRefreshToken")
+            ud.setObject(token_type, forKey: "ColorgyTokenType")
+            ud.synchronize()
+            }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                println("error!!!")
+                let alert = UIAlertController(title: "錯誤", message: "與伺服器驗證過期，請重新登入！", preferredStyle: UIAlertControllerStyle.Alert)
+                let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+                    
+                    var ud = NSUserDefaults.standardUserDefaults()
+                    ud.setObject(nil, forKey: "isLogin")
+                    ud.setObject(nil, forKey: "loginTpye")
+                    ud.setObject(nil, forKey: "smallFBProfilePhoto")
+                    ud.setObject(nil, forKey: "bigFBProfilePhoto")
+                    ud.setObject(nil, forKey: "ColorgyAccessToken")
+                    ud.setObject(nil, forKey: "ColorgyCreatedTime")
+                    ud.setObject(nil, forKey: "ColorgyExpireTime")
+                    ud.setObject(nil, forKey: "ColorgyRefreshToken")
+                    ud.setObject(nil, forKey: "ColorgyTokenType")
+                    //                    ud.setObject(nil, forKey: "courseDataFromServer")
+                    ud.setObject(nil, forKey: "userName")
+                    ud.setObject(nil, forKey: "userSchool")
+                    ud.synchronize()
+                    
+                    FBSession.activeSession().closeAndClearTokenInformation()
+                    
+                    self.logoutAnimation()
+                    
+                    var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                    dispatch_after(delay, dispatch_get_main_queue()) {
+                        var storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
+                        self.presentViewController(vc, animated: true, completion: nil)
+                    }
+                })
+                
+                alert.addAction(ok)
+                self.presentViewController(alert, animated: true, completion: nil)
+        })
+    }
+    
+    func logoutAnimation() {
+        
+        var view = UIView(frame: CGRectMake(0, 0, 500, 500))
+        view.layer.cornerRadius = 250
+        view.backgroundColor = self.colorgyLightOrange
+        view.transform = CGAffineTransformMakeScale(0, 0)
+        
+        // position of view
+        view.center.x = self.revealViewController().view.center.x
+        view.center.y = self.view.center.y
+        
+        //        self.view.addSubview(view)
+        self.revealViewController().view.addSubview(view)
+        
+        UIView.animateWithDuration(1, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+            view.transform = CGAffineTransformMakeScale(10, 10)
+            }, completion: nil)
+    }
     
     // MARK: - compare data
     
@@ -211,7 +425,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     
     
     // this function help you to store data into db
-    func storeDataToDatabase(name: String, lecturer: String, credits: Int32, uuid: String, sessions: AnyObject, year: Int32, term: Int32, id: Int32, type: String) {
+    func storeDataToDatabase(name: String?, lecturer: String?, credits: Int32?, uuid: String?, sessions: AnyObject, year: Int32?, term: Int32?, id: Int32?, type: String?) {
         
         println("store")
         // get out managedObjectContext
@@ -222,13 +436,13 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             // assign its value to it's key
             course.name = name
             course.lecturer = lecturer
-            course.credits = credits
+            course.credits = credits!
             course.uuid = uuid
             
-            course.id = id
-            course.type = type
-            course.year = year
-            course.term = term
+            course.id = id!
+            course.type = type!
+            course.year = year!
+            course.term = term!
             
             course.day_1 = sessions[0][0] as! String
             course.day_2 = sessions[1][0] as! String
@@ -331,7 +545,12 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                                 location += c.location_9 + " "
                             }
                             
-                            var object = [c.name, c.lecturer, Int(c.credits), c.uuid, period, location]
+                            var lecturer = ""
+                            if c.lecturer == nil {
+                                lecturer = "老師"
+                            }
+                            lecturer = (c.lecturer != nil) ? c.lecturer : "老師"
+                            var object = [c.name, lecturer, String(Int(c.credits)), c.uuid, period, location]
                             self.coursesAddedToTimetable.addObject(object)
                         }
                         self.tableView.reloadData()
@@ -411,23 +630,30 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             self.indicator.startAnimating()
             
             for data in self.parsedCourseData {
-                var name = data["name"] as! String
-                var lecturer = data["lecturer"] as! String
 //                    let c = data["credits"]
 //                    var credits = "\(c)"
 //                    var uuid = data["code"] as! String
                 
                 var match: Bool! = false
                 
-                if name.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
-                    match = true
+                if let name = data["name"] as? String {
+                    if name.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
+                        match = true
+                    }
                 }
-                if lecturer.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
-                    match = true
+                if let lecturer = data["lecturer"] as? String {
+                    if lecturer.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
+                        match = true
+                    }
                 }
 //                    if credits.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
 //                        match = true
 //                    }
+                if let code = data["code"] as? String {
+                    if code.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil {
+                        match = true
+                    }
+                }
                 
                 // if match search text, add to filter course, ready to display to user
                 if match! {
@@ -470,11 +696,22 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
 //            let s = self.filteredCourse[indexPath.row]["credits"]
 //            cell.location.text = "\(s)"
             
-            cell.name.text = self.filteredCourse[indexPath.row]["name"] as! String
-            cell.lecturer.text = self.filteredCourse[indexPath.row]["lecturer"] as! String
-            cell.code.text = self.filteredCourse[indexPath.row]["code"] as! String
-            var c = self.filteredCourse[indexPath.row]["credits"] as! Int
-            cell.credits.text = "\(c)"
+            if let name = self.filteredCourse[indexPath.row]["name"] as? String {
+                cell.name.text = name
+            }
+            if let lecturer = self.filteredCourse[indexPath.row]["lecturer"] as? String {
+                cell.lecturer.text = lecturer
+            }
+            if let code = self.filteredCourse[indexPath.row]["code"] as? String {
+                cell.code.text = code
+            }
+            if let credits = self.filteredCourse[indexPath.row]["credits"] as? Int {
+                var c = credits
+                cell.credits.text = "\(c)"
+            } else {
+                cell.credits.text = "-"
+            }
+            
             
             if indexPath.row % 2 == 1 {
                 cell.lecturerBackgorundView.backgroundColor = self.colorgyDimYellow
@@ -488,14 +725,27 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             return cell
         } else {
             var cell = tableView.dequeueReusableCellWithIdentifier("ColorgyCourseCardCell", forIndexPath: indexPath) as! ColorgyCourseCardCell
-            
-            cell.name.text = self.coursesAddedToTimetable[indexPath.row][0] as! String
-            cell.code.text = self.coursesAddedToTimetable[indexPath.row][3] as! String
-            var c = self.coursesAddedToTimetable[indexPath.row][2] as! Int
-            cell.credits.text = "\(c)"
-            cell.lecturer.text = self.coursesAddedToTimetable[indexPath.row][1] as! String
-            cell.period.text = self.coursesAddedToTimetable[indexPath.row][4] as! String
-            cell.location.text = self.coursesAddedToTimetable[indexPath.row][5] as! String
+            println("now on \(indexPath.row)")
+            if let name = self.coursesAddedToTimetable[indexPath.row][0] as? String {
+                cell.name.text = name
+            }
+            if let code = self.coursesAddedToTimetable[indexPath.row][3] as? String {
+                cell.code.text = code
+            }
+            if let credits = self.coursesAddedToTimetable[indexPath.row][2] as? String {
+                cell.credits.text = credits
+            } else {
+                cell.credits.text = "-"
+            }
+            if let lecturer = self.coursesAddedToTimetable[indexPath.row][1] as? String {
+                cell.lecturer.text = lecturer
+            }
+            if let period = self.coursesAddedToTimetable[indexPath.row][4] as? String {
+                cell.period.text = period
+            }
+            if let location = self.coursesAddedToTimetable[indexPath.row][5] as? String {
+                cell.location.text = location
+            }
             
             if indexPath.row % 2 == 1 {
                 cell.lecturerBackgorundView.backgroundColor = self.colorgyDimYellow
@@ -518,17 +768,34 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         if self.searchCourse.active {
             
             // get out all the data, easy to read.
-            let name = self.filteredCourse[indexPath.row]["name"] as! String
-            let lecturer = self.filteredCourse[indexPath.row]["lecturer"] as! String
-            let credits = Int32(self.filteredCourse[indexPath.row]["credits"] as! Int)
-            let uuid = self.filteredCourse[indexPath.row]["code"] as! String
+            let name = self.filteredCourse[indexPath.row]["name"] as? String
+            let lecturer = self.filteredCourse[indexPath.row]["lecturer"] as? String
+            var credits = Int32()
+            if let c = self.filteredCourse[indexPath.row]["credits"] as? Int {
+                credits = Int32(c)
+            } else {
+                credits = 0
+            }
+            let uuid = self.filteredCourse[indexPath.row]["code"] as? String
             // year, term, id, type
-            let year = Int32(self.filteredCourse[indexPath.row]["year"] as! Int)
-            let term = Int32(self.filteredCourse[indexPath.row]["term"] as! Int)
-            let id = Int32(self.filteredCourse[indexPath.row]["id"] as! Int)
-            let type = self.filteredCourse[indexPath.row]["_type"] as! String
+            var year = Int32()
+            if let y = self.filteredCourse[indexPath.row]["year"] as? Int {
+                year = Int32(y)
+            }
+            var term = Int32()
+            if let t = self.filteredCourse[indexPath.row]["term"] as? Int {
+                term = Int32(t)
+            }
+            var id = Int32()
+            if let i = self.filteredCourse[indexPath.row]["id"] as? Int {
+                id = Int32(i)
+            }
+            let type = self.filteredCourse[indexPath.row]["_type"] as? String
             
-            let optionMenu = UIAlertController(title: "\(name)", message: "\(lecturer)\n\(credits)", preferredStyle: UIAlertControllerStyle.Alert)
+            let courseName = (name != nil) ? name! : "未知課程"
+            let courseLecturer = (lecturer != nil) ? lecturer! : "-"
+            
+            let optionMenu = UIAlertController(title: "\(courseName)", message: "老師：\(courseLecturer)\n學分：\(credits)", preferredStyle: UIAlertControllerStyle.Alert)
             let ok = UIAlertAction(title: "加入課程", style: UIAlertActionStyle.Default, handler: { (action:UIAlertAction!) -> Void in
                 if !self.isCourseAlreadyAddedToSelectedCourse(self.filteredCourse[indexPath.row]["code"] as! String) {
                     // if this course is not selected...... add it
@@ -557,7 +824,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         } else if !self.searchCourse.active {
             println("you tap \(indexPath.row)")
             let name = self.coursesAddedToTimetable[indexPath.row][0] as! String
-            var alert = UIAlertController(title: "刪除課程", message: "確定翻除" + name + "這堂課嗎？", preferredStyle: UIAlertControllerStyle.Alert)
+            var alert = UIAlertController(title: "刪除課程", message: "確定刪除：" + name + "\n這堂課嗎？", preferredStyle: UIAlertControllerStyle.Alert)
             var ok = UIAlertAction(title: "刪除", style: UIAlertActionStyle.Cancel, handler: {(action: UIAlertAction!) in
                 let uuid = self.coursesAddedToTimetable[indexPath.row][3] as! String
                 self.deleteCourseWithUUID(uuid)
