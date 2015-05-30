@@ -153,7 +153,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         self.loginSwitchButton = UIButton(frame: CGRectMake(0, 0, 180, 20))
         self.loginSwitchButton.setTitle("Email 登入", forState: UIControlState.Normal)
         self.loginSwitchButton.titleLabel?.font = UIFont(name: "STHeitiTC-Medium", size: 15)
-        self.loginSwitchButton.setTitleColor(self.colorgyLightGray, forState: UIControlState.Normal)
+        self.loginSwitchButton.setTitleColor(self.colorgyGray, forState: UIControlState.Normal)
         self.loginSwitchButton.center = CGPointMake(self.view.center.x, self.view.center.y + 200)
         
         // targets of login switch button
