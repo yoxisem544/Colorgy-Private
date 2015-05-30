@@ -114,11 +114,20 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
     func okPressed() {
         println("oooo")
         println(self.focusingSchool)
-        var ud = NSUserDefaults.standardUserDefaults()
-        ud.setObject(self.focusingSchool, forKey: "userSelectedSchool")
-        ud.synchronize()
-        self.updateCourseFromServer()
-        self.schoolPickerBackgroundView.hidden = true
+        
+        let alert = UIAlertController(title: "請確認！", message: "你要選的學校是\n" + self.focusingSchool + " 嗎？\n\n如果選錯了的話，請從左上角的按鈕登出後重新選擇即可！", preferredStyle: UIAlertControllerStyle.Alert)
+        let ok = UIAlertAction(title: "確認", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            var ud = NSUserDefaults.standardUserDefaults()
+            ud.setObject(self.focusingSchool, forKey: "userSelectedSchool")
+            ud.synchronize()
+            self.schoolPickerBackgroundView.hidden = true
+            self.updateCourseFromServer()
+        })
+        let cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: nil)
+        alert.addAction(ok)
+        alert.addAction(cancel)
+        
+        self.presentViewController(alert, animated: true, completion: nil)
     }
     
     func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
