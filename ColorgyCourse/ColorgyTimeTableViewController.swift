@@ -59,7 +59,7 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
     var schoolPickerView: UIPickerView!
     var schoolPickerBackgroundView: UIView!
     var focusingSchool: String!
-    var schools = ["NTUST", "Stanford"]
+    var schools = ["loading school"]
     
     // MARK:- school picker setups
     func setupSchoolPickerView() {
@@ -287,6 +287,9 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
         // picker
         self.setupSchoolPickerView()
         
+        // test update school
+        self.updateSchools()
+        
         var ud = NSUserDefaults.standardUserDefaults()
         //        if ud.objectForKey("hasLoginOnce") == nil {
         //            self.updateCourseFromServer()
@@ -366,33 +369,6 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
         println(UIApplication.sharedApplication().scheduledLocalNotifications)
     }
     
-    func testing() {
-        
-        UIApplication.sharedApplication().cancelAllLocalNotifications()
-        
-        var cal = NSCalendar.currentCalendar()
-        var com = NSDateComponents()
-        com.year = 2014
-        com.month = 12
-        com.day = 1
-        com.hour = 16
-        com.minute = 25
-        com.second = 30
-        
-        cal.timeZone = NSTimeZone.defaultTimeZone()
-        var dateToFire = cal.dateFromComponents(com)
-        
-        var localnoti = UILocalNotification()
-        localnoti.timeZone = NSTimeZone.defaultTimeZone()
-        localnoti.fireDate = dateToFire
-        localnoti.repeatInterval = NSCalendarUnit.CalendarUnitMinute
-        localnoti.alertBody = "嗡嗡翁嗡嗡"
-        
-        UIApplication.sharedApplication().scheduleLocalNotification(localnoti)
-        println("好的，設定完成")
-        println(UIApplication.sharedApplication().scheduledLocalNotifications)
-    }
-    
     func youRBack() {
         // every time user come back to app, start animating.
         // cause this is always the very first scene, so just animate views here.
@@ -422,6 +398,30 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
     @IBAction func updateFromCloud(sender: AnyObject) {
         println("from cloud!!")
         self.updateCourseFromServer()
+    }
+    
+    func updateSchools() {
+        let front_url = "https://colorgy.io:443/api/v1/organizations.json?access_token="
+        var ud = NSUserDefaults.standardUserDefaults()
+        let token = ud.objectForKey("ColorgyAccessToken") as! String
+        let url = front_url + token
+        
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: ""))
+        afManager.requestSerializer = AFJSONRequestSerializer()
+        afManager.responseSerializer = AFJSONResponseSerializer()
+        
+        afManager.GET(url, parameters: nil, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
+            let resObj = responseObject as! NSArray
+            self.schools = []
+            for res in resObj {
+                println(res["code"])
+                self.schools.append(res["code"] as! String)
+            }
+            self.focusingSchool = self.schools[0]
+            self.schoolPickerView.reloadAllComponents()
+        }, failure: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
+            
+        })
     }
     
     func updateCourseFromServer() {
