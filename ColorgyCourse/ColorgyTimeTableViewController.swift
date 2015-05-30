@@ -194,10 +194,113 @@ class ColorgyTimeTableViewController: UIViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "youRBack", name: UIApplicationDidBecomeActiveNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "youGo", name: UIApplicationDidEnterBackgroundNotification, object: nil)
         // notify
-        self.setupNotification()
+//        self.setupNotification()
         // animate conflict courses
         self.isAnimating = true
         self.animateConflictCourses()
+        
+        var ud = NSUserDefaults.standardUserDefaults()
+        if ud.objectForKey("hasLoginOnce") == nil {
+            self.updateCourseFromServer()
+            ud.setObject("loginOnce", forKey: "hasLoginOnce")
+            ud.synchronize()
+        }
+        self.setupCourseNotification()
+    }
+    
+    //MARK:- notification
+    func setupCourseNotification() {
+        
+        UIApplication.sharedApplication().cancelAllLocalNotifications()
+        if self.conflictCourses != nil {
+        for (index, everyDaySessions) in enumerate(self.conflictCourses) {
+            for (i, session) in enumerate(everyDaySessions) {
+                if i == 0 {
+                    println("head of session")
+                    if session.count > 0 {
+                        println("head of session")
+                        var thisOne = (session[0] as! UIView).subviews[0] as! UILabel
+                        var thisOneLocation = (session[1] as! UIView).subviews[1] as! UILabel
+                        self.setNotificationWithMessage("等一下在" + thisOneLocation.text! + " 上 " + thisOne.text!, day: index + 1, session: i)
+                    }
+                } else {
+                    println("\(index), \(i)")
+                    if session.count > 0 {
+                        var thisOne = (session[0] as! UIView).subviews[0] as! UILabel
+                        var thisOneLocation = (session[0] as! UIView).subviews[1] as! UILabel
+                        println("\(index), \(i) : \(thisOne.text)")
+                        if everyDaySessions[i - 1].count > 0 {
+                            var previousOne = (everyDaySessions[i - 1][0] as! UIView).subviews[0] as! UILabel
+                            if thisOne.text == previousOne.text {
+                                println("match!")
+                            } else {
+                                println("nop")
+                            }
+                        } else {
+                            println("no course infront of ....")
+                            self.setNotificationWithMessage("等一下在" + thisOneLocation.text! + " 上 " + thisOne.text!, day: index + 1, session: i)
+                        }
+                    }
+                }
+            }
+        }
+        } else {
+            println("self.conflictCourses is nil fuck it")
+        }
+        println(UIApplication.sharedApplication().scheduledLocalNotifications)
+        
+    }
+    
+    func setNotificationWithMessage(message: String, day: Int, session: Int) {
+        
+        var cal = NSCalendar.currentCalendar()
+        var com = NSDateComponents()
+        com.year = 2014
+        com.month = 12
+        com.day = day
+        com.hour = session + 7
+        com.minute = 0
+        com.second = 0
+        
+        cal.timeZone = NSTimeZone.defaultTimeZone()
+        var dateToFire = cal.dateFromComponents(com)
+        
+        var localnoti = UILocalNotification()
+        localnoti.timeZone = NSTimeZone.defaultTimeZone()
+        localnoti.fireDate = dateToFire
+        localnoti.repeatInterval = NSCalendarUnit.WeekCalendarUnit
+        localnoti.alertBody = message
+        
+        UIApplication.sharedApplication().scheduleLocalNotification(localnoti)
+        println("好的，設定完成")
+        println(UIApplication.sharedApplication().scheduledLocalNotifications)
+    }
+    
+    func testing() {
+        
+        UIApplication.sharedApplication().cancelAllLocalNotifications()
+        
+        var cal = NSCalendar.currentCalendar()
+        var com = NSDateComponents()
+        com.year = 2014
+        com.month = 12
+        com.day = 1
+        com.hour = 16
+        com.minute = 25
+        com.second = 30
+        
+        cal.timeZone = NSTimeZone.defaultTimeZone()
+        var dateToFire = cal.dateFromComponents(com)
+        
+        var localnoti = UILocalNotification()
+        localnoti.timeZone = NSTimeZone.defaultTimeZone()
+        localnoti.fireDate = dateToFire
+        localnoti.repeatInterval = NSCalendarUnit.CalendarUnitMinute
+        localnoti.alertBody = "嗡嗡翁嗡嗡"
+        
+        UIApplication.sharedApplication().scheduleLocalNotification(localnoti)
+        println("好的，設定完成")
+        println(UIApplication.sharedApplication().scheduledLocalNotifications)
     }
     
     func youRBack() {
@@ -243,6 +346,7 @@ class ColorgyTimeTableViewController: UIViewController {
         let url = front_url + school.lowercaseString + middle_url + token
         println("安安\n")
         println(url)
+        
 
         afManager.requestSerializer = AFJSONRequestSerializer()
         afManager.responseSerializer = AFJSONResponseSerializer()
@@ -393,6 +497,7 @@ class ColorgyTimeTableViewController: UIViewController {
             let position = self.getCoursePositionOnTimetable(course.center)!
             if position.day > 0 && position.session > 0 {
                 // some session or day are smaller then 1
+                println("conflict: \(position)")
                 conflictTimetable[position.day - 1][position.session - 1].addObject(course)
             }
         }
@@ -403,8 +508,9 @@ class ColorgyTimeTableViewController: UIViewController {
     func getCoursePositionOnTimetable(point: CGPoint?) -> (day: Int, session: Int)? {
         
         if point != nil {
-            var day = Int((point!.x - self.timetableSpacing - self.sideBarWidth - self.colorgyTimeTableCell.width / 2) / self.colorgyTimeTableCell.width) + 1
-            var session = Int((point!.y - self.timetableSpacing - self.headerHeight - self.colorgyTimeTableCell.width / 2) / self.colorgyTimeTableCell.height) + 1
+            var day = Int((point!.x - self.timetableSpacing - self.sideBarWidth - self.colorgyTimeTableCell.width / 2) / self.colorgyTimeTableCell.width + 0.1) + 1
+            // add 0.1 to prevent 1.99999 -> 1.0000
+            var session = Int(((point!.y - self.timetableSpacing - self.headerHeight - self.colorgyTimeTableCell.width / 2) / self.colorgyTimeTableCell.height + 0.1) + 1)
             return (day, session)
         } else {
             return nil
@@ -493,7 +599,7 @@ class ColorgyTimeTableViewController: UIViewController {
         let courses = self.conflictCourses[day - 1][session - 1]
         println(courses.count)
         var message = ""
-        var title = "好"
+        var title = "課程資訊"
         if courses.count > 1 {
             title = "衝堂囉！"
         }
@@ -501,9 +607,12 @@ class ColorgyTimeTableViewController: UIViewController {
             let c = course as! UIView
             println(c.subviews)
             for subview in c.subviews {
-                if subview.isKindOfClass(UILabel) {
+                if subview.isKindOfClass(UILabel) && subview.tag == 1 {
                     let label = subview as! UILabel
                     message += "課程名稱：" + label.text! + "\n"
+                } else if subview.isKindOfClass(UILabel) && subview.tag == 2 {
+                    let label = subview as! UILabel
+                    message += "教室位置：" + label.text! + "\n"
                 }
             }
             println("以上課程衝堂！")
@@ -669,17 +778,30 @@ class ColorgyTimeTableViewController: UIViewController {
     func addCourseWith(courseName: String, location: String, day: Int, session: Int) -> UIView? {
         
         var view = UIView(frame: CGRectMake(0, 0, self.colorgyTimeTableCell.width - 1, self.colorgyTimeTableCell.height - 1))
-        var label = UILabel(frame: CGRectMake(0, 0, self.colorgyTimeTableCell.width - 1, self.colorgyTimeTableCell.height - 1))
+        var label = UILabel(frame: CGRectMake(0, 3, self.colorgyTimeTableCell.width - 1, (self.colorgyTimeTableCell.height - 1) * 0.6))
         
         view.layer.cornerRadius = 5
         
-        label.text = courseName + "\n" + location
+        // name label
+        label.text = courseName
         label.font = UIFont(name: "STHeitiTC-Medium", size: 13)
         label.textAlignment = NSTextAlignment.Center
-        label.numberOfLines = 2
+        label.numberOfLines = 4
         label.textColor = UIColor.whiteColor()
+        label.tag = 1
         
         view.addSubview(label)
+        
+        // location label
+        var titlelabel = UILabel(frame: CGRectMake(0, label.bounds.size.height, self.colorgyTimeTableCell.width - 1, (self.colorgyTimeTableCell.height - 1) * 0.4))
+        titlelabel.text = location
+        titlelabel.font = UIFont(name: "STHeitiTC-Medium", size: 11)
+        titlelabel.textAlignment = NSTextAlignment.Center
+        titlelabel.numberOfLines = 1
+        titlelabel.textColor = UIColor.whiteColor()
+        titlelabel.tag = 2
+        
+        view.addSubview(titlelabel)
         
         var x = self.timetableSpacing + self.sideBarWidth - self.colorgyTimeTableCell.width / 2 + CGFloat(day) * self.colorgyTimeTableCell.width
         var y = self.timetableSpacing + self.headerHeight - self.colorgyTimeTableCell.width / 2 + CGFloat(session) * self.colorgyTimeTableCell.width

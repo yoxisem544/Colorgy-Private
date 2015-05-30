@@ -99,6 +99,7 @@ class ColorgySideMenuViewController: UIViewController {
                 ud.setObject(nil, forKey: "courseDataFromServer")
                 ud.setObject(nil, forKey: "userName")
                 ud.setObject(nil, forKey: "userSchool")
+                ud.setObject(nil, forKey: "hasLoginOnce")
                 ud.synchronize()
             
                 self.deleteDataFromDatabase()

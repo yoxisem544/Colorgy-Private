@@ -585,25 +585,29 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         afManager.GET("https://colorgy.io/api/v1/me?access_token=" + access_token, parameters: nil, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
                 let name = responseObject["name"] as! String
                 ud.setObject(name, forKey: "userName")
+            ud.synchronize()
                 if let res = responseObject["organizations"] as? NSArray {
                     ud.setObject(res[0] as! String, forKey: "userSchool")
-                    // if user is authed to Colorgy
-                    println("ready to switch view")
-                    self.animateLogoOff()
-                    // wait for animate logo off to finish
-                    var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
-                    dispatch_after(delay, dispatch_get_main_queue()) {
-                        println("fire!")
-                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                        var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyService") as! SWRevealViewController
-                        self.presentViewController(vc, animated: true, completion: nil)
-                    }
-                    
+                    ud.synchronize()
                 } else {
                     // if not, block this user.
-                    self.alertUserWithError("你必須在Colorgy上驗證學校信箱之後才能開始使用！")
-                    self.loginSwitchButton.hidden = false
+//                    self.alertUserWithError("你必須在Colorgy上驗證學校信箱之後才能開始使用！")
+//                    self.loginSwitchButton.hidden = false
+                    ud.setObject("NotYetAuthorized", forKey: "userSchool")
+                    ud.synchronize()
                 }
+                // if user is authed to Colorgy
+                println("ready to switch view")
+                self.animateLogoOff()
+                // wait for animate logo off to finish
+                var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                dispatch_after(delay, dispatch_get_main_queue()) {
+                    println("fire!")
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyService") as! SWRevealViewController
+                    self.presentViewController(vc, animated: true, completion: nil)
+                }
+            
                 ud.synchronize()
             
             

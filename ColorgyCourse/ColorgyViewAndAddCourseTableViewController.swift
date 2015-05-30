@@ -67,7 +67,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         self.tableView.backgroundColor = self.colorgyDarkGray
         // navi style
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
-        self.navigationItem.title = "選課"
+        self.navigationItem.title = "已選課程"
         
         // get json file
 //        let path = NSBundle.mainBundle().pathForResource("CCU_courses", ofType: "json")
@@ -836,6 +836,55 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                 self.presentViewController(alert, animated: true, completion: nil)
             }
         }
+    }
+    
+    func testTOAddAllcourse() {
+        for course in self.filteredCourse {
+            // get out all the data, easy to read.
+            let name = course["name"] as? String
+            let lecturer = course["lecturer"] as? String
+            var credits = Int32()
+            if let c = course["credits"] as? Int {
+                credits = Int32(c)
+            } else {
+                credits = 0
+            }
+            let uuid = course["code"] as? String
+            // year, term, id, type
+            var year = Int32()
+            if let y = course["year"] as? Int {
+                year = Int32(y)
+            }
+            var term = Int32()
+            if let t = course["term"] as? Int {
+                term = Int32(t)
+            }
+            var id = Int32()
+            if let i = course["id"] as? Int {
+                id = Int32(i)
+            }
+            let type = course["_type"] as? String
+            
+            let courseName = (name != nil) ? name! : "未知課程"
+            let courseLecturer = (lecturer != nil) ? lecturer! : "-"
+            
+            if !self.isCourseAlreadyAddedToSelectedCourse(course["code"] as! String) {
+                // if this course is not selected...... add it
+                var sessions = NSMutableArray()
+                for i in 1...9 {
+                    let day = course["day_" + "\(i)"]
+                    let session = course["period_" + "\(i)"]
+                    let location = course["location_" + "\(i)"]
+                    
+                    sessions.addObject(["\(day!!)", "\(session!!)", "\(location!!)"])
+                }
+                println(sessions)
+                self.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
+                // user add their course, set coursesAddedToTimetable to nil
+                self.coursesAddedToTimetable = nil
+            }
+        }
+        self.tableView.reloadData()
     }
     
     func deleteCourseWithUUID(uuid: String) {
