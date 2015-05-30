@@ -713,6 +713,24 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             } else {
                 cell.credits.text = "-"
             }
+            var text = ""
+            for i in 1...9 {
+                if let location = self.filteredCourse[indexPath.row]["location_\(i)"] as? String {
+                    println("近來惹")
+                    text += location + " "
+                }
+                                println(text)
+                cell.location.text = text
+            }
+            text = ""
+            for i in 1...9 {
+
+                if let period = self.filteredCourse[indexPath.row]["period_\(i)"] as? String {
+                    text += period + " "
+                }
+
+                cell.period.text = text
+            }
             
             
             if indexPath.row % 2 == 1 {
