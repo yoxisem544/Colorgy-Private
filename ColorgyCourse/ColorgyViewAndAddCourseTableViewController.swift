@@ -717,7 +717,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             for i in 1...9 {
                 if let location = self.filteredCourse[indexPath.row]["location_\(i)"] as? String {
                     println("近來惹")
-                    text += location + " "
+                    if location != "" {
+                        text += location + " "
+                    }
                 }
                                 println(text)
                 cell.location.text = text
@@ -725,8 +727,12 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             text = ""
             for i in 1...9 {
 
-                if let period = self.filteredCourse[indexPath.row]["period_\(i)"] as? String {
-                    text += period + " "
+                if let period = self.filteredCourse[indexPath.row]["period_\(i)"] as? Int {
+//                    text += period + " "
+                    if let day = self.filteredCourse[indexPath.row]["day_\(i)"] as? Int {
+                        text += self.getPeriodWithDay(day, session: period) + " "
+                    }
+
                 }
 
                 cell.period.text = text
@@ -858,6 +864,18 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         }
     }
     
+    //MARK:- get period
+    func getPeriodWithDay(day: Int, session: Int) -> String {
+        let weekdays = ["Mon", "Tue", "wed", "Thu", "Fri", "Sat", "Sun"]
+        var period = ""
+        
+        if day > 0 && day <= 7 && session >= 0 && session <= 14 {
+            period = weekdays[day] + String(session)
+        }
+        
+        return period
+    }
+    // MARK:- test
     func testTOAddAllcourse() {
         for course in self.filteredCourse {
             // get out all the data, easy to read.
