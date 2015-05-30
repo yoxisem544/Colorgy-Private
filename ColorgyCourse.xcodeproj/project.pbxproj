@@ -7,13 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		63038C651B10B58B008C8180 /* cordova_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 63038C641B10B58B008C8180 /* cordova_small.png */; };
-		63038C671B10B597008C8180 /* cordova_big.png in Resources */ = {isa = PBXBuildFile; fileRef = 63038C661B10B597008C8180 /* cordova_big.png */; };
-		63045EAD1B0EC5E10071555B /* SwitfyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63045EAC1B0EC5E10071555B /* SwitfyJSON.swift */; };
 		631008DF1AF771B7008A40E4 /* ColorgyNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631008DE1AF771B7008A40E4 /* ColorgyNavigationController.swift */; };
 		6324DA921B13696C00DF2F6C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6324DA911B13696C00DF2F6C /* CoreData.framework */; };
-		634FD6211AF749A9003B627D /* NCKU_samll_course.json in Resources */ = {isa = PBXBuildFile; fileRef = 634FD6201AF749A9003B627D /* NCKU_samll_course.json */; };
-		635F9FDC1AFDE58E001907BA /* CCU_courses.json in Resources */ = {isa = PBXBuildFile; fileRef = 635F9FDB1AFDE58E001907BA /* CCU_courses.json */; };
 		636FFF7A1AF9086D0012135C /* ColorgySideMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636FFF791AF9086D0012135C /* ColorgySideMenuViewController.swift */; };
 		6379F3CA1AFF454F007686B5 /* ColorgyUserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6379F3C91AFF454F007686B5 /* ColorgyUserProfileViewController.swift */; };
 		63A29E4D1AF722DF000494DB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A29E4C1AF722DF000494DB /* AppDelegate.swift */; };
@@ -43,13 +38,8 @@
 
 /* Begin PBXFileReference section */
 		572BB26BB0AC9A6CCD0BE10F /* Pods-ColorgyCourse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ColorgyCourse.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ColorgyCourse/Pods-ColorgyCourse.debug.xcconfig"; sourceTree = "<group>"; };
-		63038C641B10B58B008C8180 /* cordova_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cordova_small.png; sourceTree = "<group>"; };
-		63038C661B10B597008C8180 /* cordova_big.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cordova_big.png; sourceTree = "<group>"; };
-		63045EAC1B0EC5E10071555B /* SwitfyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitfyJSON.swift; sourceTree = "<group>"; };
 		631008DE1AF771B7008A40E4 /* ColorgyNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyNavigationController.swift; sourceTree = "<group>"; };
 		6324DA911B13696C00DF2F6C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		634FD6201AF749A9003B627D /* NCKU_samll_course.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NCKU_samll_course.json; sourceTree = "<group>"; };
-		635F9FDB1AFDE58E001907BA /* CCU_courses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = CCU_courses.json; sourceTree = "<group>"; };
 		636FFF791AF9086D0012135C /* ColorgySideMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgySideMenuViewController.swift; sourceTree = "<group>"; };
 		6379F3C91AFF454F007686B5 /* ColorgyUserProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyUserProfileViewController.swift; sourceTree = "<group>"; };
 		63A29E471AF722DF000494DB /* ColorgyCourse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ColorgyCourse.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -156,11 +146,6 @@
 		63A29E4A1AF722DF000494DB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				63038C661B10B597008C8180 /* cordova_big.png */,
-				63038C641B10B58B008C8180 /* cordova_small.png */,
-				63045EAC1B0EC5E10071555B /* SwitfyJSON.swift */,
-				634FD6201AF749A9003B627D /* NCKU_samll_course.json */,
-				635F9FDB1AFDE58E001907BA /* CCU_courses.json */,
 				63A29E4B1AF722DF000494DB /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -268,11 +253,7 @@
 			files = (
 				63A29E551AF722DF000494DB /* Main.storyboard in Resources */,
 				63A29E5A1AF722DF000494DB /* LaunchScreen.xib in Resources */,
-				63038C651B10B58B008C8180 /* cordova_small.png in Resources */,
 				63A29E571AF722DF000494DB /* Images.xcassets in Resources */,
-				63038C671B10B597008C8180 /* cordova_big.png in Resources */,
-				634FD6211AF749A9003B627D /* NCKU_samll_course.json in Resources */,
-				635F9FDC1AFDE58E001907BA /* CCU_courses.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -331,7 +312,6 @@
 				63A29E501AF722DF000494DB /* ColorgyCourse.xcdatamodeld in Sources */,
 				636FFF7A1AF9086D0012135C /* ColorgySideMenuViewController.swift in Sources */,
 				63A29E721AF7236C000494DB /* ColorgyFBLoginViewController.swift in Sources */,
-				63045EAD1B0EC5E10071555B /* SwitfyJSON.swift in Sources */,
 				63A29E4D1AF722DF000494DB /* AppDelegate.swift in Sources */,
 				631008DF1AF771B7008A40E4 /* ColorgyNavigationController.swift in Sources */,
 			);

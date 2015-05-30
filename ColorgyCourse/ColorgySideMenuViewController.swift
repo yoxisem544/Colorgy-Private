@@ -164,7 +164,7 @@ class ColorgySideMenuViewController: UIViewController {
             var data = ud.objectForKey("smallFBProfilePhoto") as! NSData
             profile.image = UIImage(data: data)
         } else if ud.objectForKey("loginType")! as! String == "account" {
-            profile.image = UIImage(named: "cordova_small.png")
+            // no profile image
         }
 
         profile.layer.masksToBounds = true

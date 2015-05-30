@@ -55,7 +55,7 @@ class ColorgyUserProfileViewController: UIViewController {
             var name = ud.objectForKey("userName") as! String
             var school = ud.objectForKey("userSchool") as! String
             self.setupUserInformationWithName(name, school: school)
-            self.setupUserPorfilePhotoWithImage(UIImage(named: "cordova_big.png")!)
+            self.setupUserPorfilePhotoWithImage(nil)
         }
         self.setupProfilePhotoOuterFrame()
 //        self.fetchCourseDataFromServer()
@@ -227,13 +227,17 @@ class ColorgyUserProfileViewController: UIViewController {
             })
     }
     
-    func setupUserPorfilePhotoWithImage(image: UIImage) {
+    func setupUserPorfilePhotoWithImage(image: UIImage?) {
         // photo
         self.profilePhotoImageView = UIImageView(frame: CGRectMake(0, 0, 150, 150))
         self.profilePhotoImageView.layer.cornerRadius = self.profilePhotoImageView.frame.width / 2
         self.profilePhotoImageView.layer.borderColor = UIColor.whiteColor().CGColor
         self.profilePhotoImageView.layer.borderWidth = 9
-        self.profilePhotoImageView.image = image
+        if image != nil {
+            self.profilePhotoImageView.image = image
+        } else {
+            self.profilePhotoImageView.backgroundColor = UIColor.grayColor()
+        }
         self.profilePhotoImageView.center = self.userInformationCard.center
         self.profilePhotoImageView.center.y = self.userInformationCard.frame.origin.y - 5
         self.profilePhotoImageView.layer.masksToBounds = true
