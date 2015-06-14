@@ -61,6 +61,9 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
     var focusingSchool: String!
     var schools = ["loading school"]
     
+    // upadting alert view
+    var updatingAlert: UIAlertController!
+    
     // MARK:- school picker setups
     func setupSchoolPickerView() {
         
@@ -182,40 +185,48 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
                 ud.setObject(refresh_token, forKey: "ColorgyRefreshToken")
                 ud.setObject(token_type, forKey: "ColorgyTokenType")
                 ud.synchronize()
+            
+                if self.updatingAlert != nil {
+                    self.updatingAlert.message = "\n正在下載新的課程資料...\n\n\n"
+                }
             }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
-                println("error!!!")
-                let alert = UIAlertController(title: "錯誤", message: "與伺服器驗證過期，請重新登入！", preferredStyle: UIAlertControllerStyle.Alert)
-                let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
-                    
-                    var ud = NSUserDefaults.standardUserDefaults()
-                    ud.setObject(nil, forKey: "isLogin")
-                    ud.setObject(nil, forKey: "loginTpye")
-                    ud.setObject(nil, forKey: "smallFBProfilePhoto")
-                    ud.setObject(nil, forKey: "bigFBProfilePhoto")
-                    ud.setObject(nil, forKey: "ColorgyAccessToken")
-                    ud.setObject(nil, forKey: "ColorgyCreatedTime")
-                    ud.setObject(nil, forKey: "ColorgyExpireTime")
-                    ud.setObject(nil, forKey: "ColorgyRefreshToken")
-                    ud.setObject(nil, forKey: "ColorgyTokenType")
-//                    ud.setObject(nil, forKey: "courseDataFromServer")
-                    ud.setObject(nil, forKey: "userName")
-                    ud.setObject(nil, forKey: "userSchool")
-                    ud.synchronize()
-                    
-                    FBSession.activeSession().closeAndClearTokenInformation()
-                    
-                    self.logoutAnimation()
+                println("error refreshing token, authrication fail!!!")
+                self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
+                var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                dispatch_after(delay, dispatch_get_main_queue()) {
+                    let alert = UIAlertController(title: "錯誤", message: "與伺服器驗證過期，請重新登入！", preferredStyle: UIAlertControllerStyle.Alert)
+                    let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+                        
+                        var ud = NSUserDefaults.standardUserDefaults()
+                        ud.setObject(nil, forKey: "isLogin")
+                        ud.setObject(nil, forKey: "loginTpye")
+                        ud.setObject(nil, forKey: "smallFBProfilePhoto")
+                        ud.setObject(nil, forKey: "bigFBProfilePhoto")
+                        ud.setObject(nil, forKey: "ColorgyAccessToken")
+                        ud.setObject(nil, forKey: "ColorgyCreatedTime")
+                        ud.setObject(nil, forKey: "ColorgyExpireTime")
+                        ud.setObject(nil, forKey: "ColorgyRefreshToken")
+                        ud.setObject(nil, forKey: "ColorgyTokenType")
+    //                    ud.setObject(nil, forKey: "courseDataFromServer")
+                        ud.setObject(nil, forKey: "userName")
+                        ud.setObject(nil, forKey: "userSchool")
+                        ud.synchronize()
+                        
+                        FBSession.activeSession().closeAndClearTokenInformation()
+                        
+                        self.logoutAnimation()
 
-                    var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
-                    dispatch_after(delay, dispatch_get_main_queue()) {
-                        var storyboard = UIStoryboard(name: "Main", bundle: nil)
-                        var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
-                        self.presentViewController(vc, animated: true, completion: nil)
-                    }
-                })
-                
-                alert.addAction(ok)
-                self.presentViewController(alert, animated: true, completion: nil)
+                        var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                        dispatch_after(delay, dispatch_get_main_queue()) {
+                            var storyboard = UIStoryboard(name: "Main", bundle: nil)
+                            var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
+                            self.presentViewController(vc, animated: true, completion: nil)
+                        }
+                    })
+                    
+                    alert.addAction(ok)
+                    self.presentViewController(alert, animated: true, completion: nil)
+                }
             })
     }
     
@@ -278,7 +289,6 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
         
         println("=====================")
         self.detectIfClassHasConflicts()
-        println("testREFRESH!")
         
         // status bar frame change notification
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "barChange", name: UIApplicationDidChangeStatusBarFrameNotification, object: nil)
@@ -290,24 +300,18 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
         self.isAnimating = true
         self.animateConflictCourses()
         
-       
         self.setupCourseNotification()
         
-        // picker
-        self.setupSchoolPickerView()
-        
-        // test update school
-        self.updateSchools()
-        
         var ud = NSUserDefaults.standardUserDefaults()
-        //        if ud.objectForKey("hasLoginOnce") == nil {
-        //            self.updateCourseFromServer()
-        //            ud.setObject("loginOnce", forKey: "hasLoginOnce")
-        //            ud.synchronize()
-        //        }
+        // picker
         if ud.objectForKey("userSelectedSchool") == nil {
+            self.setupSchoolPickerView()
+            // update school
+            self.updateSchools()
+            // show if user has no school.
             self.schoolPickerBackgroundView.hidden = false
         }
+
     }
     
     //MARK:- notification
@@ -406,7 +410,23 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
     
     @IBAction func updateFromCloud(sender: AnyObject) {
         println("from cloud!!")
-        self.updateCourseFromServer()
+        var reachability = Reachability.reachabilityForInternetConnection()
+        var networkStatus = reachability.currentReachabilityStatus().value
+        if networkStatus == NotReachable.value {
+            println("沒有往往")
+            self.alertUserWIthError("你現在沒有網路耶....")
+        } else {
+            println("有往往")
+            self.updateCourseFromServer()
+        }
+        
+    }
+    
+    func alertUserWIthError(error: String) {
+        let alert = UIAlertController(title: "錯誤", message: error, preferredStyle: UIAlertControllerStyle.Alert)
+        let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: nil)
+        alert.addAction(ok)
+        self.presentViewController(alert, animated: true, completion: nil)
     }
     
     func updateSchools() {
@@ -429,7 +449,7 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
             self.focusingSchool = self.schools[0]
             self.schoolPickerView.reloadAllComponents()
         }, failure: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
-            
+            self.updateSchools()
         })
     }
     
@@ -452,113 +472,134 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
         afManager.responseSerializer = AFJSONResponseSerializer()
         
         // block when updating...
-        let alert = UIAlertController(title: "更新中", message: "課程資料更新中，\n過程中請不要離開程式！\n\n", preferredStyle: UIAlertControllerStyle.Alert)
+        self.updatingAlert = UIAlertController(title: "更新中", message: "課程資料更新中，\n過程中請不要離開程式！\n\n", preferredStyle: UIAlertControllerStyle.Alert)
         let indicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 150, 150))
-        alert.view.addSubview(indicator)
+        self.updatingAlert.view.addSubview(indicator)
         indicator.center = CGPointMake(134, 100)
         indicator.color = self.colorgyOrange
         indicator.startAnimating()
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.presentViewController(self.updatingAlert, animated: true, completion: nil)
         
-        afManager.GET(url, parameters: nil, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
-            println(responseObject.count)
-            // check db and new course data, update old db data
-            var vc = ColorgyViewAndAddCourseTableViewController()
-            var coursesInDB = vc.getDataFromDatabase()
-            // if get update course, archive it and replace it.
-            let archiveData = vc.archive(responseObject)
-            ud.setObject(archiveData, forKey: "courseDataFromServer")
-            ud.synchronize()
-            // update only if there is data in db.
-            var userCourses = NSMutableArray()
-            // collect user course uuid
-            if coursesInDB != nil {
-                for course: Course in coursesInDB! {
-                    userCourses.addObject(course.uuid)
+        // every time connecting to server, check token first
+        self.updatingAlert.message = "\n正在更新驗證...\n\n\n"
+        self.refreshAccessToken()
+        
+        
+        var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 2 * Double(NSEC_PER_SEC)))
+        dispatch_after(delay, dispatch_get_main_queue()) {
+            afManager.GET(url, parameters: nil, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
+                println(responseObject.count)
+                // check db and new course data, update old db data
+                var vc = ColorgyViewAndAddCourseTableViewController()
+                var coursesInDB = vc.getDataFromDatabase()
+                // if get update course, archive it and replace it.
+                let archiveData = vc.archive(responseObject)
+                ud.setObject(archiveData, forKey: "courseDataFromServer")
+                ud.synchronize()
+                // update only if there is data in db.
+                var userCourses = NSMutableArray()
+                // collect user course uuid
+                if coursesInDB != nil {
+                    for course: Course in coursesInDB! {
+                        userCourses.addObject(course.uuid)
+                    }
                 }
-            }
-            // clear db
-            var sidevc = ColorgySideMenuViewController()
-            sidevc.deleteDataFromDatabase()
-            // get courses back using new data.
-            if userCourses.count != 0 {
-                // this vc help us to store data to db
-                let vc = ColorgyViewAndAddCourseTableViewController()
-                // loop through new course data
-                for newCourse in responseObject as! NSArray {
-                    // check if any course match.
-                    for uc in userCourses {
-                        if newCourse["code"] as! String == uc as! String {
-                            println("有！ \(uc)")
-                            // get out all the data, easy to use.
-                            let name = newCourse["name"] as? String
-                            let lecturer = newCourse["lecturer"] as? String
-                            var credits = Int32()
-                            if let c = newCourse["credits"] as? Int {
-                                credits = Int32(c)
+                // clear db
+                var sidevc = ColorgySideMenuViewController()
+                sidevc.deleteDataFromDatabase()
+                // get courses back using new data.
+                if userCourses.count != 0 {
+                    // this vc help us to store data to db
+                    let vc = ColorgyViewAndAddCourseTableViewController()
+                    // loop through new course data
+                    for newCourse in responseObject as! NSArray {
+                        // check if any course match.
+                        for uc in userCourses {
+                            if newCourse["code"] as! String == uc as! String {
+                                println("有！ \(uc)")
+                                // get out all the data, easy to use.
+                                let name = newCourse["name"] as? String
+                                let lecturer = newCourse["lecturer"] as? String
+                                var credits = Int32()
+                                if let c = newCourse["credits"] as? Int {
+                                    credits = Int32(c)
+                                }
+                                let uuid = newCourse["code"] as? String
+                                // year, term, id, type
+                                var year = Int32(newCourse["year"] as! Int)
+                                if let y = newCourse["year"] as? Int {
+                                    year = Int32(y)
+                                }
+                                var term = Int32()
+                                if let t = newCourse["year"] as? Int {
+                                    term = Int32(t)
+                                }
+                                var id = Int32()
+                                if let i = newCourse["id"] as? Int {
+                                    id = Int32(i)
+                                }
+                                let type = newCourse["_type"] as? String
+                                // sessions.
+                                var sessions = NSMutableArray()
+                                for i in 1...9 {
+                                    let day = newCourse["day_" + "\(i)"]
+                                    let session = newCourse["period_" + "\(i)"]
+                                    let location = newCourse["location_" + "\(i)"]
+                                    
+                                    sessions.addObject(["\(day!!)", "\(session!!)", "\(location!!)"])
+                                }
+                                // store it
+                                vc.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
+                                // if match, remove from lists and break.
+                                userCourses.removeObject(uc)
+                                break
                             }
-                            let uuid = newCourse["code"] as? String
-                            // year, term, id, type
-                            var year = Int32(newCourse["year"] as! Int)
-                            if let y = newCourse["year"] as? Int {
-                                year = Int32(y)
-                            }
-                            var term = Int32()
-                            if let t = newCourse["year"] as? Int {
-                                term = Int32(t)
-                            }
-                            var id = Int32()
-                            if let i = newCourse["id"] as? Int {
-                                id = Int32(i)
-                            }
-                            let type = newCourse["_type"] as? String
-                            // sessions.
-                            var sessions = NSMutableArray()
-                            for i in 1...9 {
-                                let day = newCourse["day_" + "\(i)"]
-                                let session = newCourse["period_" + "\(i)"]
-                                let location = newCourse["location_" + "\(i)"]
-                                
-                                sessions.addObject(["\(day!!)", "\(session!!)", "\(location!!)"])
-                            }
-                            // store it
-                            vc.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
-                            // if match, remove from lists and break.
-                            userCourses.removeObject(uc)
-                            break
                         }
                     }
                 }
-            }
-            println("update success")
-            alert.dismissViewControllerAnimated(true, completion: nil)
-            self.viewDidLoad()
-            var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 0.3 * Double(NSEC_PER_SEC)))
-            dispatch_after(delay, dispatch_get_main_queue()) {
-                // after update, load view again
-                let success = UIAlertController(title: "更新成功", message: "✅ yeah!", preferredStyle: UIAlertControllerStyle.Alert)
-                self.presentViewController(success, animated: true, completion: nil)
-                delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1.5 * Double(NSEC_PER_SEC)))
+                println("update success")
+                self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
+                self.viewDidLoad()
+                var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 0.3 * Double(NSEC_PER_SEC)))
                 dispatch_after(delay, dispatch_get_main_queue()) {
-                    success.dismissViewControllerAnimated(true, completion: nil)
+                    // after update, load view again
+                    let success = UIAlertController(title: "更新成功", message: "✅ yeah!", preferredStyle: UIAlertControllerStyle.Alert)
+                    self.presentViewController(success, animated: true, completion: nil)
+                    delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1.5 * Double(NSEC_PER_SEC)))
+                    dispatch_after(delay, dispatch_get_main_queue()) {
+                        success.dismissViewControllerAnimated(true, completion: nil)
+                    }
                 }
+                }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
+                    println("error post")
+                    self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
+                    if ud.objectForKey("courseDataFromServer") != nil {
+                        println("✅ 使用者已經下載資料，無須在下載一次")
+                        var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                        dispatch_after(delay, dispatch_get_main_queue()) {
+                            let err = UIAlertController(title: "錯誤", message: "更新失敗，你的網路可能有問題唷！", preferredStyle: UIAlertControllerStyle.Alert)
+                            let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+                                self.viewDidLoad()
+                            })
+                            err.addAction(ok)
+                            self.presentViewController(err, animated: true, completion: nil)
+                        }
+                    } else {
+                        var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                        dispatch_after(delay, dispatch_get_main_queue()) {
+                            self.refreshAccessToken()
+                            let err = UIAlertController(title: "錯誤", message: "更新失敗，" + school + "可能尚未開通使用！", preferredStyle: UIAlertControllerStyle.Alert)
+                            let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+                                ud.setObject(nil, forKey: "userSelectedSchool")
+                                ud.synchronize()
+                                self.viewDidLoad()
+                            })
+                            err.addAction(ok)
+                            self.presentViewController(err, animated: true, completion: nil)
+                        }
+                    }
+                })
             }
-            }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
-                println("error post")
-                alert.dismissViewControllerAnimated(true, completion: nil)
-                var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
-                dispatch_after(delay, dispatch_get_main_queue()) {
-                    self.refreshAccessToken()
-                    let err = UIAlertController(title: "錯誤", message: "更新失敗，" + school + "可能尚未開通使用！", preferredStyle: UIAlertControllerStyle.Alert)
-                    let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
-                        ud.setObject(nil, forKey: "userSelectedSchool")
-                        ud.synchronize()
-                        self.viewDidLoad()
-                    })
-                    err.addAction(ok)
-                    self.presentViewController(err, animated: true, completion: nil)
-                }
-            })
     }
     // MARK:- register local notification
     func setupNotification() {

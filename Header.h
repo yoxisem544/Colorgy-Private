@@ -13,4 +13,6 @@
 #import <FacebookSDK/FacebookSDK.h>
 #import "AFNetworking.h"
 
+#import "Reachability.h"
+
 #endif

@@ -45,6 +45,8 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     var colorgyDarkGray = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
 //    var colorgyGreen: UIColor = UIColor(red: 42/255.0, green: 171/255.0, blue: 147/255.0, alpha: 1)
     
+    // updating
+    var updatingAlert: UIAlertController!
     
     // MARK: - view
     override func viewDidLoad() {
@@ -93,7 +95,13 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             }
         }
         
-        
+        var reachability = Reachability.reachabilityForInternetConnection()
+        var networkStatus = reachability.currentReachabilityStatus().value
+        if networkStatus == NotReachable.value {
+            println("沒有往往")
+        } else {
+            println("有往往")
+        }
         
         // setup search controller and its style
         self.searchCourse = UISearchController(searchResultsController: nil)
@@ -142,7 +150,22 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     //MARK:- update from cloud
     @IBAction func updateFromCloud(sender: AnyObject) {
         println("from cloud!!")
-        self.updateCourseFromServer()
+        var reachability = Reachability.reachabilityForInternetConnection()
+        var networkStatus = reachability.currentReachabilityStatus().value
+        if networkStatus == NotReachable.value {
+            println("沒有往往")
+            self.alertUserWIthError("你現在沒有網路唷～～～～～")
+        } else {
+            println("有往往")
+            self.updateCourseFromServer()
+        }
+    }
+    
+    func alertUserWIthError(error: String) {
+        let alert = UIAlertController(title: "錯誤", message: error, preferredStyle: UIAlertControllerStyle.Alert)
+        let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: nil)
+        alert.addAction(ok)
+        self.presentViewController(alert, animated: true, completion: nil)
     }
     
     // MARK: - Fetch data from server
@@ -164,110 +187,118 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         afManager.responseSerializer = AFJSONResponseSerializer()
         
         // block when updating...
-        let alert = UIAlertController(title: "更新中", message: "課程資料更新中，\n過程中請不要離開程式！\n\n", preferredStyle: UIAlertControllerStyle.Alert)
+        self.updatingAlert = UIAlertController(title: "更新中", message: "課程資料更新中，\n過程中請不要離開程式！\n\n", preferredStyle: UIAlertControllerStyle.Alert)
         let indicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 150, 150))
-        alert.view.addSubview(indicator)
+        self.updatingAlert.view.addSubview(indicator)
         indicator.center = CGPointMake(134, 100)
         indicator.color = self.colorgyLightOrange
         indicator.startAnimating()
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.presentViewController(self.updatingAlert, animated: true, completion: nil)
         
-        afManager.GET(url, parameters: nil, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
-            println(responseObject.count)
-            // check db and new course data, update old db data
-            var vc = ColorgyViewAndAddCourseTableViewController()
-            var coursesInDB = vc.getDataFromDatabase()
-            // if get update course, archive it and replace it.
-            let archiveData = vc.archive(responseObject)
-            ud.setObject(archiveData, forKey: "courseDataFromServer")
-            ud.synchronize()
-            // update only if there is data in db.
-            var userCourses = NSMutableArray()
-            // collect user course uuid
-            if coursesInDB != nil {
-                for course: Course in coursesInDB! {
-                    userCourses.addObject(course.uuid)
+        // refresh every time
+        self.refreshAccessToken()
+        
+        //fire after 2 second, wait for refresh
+        var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 2 * Double(NSEC_PER_SEC)))
+        dispatch_after(delay, dispatch_get_main_queue()) {
+            afManager.GET(url, parameters: nil, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
+                println(responseObject.count)
+                // check db and new course data, update old db data
+                var vc = ColorgyViewAndAddCourseTableViewController()
+                var coursesInDB = vc.getDataFromDatabase()
+                // if get update course, archive it and replace it.
+                let archiveData = vc.archive(responseObject)
+                ud.setObject(archiveData, forKey: "courseDataFromServer")
+                ud.synchronize()
+                // update only if there is data in db.
+                var userCourses = NSMutableArray()
+                // collect user course uuid
+                if coursesInDB != nil {
+                    for course: Course in coursesInDB! {
+                        userCourses.addObject(course.uuid)
+                    }
                 }
-            }
-            // clear db
-            var sidevc = ColorgySideMenuViewController()
-            sidevc.deleteDataFromDatabase()
-            // get courses back using new data.
-            if userCourses.count != 0 {
-                // this vc help us to store data to db
-                let vc = ColorgyViewAndAddCourseTableViewController()
-                // loop through new course data
-                for newCourse in responseObject as! NSArray {
-                    // check if any course match.
-                    for uc in userCourses {
-                        if newCourse["code"] as! String == uc as! String {
-                            println("有！ \(uc)")
-                            // get out all the data, easy to use.
-                            let name = newCourse["name"] as? String
-                            let lecturer = newCourse["lecturer"] as? String
-                            var credits = Int32()
-                            if let c = newCourse["credits"] as? Int {
-                                credits = Int32(c)
+                // clear db
+                var sidevc = ColorgySideMenuViewController()
+                sidevc.deleteDataFromDatabase()
+                // get courses back using new data.
+                if userCourses.count != 0 {
+                    // this vc help us to store data to db
+                    let vc = ColorgyViewAndAddCourseTableViewController()
+                    // loop through new course data
+                    for newCourse in responseObject as! NSArray {
+                        // check if any course match.
+                        for uc in userCourses {
+                            if newCourse["code"] as! String == uc as! String {
+                                println("有！ \(uc)")
+                                // get out all the data, easy to use.
+                                let name = newCourse["name"] as? String
+                                let lecturer = newCourse["lecturer"] as? String
+                                var credits = Int32()
+                                if let c = newCourse["credits"] as? Int {
+                                    credits = Int32(c)
+                                }
+                                let uuid = newCourse["code"] as? String
+                                // year, term, id, type
+                                var year = Int32(newCourse["year"] as! Int)
+                                if let y = newCourse["year"] as? Int {
+                                    year = Int32(y)
+                                }
+                                var term = Int32()
+                                if let t = newCourse["year"] as? Int {
+                                    term = Int32(t)
+                                }
+                                var id = Int32()
+                                if let i = newCourse["id"] as? Int {
+                                    id = Int32(i)
+                                }
+                                let type = newCourse["_type"] as? String
+                                // sessions.
+                                var sessions = NSMutableArray()
+                                for i in 1...9 {
+                                    let day = newCourse["day_" + "\(i)"]
+                                    let session = newCourse["period_" + "\(i)"]
+                                    let location = newCourse["location_" + "\(i)"]
+                                    
+                                    sessions.addObject(["\(day!!)", "\(session!!)", "\(location!!)"])
+                                }
+                                // store it
+                                vc.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
+                                // if match, remove from lists and break.
+                                userCourses.removeObject(uc)
+                                break
                             }
-                            let uuid = newCourse["code"] as? String
-                            // year, term, id, type
-                            var year = Int32(newCourse["year"] as! Int)
-                            if let y = newCourse["year"] as? Int {
-                                year = Int32(y)
-                            }
-                            var term = Int32()
-                            if let t = newCourse["year"] as? Int {
-                                term = Int32(t)
-                            }
-                            var id = Int32()
-                            if let i = newCourse["id"] as? Int {
-                                id = Int32(i)
-                            }
-                            let type = newCourse["_type"] as? String
-                            // sessions.
-                            var sessions = NSMutableArray()
-                            for i in 1...9 {
-                                let day = newCourse["day_" + "\(i)"]
-                                let session = newCourse["period_" + "\(i)"]
-                                let location = newCourse["location_" + "\(i)"]
-                                
-                                sessions.addObject(["\(day!!)", "\(session!!)", "\(location!!)"])
-                            }
-                            // store it
-                            vc.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
-                            // if match, remove from lists and break.
-                            userCourses.removeObject(uc)
-                            break
                         }
                     }
                 }
-            }
-            println("update success")
-            alert.dismissViewControllerAnimated(true, completion: nil)
-            self.viewDidLoad()
-            var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 0.3 * Double(NSEC_PER_SEC)))
-            dispatch_after(delay, dispatch_get_main_queue()) {
-                // after update, load view again
-                let success = UIAlertController(title: "更新成功", message: "✅yeah!", preferredStyle: UIAlertControllerStyle.Alert)
-                self.presentViewController(success, animated: true, completion: nil)
-                delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1.5 * Double(NSEC_PER_SEC)))
+                println("update success")
+                self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
+                self.viewDidLoad()
+                var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 0.3 * Double(NSEC_PER_SEC)))
                 dispatch_after(delay, dispatch_get_main_queue()) {
-                    success.dismissViewControllerAnimated(true, completion: nil)
-                    self.tableView.reloadData()
+                    // after update, load view again
+                    let success = UIAlertController(title: "更新成功", message: "✅yeah!", preferredStyle: UIAlertControllerStyle.Alert)
+                    self.presentViewController(success, animated: true, completion: nil)
+                    delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1.5 * Double(NSEC_PER_SEC)))
+                    dispatch_after(delay, dispatch_get_main_queue()) {
+                        success.dismissViewControllerAnimated(true, completion: nil)
+                        self.tableView.reloadData()
+                    }
                 }
-            }
-            }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
-                println("error post")
-                alert.dismissViewControllerAnimated(true, completion: nil)
-                var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
-                dispatch_after(delay, dispatch_get_main_queue()) {
-                    self.refreshAccessToken()
-                    let err = UIAlertController(title: "錯誤", message: "更新失敗，" + school + "可能尚未開通使用！", preferredStyle: UIAlertControllerStyle.Alert)
-                    let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: nil)
-                    err.addAction(ok)
-                    self.presentViewController(err, animated: true, completion: nil)
-                }
-        })
+                }, failure: { (task: NSURLSessionDataTask!, error: NSError!) in
+                    println("error post")
+                    // dismiss loading view
+                    self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
+                    var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                    dispatch_after(delay, dispatch_get_main_queue()) {
+                        self.refreshAccessToken()
+                        let err = UIAlertController(title: "錯誤", message: "更新失敗，可能是網路不穩定造成的！再重新試試看吧！", preferredStyle: UIAlertControllerStyle.Alert)
+                        let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: nil)
+                        err.addAction(ok)
+                        self.presentViewController(err, animated: true, completion: nil)
+                    }
+            })
+        }
     }
     
     func refreshAccessToken() {
@@ -307,38 +338,42 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             ud.synchronize()
             }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
                 println("error!!!")
-                let alert = UIAlertController(title: "錯誤", message: "與伺服器驗證過期，請重新登入！", preferredStyle: UIAlertControllerStyle.Alert)
-                let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+                self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
+                var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 0.5 * Double(NSEC_PER_SEC)))
+                dispatch_after(delay, dispatch_get_main_queue()) {
+                    let alert = UIAlertController(title: "錯誤", message: "與伺服器驗證過期，請重新登入！", preferredStyle: UIAlertControllerStyle.Alert)
+                    let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+                        
+                        var ud = NSUserDefaults.standardUserDefaults()
+                        ud.setObject(nil, forKey: "isLogin")
+                        ud.setObject(nil, forKey: "loginTpye")
+                        ud.setObject(nil, forKey: "smallFBProfilePhoto")
+                        ud.setObject(nil, forKey: "bigFBProfilePhoto")
+                        ud.setObject(nil, forKey: "ColorgyAccessToken")
+                        ud.setObject(nil, forKey: "ColorgyCreatedTime")
+                        ud.setObject(nil, forKey: "ColorgyExpireTime")
+                        ud.setObject(nil, forKey: "ColorgyRefreshToken")
+                        ud.setObject(nil, forKey: "ColorgyTokenType")
+                        //                    ud.setObject(nil, forKey: "courseDataFromServer")
+                        ud.setObject(nil, forKey: "userName")
+                        ud.setObject(nil, forKey: "userSchool")
+                        ud.synchronize()
+                        
+                        FBSession.activeSession().closeAndClearTokenInformation()
+                        
+                        self.logoutAnimation()
+                        
+                        var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                        dispatch_after(delay, dispatch_get_main_queue()) {
+                            var storyboard = UIStoryboard(name: "Main", bundle: nil)
+                            var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
+                            self.presentViewController(vc, animated: true, completion: nil)
+                        }
+                    })
                     
-                    var ud = NSUserDefaults.standardUserDefaults()
-                    ud.setObject(nil, forKey: "isLogin")
-                    ud.setObject(nil, forKey: "loginTpye")
-                    ud.setObject(nil, forKey: "smallFBProfilePhoto")
-                    ud.setObject(nil, forKey: "bigFBProfilePhoto")
-                    ud.setObject(nil, forKey: "ColorgyAccessToken")
-                    ud.setObject(nil, forKey: "ColorgyCreatedTime")
-                    ud.setObject(nil, forKey: "ColorgyExpireTime")
-                    ud.setObject(nil, forKey: "ColorgyRefreshToken")
-                    ud.setObject(nil, forKey: "ColorgyTokenType")
-                    //                    ud.setObject(nil, forKey: "courseDataFromServer")
-                    ud.setObject(nil, forKey: "userName")
-                    ud.setObject(nil, forKey: "userSchool")
-                    ud.synchronize()
-                    
-                    FBSession.activeSession().closeAndClearTokenInformation()
-                    
-                    self.logoutAnimation()
-                    
-                    var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
-                    dispatch_after(delay, dispatch_get_main_queue()) {
-                        var storyboard = UIStoryboard(name: "Main", bundle: nil)
-                        var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
-                        self.presentViewController(vc, animated: true, completion: nil)
-                    }
-                })
-                
-                alert.addAction(ok)
-                self.presentViewController(alert, animated: true, completion: nil)
+                    alert.addAction(ok)
+                    self.presentViewController(alert, animated: true, completion: nil)
+                }
         })
     }
     
@@ -511,39 +546,39 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                             var period = ""
                             
                             if c.day_1 != "<null>" {
-                                period += weekdays[c.day_1.toInt()! - 1] + c.period_1 + " "
+                                period += weekdays[c.day_1.toInt()! - 1] + "\(c.period_1.toInt()!-1)" + " "
                                 location += c.location_1 + " "
                             }
                             if c.day_2 != "<null>" {
-                                period += weekdays[c.day_2.toInt()! - 1] + c.period_2 + " "
+                                period += weekdays[c.day_2.toInt()! - 1] + "\(c.period_2.toInt()!-1)" + " "
                                 location += c.location_2 + " "
                             }
                             if c.day_3 != "<null>" {
-                                period += weekdays[c.day_3.toInt()! - 1] + c.period_3 + " "
+                                period += weekdays[c.day_3.toInt()! - 1] + "\(c.period_3.toInt()!-1)" + " "
                                 location += c.location_3 + " "
                             }
                             if c.day_4 != "<null>" {
-                                period += weekdays[c.day_4.toInt()! - 1] + c.period_4 + " "
+                                period += weekdays[c.day_4.toInt()! - 1] + "\(c.period_4.toInt()!-1)" + " "
                                 location += c.location_4 + " "
                             }
                             if c.day_5 != "<null>" {
-                                period += weekdays[c.day_5.toInt()! - 1] + c.period_5 + " "
+                                period += weekdays[c.day_5.toInt()! - 1] + "\(c.period_5.toInt()!-1)" + " "
                                 location += c.location_5 + " "
                             }
                             if c.day_6 != "<null>" {
-                                period += weekdays[c.day_6.toInt()! - 1] + c.period_6 + " "
+                                period += weekdays[c.day_6.toInt()! - 1] + "\(c.period_6.toInt()!-1)" + " "
                                 location += c.location_6 + " "
                             }
                             if c.day_7 != "<null>" {
-                                period += weekdays[c.day_7.toInt()! - 1] + c.period_7 + " "
+                                period += weekdays[c.day_7.toInt()! - 1] + "\(c.period_7.toInt()!-1)" + " "
                                 location += c.location_7 + " "
                             }
                             if c.day_8 != "<null>" {
-                                period += weekdays[c.day_8.toInt()! - 1] + c.period_8 + " "
+                                period += weekdays[c.day_8.toInt()! - 1] + "\(c.period_8.toInt()!-1)" + " "
                                 location += c.location_8 + " "
                             }
                             if c.day_9 != "<null>" {
-                                period += weekdays[c.day_9.toInt()! - 1] + c.period_9 + " "
+                                period += weekdays[c.day_9.toInt()! - 1] + "\(c.period_9.toInt()!-1)" + " "
                                 location += c.location_9 + " "
                             }
                             
@@ -721,7 +756,6 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                         text += location + " "
                     }
                 }
-                                println(text)
                 cell.location.text = text
             }
             text = ""
@@ -732,12 +766,11 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                     if let day = self.filteredCourse[indexPath.row]["day_\(i)"] as? Int {
                         text += self.getPeriodWithDay(day, session: period) + " "
                     }
-
                 }
 
                 cell.period.text = text
             }
-            
+            println("早安：\(text)")
             
             if indexPath.row % 2 == 1 {
                 cell.lecturerBackgorundView.backgroundColor = self.colorgyDimYellow
@@ -845,8 +878,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             
             optionMenu.addAction(ok)
             optionMenu.addAction(cancel)
-            
-            self.presentViewController(optionMenu, animated: true, completion: nil)
+            dispatch_async(dispatch_get_main_queue()) {
+                self.presentViewController(optionMenu, animated: true, completion: nil)
+            }
         } else if !self.searchCourse.active {
             println("you tap \(indexPath.row)")
             let name = self.coursesAddedToTimetable[indexPath.row][0] as! String
@@ -869,8 +903,10 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         let weekdays = ["Mon", "Tue", "wed", "Thu", "Fri", "Sat", "Sun"]
         var period = ""
         
-        if day > 0 && day <= 7 && session >= 0 && session <= 14 {
-            period = weekdays[day] + String(session)
+        // day is from 1~7, need to -1
+        // session also
+        if day > 0 && day <= 7 && session >= 0 && session <= 15 {
+            period = weekdays[day - 1] + String(session - 1)
         }
         
         return period

@@ -213,6 +213,7 @@ class ColorgySideMenuViewController: UIViewController {
         button.addTarget(self, action: "buttonTouchDragEnter:", forControlEvents: UIControlEvents.TouchDragEnter)
         button.addTarget(self, action: "buttonTouchDragExit:", forControlEvents: UIControlEvents.TouchDragExit)
         button.addTarget(self, action: "buttonTouchDown:", forControlEvents: UIControlEvents.TouchDown)
+        button.addTarget(self, action: "buttonTouchCancel:", forControlEvents: UIControlEvents.TouchCancel)
         
         // extend view
         var extendView = UIView(frame: CGRectMake(140, offset, 140, 75))
@@ -261,20 +262,34 @@ class ColorgySideMenuViewController: UIViewController {
         sender.alpha = 1.0
     }
     
+    func buttonTouchCancel(sender: UIButton) {
+        sender.alpha = 1.0
+    }
+    
     // MARK: - push segue region
     func pushSegueToTimetable(sender: UIButton) {
-        sender.alpha = 1.0
+        sender.alpha = 0.77
         performSegueWithIdentifier("timetable", sender: self)
+        self.recoverButtonAlpha(sender)
     }
     
     func pushSegueToselectCourse(sender: UIButton) {
-        sender.alpha = 1.0
+        sender.alpha = 0.77
         performSegueWithIdentifier("selectCourse", sender: self)
+        self.recoverButtonAlpha(sender)
     }
     
     func pushSegueToProfile(sender: UIButton) {
-        sender.alpha = 1.0
+        sender.alpha = 0.77
         performSegueWithIdentifier("profile", sender: self)
+        self.recoverButtonAlpha(sender)
+    }
+    
+    func recoverButtonAlpha(button: UIButton) {
+        var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+        dispatch_after(delay, dispatch_get_main_queue()) {
+            button.alpha = 1.0
+        }
     }
     
     // MARK: - Animation
