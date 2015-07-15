@@ -298,7 +298,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
             transDown = CGAffineTransformMakeTranslation(0, -261)
         }
         
-        UIView.animateWithDuration(1.0, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.1, options: nil, animations: {
+        UIView.animateWithDuration(1.0, delay: 0.1, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.1, options: nil, animations: {
                 // first drop down background image.
                 self.loginBackground.transform = transDown
             }, completion: nil)
@@ -522,6 +522,8 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         
         afManager.requestSerializer = AFJSONRequestSerializer()
         afManager.responseSerializer = AFJSONResponseSerializer()
+        
+        println("fb token \(token)")
         
         let params = [
             "grant_type": "password",
