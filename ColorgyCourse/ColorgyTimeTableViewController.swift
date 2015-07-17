@@ -184,6 +184,7 @@ class ColorgyTimeTableViewController: UIViewController {
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         self.navigationItem.title = "課表"
         // never adjust this for me.....fuck
+        // this is very important line!
         self.automaticallyAdjustsScrollViewInsets = false
         
         self.colorgyTimeTableView = self.ColorgyTimeTableView()
@@ -568,7 +569,10 @@ class ColorgyTimeTableViewController: UIViewController {
         // width matches device width
         // height is headerBarHeight and coursescount height and some spacing
         view.contentSize = CGSizeMake(self.screenWidth, self.headerHeight + self.colorgyTimeTableCell.height * CGFloat(self.courseCount) + CGFloat(2) * self.timetableSpacing)
+        // this is nav bar height -> 64
         view.contentInset.top = 64
+        // this is tab bar height -> 49
+        view.contentInset.bottom = 49
         view.contentOffset.y = -64
         
         // add grid view
