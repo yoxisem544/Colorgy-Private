@@ -325,8 +325,8 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
                     println("head of session")
                     if session.count > 0 {
                         println("head of session")
+                        var thisOneLocation = (session[0] as! UIView).subviews[1] as! UILabel
                         var thisOne = (session[0] as! UIView).subviews[0] as! UILabel
-                        var thisOneLocation = (session[1] as! UIView).subviews[1] as! UILabel
                         self.setNotificationWithMessage("等一下在" + thisOneLocation.text! + " 上 " + thisOne.text!, day: index + 1, session: i)
                     }
                 } else {
