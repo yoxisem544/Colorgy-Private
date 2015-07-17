@@ -4,29 +4,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
     <scenes>
-        <!--Reveal View Controller-->
-        <scene sceneID="ssc-GM-iYq">
-            <objects>
-                <viewController storyboardIdentifier="ColorgyService" id="ERC-rS-cej" customClass="SWRevealViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="0dz-gR-GvN"/>
-                        <viewControllerLayoutGuide type="bottom" id="b9e-Dj-8wL"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="UvP-EX-tT0">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <connections>
-                        <segue destination="c4P-6e-yFm" kind="custom" identifier="sw_rear" customClass="SWRevealViewControllerSegueSetController" id="2b3-BM-V9e"/>
-                        <segue destination="AUs-2t-DyB" kind="custom" identifier="sw_front" customClass="SWRevealViewControllerSegueSetController" id="z2X-d6-Ptj"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="kne-Ct-u6F" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="166" y="237"/>
-        </scene>
-        <!--Colorgy Side Menu View Controller-->
+        <!--Item-->
         <scene sceneID="2yO-Xd-KgD">
             <objects>
                 <viewController id="c4P-6e-yFm" customClass="ColorgySideMenuViewController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
@@ -39,11 +17,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <connections>
-                        <segue destination="AUs-2t-DyB" kind="custom" identifier="timetable" customClass="SWRevealViewControllerSeguePushController" id="dgS-SD-nX2"/>
-                        <segue destination="tjl-k1-Wo2" kind="custom" identifier="selectCourse" customClass="SWRevealViewControllerSeguePushController" id="yVy-gB-MrG"/>
-                        <segue destination="896-tN-Dvn" kind="custom" identifier="profile" customClass="SWRevealViewControllerSeguePushController" id="f0B-DK-8Ih"/>
-                    </connections>
+                    <tabBarItem key="tabBarItem" title="Item" id="UGm-2b-I2z"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AUg-4F-Rpk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -250,10 +224,11 @@
             </objects>
             <point key="canvasLocation" x="2694" y="726"/>
         </scene>
-        <!--Colorgy Navigation Controller-->
+        <!--Item-->
         <scene sceneID="caM-oY-yFh">
             <objects>
                 <navigationController id="tjl-k1-Wo2" customClass="ColorgyNavigationController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" id="p8e-42-vKF"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="HnT-v1-98w">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -287,10 +262,11 @@
             </objects>
             <point key="canvasLocation" x="166" y="-639"/>
         </scene>
-        <!--Colorgy Navigation Controller-->
+        <!--Item-->
         <scene sceneID="Y63-X2-RKf">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="AUs-2t-DyB" customClass="ColorgyNavigationController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" id="MIO-JU-noh"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="gLX-pq-Rgo">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -329,10 +305,32 @@
             </objects>
             <point key="canvasLocation" x="2686" y="1533"/>
         </scene>
-        <!--Colorgy Navigation Controller-->
+        <!--Tab Bar Controller-->
+        <scene sceneID="Muu-eL-7ze">
+            <objects>
+                <tabBarController storyboardIdentifier="ColorgyTabBarService" id="WOS-CQ-Zfe" sceneMemberID="viewController">
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="5Hw-3e-ptB">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="AUs-2t-DyB" kind="relationship" relationship="viewControllers" id="uSh-fM-VlC"/>
+                        <segue destination="tjl-k1-Wo2" kind="relationship" relationship="viewControllers" id="EtG-6k-lb2"/>
+                        <segue destination="896-tN-Dvn" kind="relationship" relationship="viewControllers" id="baw-an-uCz"/>
+                        <segue destination="c4P-6e-yFm" kind="relationship" relationship="viewControllers" id="yTm-O2-J98"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4hU-eW-Lyb" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="494" y="1411"/>
+        </scene>
+        <!--Item-->
         <scene sceneID="jT5-fJ-TYw">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="896-tN-Dvn" customClass="ColorgyNavigationController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" id="Myq-vh-80B"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="fb2-gT-Pgb">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -352,7 +350,4 @@
         <image name="cloud" width="28" height="27"/>
         <image name="menu" width="26" height="23"/>
     </resources>
-    <inferredMetricsTieBreakers>
-        <segue reference="z2X-d6-Ptj"/>
-    </inferredMetricsTieBreakers>
 </document>

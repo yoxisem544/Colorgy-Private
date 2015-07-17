@@ -300,11 +300,12 @@ class ColorgySideMenuViewController: UIViewController {
         view.transform = CGAffineTransformMakeScale(0, 0)
         
         // position of view
-        view.center.x = self.revealViewController().view.center.x
+        var x = self.tabBarController?.view.center.x
+        view.center.x = x!
         view.center.y = self.view.center.y
         
-//        self.view.addSubview(view)
-        self.revealViewController().view.addSubview(view)
+        // apply this to view, will be animated later.
+        self.tabBarController?.view.addSubview(view)
         
         UIView.animateWithDuration(1, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
                 view.transform = CGAffineTransformMakeScale(10, 10)

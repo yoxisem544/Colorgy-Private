@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.window?.rootViewController = vc
             self.window?.makeKeyAndVisible()
         } else {
-            var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyService") as! SWRevealViewController
+            var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyTabBarService") as! UITabBarController
             self.window?.rootViewController = vc
             self.window?.makeKeyAndVisible()
         }

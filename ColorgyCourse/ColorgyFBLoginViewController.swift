@@ -606,7 +606,7 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
                 dispatch_after(delay, dispatch_get_main_queue()) {
                     println("fire!")
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                    var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyService") as! SWRevealViewController
+                    var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyTabBarService") as! UITabBarController
                     self.presentViewController(vc, animated: true, completion: nil)
                 }
             

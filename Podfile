@@ -2,7 +2,7 @@
 # platform :ios, '6.0'
 
 target 'ColorgyCourse' do
-  pod 'SWRevealViewController'
+  # pod 'SWRevealViewController'
   pod 'AFNetworking'
 end
 

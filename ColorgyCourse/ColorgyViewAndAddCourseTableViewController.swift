@@ -52,15 +52,6 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //reveal region
-        if self.revealViewController() != nil {
-            revealMenuButon.target = self.revealViewController()
-            revealMenuButon.action = "revealToggle:"
-            self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
-        }
-        self.revealViewController().rearViewRevealWidth = 140
-        //
-        
         // tableview delegate and datasource
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -385,11 +376,12 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         view.transform = CGAffineTransformMakeScale(0, 0)
         
         // position of view
-        view.center.x = self.revealViewController().view.center.x
+        var x = self.tabBarController?.view.center.x
+        view.center.x = x!
         view.center.y = self.view.center.y
         
-        //        self.view.addSubview(view)
-        self.revealViewController().view.addSubview(view)
+        // apply this to view, will be animated later.
+        self.tabBarController?.view.addSubview(view)
         
         UIView.animateWithDuration(1, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
             view.transform = CGAffineTransformMakeScale(10, 10)

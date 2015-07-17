@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+class ColorgyTimeTableViewController: UIViewController {
     
     // MARK: - reveal menu
     @IBOutlet weak var revealMenuButton: UIBarButtonItem!
@@ -56,98 +56,9 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
     var timetableWhite: UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.6)
     
     // MARK:- school picker
-    var schoolPickerView: UIPickerView!
-    var schoolPickerBackgroundView: UIView!
-    var focusingSchool: String!
-    var schools = ["loading school"]
     
     // upadting alert view
     var updatingAlert: UIAlertController!
-    
-    // MARK:- school picker setups
-    func setupSchoolPickerView() {
-        
-        var rv = self.revealViewController().view
-        let w = self.view.frame.width
-        self.schoolPickerView = UIPickerView(frame: CGRectMake(0, 0, w * 0.6, 0))
-        println(self.schoolPickerView.frame)
-        self.schoolPickerView.backgroundColor = UIColor.whiteColor()
-        self.schoolPickerView.delegate = self
-        self.schoolPickerView.dataSource = self
-        self.schoolPickerView.center = self.view.center
-        self.schoolPickerView.layer.cornerRadius = 10
-        
-        
-        
-        self.schoolPickerBackgroundView = UIView(frame: CGRectMake(0, 0, rv.frame.width, rv.frame.height))
-        self.schoolPickerBackgroundView.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
-        
-        self.schoolPickerBackgroundView.addSubview(self.schoolPickerView)
-        
-        // ok and cancel button
-        var btn = UIButton(frame: CGRectMake(0, 0, 140, 60))
-        btn.setTitle("選擇", forState: UIControlState.Normal)
-        btn.titleLabel?.font = UIFont(name: "STHeitiTC-Medium", size: 40)
-        btn.addTarget(self, action: "okPressed", forControlEvents: UIControlEvents.TouchUpInside)
-        btn.center = self.schoolPickerView.center
-        btn.center.y += self.schoolPickerView.frame.height * 0.7
-        btn.layer.borderWidth = 2
-        btn.layer.borderColor = UIColor.whiteColor().CGColor
-        btn.layer.cornerRadius = 10
-        self.schoolPickerBackgroundView.addSubview(btn)
-        
-        // title on top of picker
-        var title = UILabel(frame: CGRectMake(0, 0, self.view.frame.width, 40))
-        title.font = UIFont(name: "STHeitiTC-Medium", size: 40)
-        title.text = "請選擇學校"
-        title.textAlignment = NSTextAlignment.Center
-        title.center = CGPointMake(self.view.center.x, self.schoolPickerView.center.y - self.schoolPickerView.bounds.size.height / 2 - title.bounds.size.height)
-        title.textColor = UIColor.whiteColor()
-        
-        self.schoolPickerBackgroundView.addSubview(title)
-        
-        self.focusingSchool = self.schools[0]
-
-        
-        rv.addSubview(self.schoolPickerBackgroundView)
-        self.schoolPickerBackgroundView.hidden = true
-        
-    }
-    
-    func okPressed() {
-        println("oooo")
-        println(self.focusingSchool)
-        
-        let alert = UIAlertController(title: "請確認！", message: "你要選的學校是\n" + self.focusingSchool + " 嗎？\n\n如果選錯了的話，請從左上角的按鈕登出後重新選擇即可！", preferredStyle: UIAlertControllerStyle.Alert)
-        let ok = UIAlertAction(title: "確認", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
-            var ud = NSUserDefaults.standardUserDefaults()
-            ud.setObject(self.focusingSchool, forKey: "userSelectedSchool")
-            ud.synchronize()
-            self.schoolPickerBackgroundView.hidden = true
-            self.updateCourseFromServer()
-        })
-        let cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: nil)
-        alert.addAction(ok)
-        alert.addAction(cancel)
-        
-        self.presentViewController(alert, animated: true, completion: nil)
-    }
-    
-    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return self.schools.count
-    }
-    
-    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
-        return schools[row]
-    }
-    
-    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        self.focusingSchool = self.schools[row]
-    }
     
     //MARK:- test refresh
     func refreshAccessToken() {
@@ -238,11 +149,12 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
         view.transform = CGAffineTransformMakeScale(0, 0)
         
         // position of view
-        view.center.x = self.revealViewController().view.center.x
+        var x = self.tabBarController?.view.center.x
+        view.center.x = x!
         view.center.y = self.view.center.y
         
-        //        self.view.addSubview(view)
-        self.revealViewController().view.addSubview(view)
+        // apply this to view, will be animated later.
+        self.tabBarController?.view.addSubview(view)
         
         UIView.animateWithDuration(1, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
             view.transform = CGAffineTransformMakeScale(10, 10)
@@ -252,14 +164,6 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
     // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
-        //reveal region
-        if self.revealViewController() != nil {
-            revealMenuButton.target = self.revealViewController()
-            revealMenuButton.action = "revealToggle:"
-            self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
-        }
-        self.revealViewController().rearViewRevealWidth = 140
-        //
 
         // Do any additional setup after loading the view.
         println("colorgy timetable view did load!")
@@ -301,16 +205,6 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
         self.animateConflictCourses()
         
         self.setupCourseNotification()
-        
-        var ud = NSUserDefaults.standardUserDefaults()
-        // picker
-        if ud.objectForKey("userSelectedSchool") == nil {
-            self.setupSchoolPickerView()
-            // update school
-            self.updateSchools()
-            // show if user has no school.
-            self.schoolPickerBackgroundView.hidden = false
-        }
 
     }
     
@@ -429,30 +323,6 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
         self.presentViewController(alert, animated: true, completion: nil)
     }
     
-    func updateSchools() {
-        let front_url = "https://colorgy.io:443/api/v1/organizations.json?access_token="
-        var ud = NSUserDefaults.standardUserDefaults()
-        let token = ud.objectForKey("ColorgyAccessToken") as! String
-        let url = front_url + token
-        
-        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: ""))
-        afManager.requestSerializer = AFJSONRequestSerializer()
-        afManager.responseSerializer = AFJSONResponseSerializer()
-        
-        afManager.GET(url, parameters: nil, success: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
-            let resObj = responseObject as! NSArray
-            self.schools = []
-            for res in resObj {
-                println(res["code"])
-                self.schools.append(res["code"] as! String)
-            }
-            self.focusingSchool = self.schools[0]
-            self.schoolPickerView.reloadAllComponents()
-        }, failure: { (task:NSURLSessionDataTask!, responseObject: AnyObject!) in
-            self.updateSchools()
-        })
-    }
-    
     func updateCourseFromServer() {
         
         let afManager = AFHTTPSessionManager(baseURL: NSURL(string: ""))
@@ -460,8 +330,8 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
         var ud = NSUserDefaults.standardUserDefaults()
         var front_url = "https://colorgy.io:443/api/"
         var middle_url = "/courses.json?per_page=5000&&&&&access_token="
-//        let school = ud.objectForKey("userSchool") as! String
-        let school = ud.objectForKey("userSelectedSchool") as! String
+        let school = ud.objectForKey("userSchool") as! String
+//        let school = ud.objectForKey("userSelectedSchool") as! String
         var token = ud.objectForKey("ColorgyAccessToken") as! String
         let url = front_url + school.lowercaseString + middle_url + token
         println("安安\n")
@@ -471,7 +341,7 @@ class ColorgyTimeTableViewController: UIViewController, UIPickerViewDelegate, UI
         afManager.requestSerializer = AFJSONRequestSerializer()
         afManager.responseSerializer = AFJSONResponseSerializer()
         
-        // block when updating...
+        // block whole view when updating...
         self.updatingAlert = UIAlertController(title: "更新中", message: "課程資料更新中，\n過程中請不要離開程式！\n\n", preferredStyle: UIAlertControllerStyle.Alert)
         let indicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 150, 150))
         self.updatingAlert.view.addSubview(indicator)

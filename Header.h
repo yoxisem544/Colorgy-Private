@@ -9,7 +9,7 @@
 #ifndef _Header_h
 #define _Header_h
 
-#import "SWRevealViewController.h"
+//#import "SWRevealViewController.h"
 #import <FacebookSDK/FacebookSDK.h>
 #import "AFNetworking.h"
 

@@ -26,15 +26,6 @@ class ColorgyUserProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //reveal region
-        if self.revealViewController() != nil {
-            revealMenuButton.target = self.revealViewController()
-            revealMenuButton.action = "revealToggle:"
-            self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
-        }
-        self.revealViewController().rearViewRevealWidth = 140
-        //
-        
         // style of nav bar
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         self.navigationItem.title = "個人資料"

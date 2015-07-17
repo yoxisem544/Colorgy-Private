@@ -9,11 +9,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-ColorgyCourse-SWRevealViewController.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>Pods-ColorgyCourse.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -22,17 +17,12 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>A91941D18F838C53466AC751</key>
+		<key>4358F8181017CC5737BF0037</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>A9756A93D897EFA26E2A27BF</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>DCC737986AB8D1617693492E</key>
+		<key>F4EA838C5BB2EE4A049F6417</key>
 		<dict>
 			<key>primary</key>
 			<true/>
