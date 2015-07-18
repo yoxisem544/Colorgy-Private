@@ -775,6 +775,13 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                 cell.cardBackgroundView.backgroundColor = self.colorgyLightOrange
             }
             
+            // rotate button here.....
+            if !self.isCourseAlreadyAddedToSelectedCourse(cell.code.text!) {
+                cell.addButton.transform = CGAffineTransformMakeRotation(0)
+            } else {
+                let halfQuarter = CGFloat((M_PI * 45.0) / 180.0)
+                cell.addButton.transform = CGAffineTransformMakeRotation(halfQuarter)
+            }
             
             return cell
         } else {
@@ -822,25 +829,76 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         
         println("an!")
         println(sender.tag)
-        // 45 degree
-        let halfQuarter = CGFloat((M_PI * 45.0) / 180.0)
-        UIView.animateWithDuration(0.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.3, options: nil, animations: {
+        
+        if !self.searchCourse.active {
+            // user not searching course.
+            println("user not searching")
+            println(self.coursesAddedToTimetable[sender.tag])
+        } else {
+            println("inside search box")
+            println(self.filteredCourse[sender.tag])
+        }
+        
+        // change button state.
+        if self.getAddButtonState(sender) == "add" {
+            self.animateAddButton(sender, state: "remove")
+        } else {
+            self.animateAddButton(sender, state: "add")
+        }
+    }
+    
+    func getAddButtonState(button: UIButton) -> String? {
+        
+        if button.transform.a == 1 {
+            return "add"
+        } else {
+            return "remove"
+        }
+    }
+    
+    func animateAddButton(button: UIButton, state: String) {
+        
+        if state == "add" {
+            // roll back!
+            let halfQuarter = CGFloat((M_PI * 45.0) / 180.0)
+            UIView.animateWithDuration(0.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.3, options: nil, animations: {
                 // make spin and scale first.
-                var spin = CGAffineTransformMakeRotation(halfQuarter)
+                var spin = CGAffineTransformMakeRotation(0)
                 var scale = CGAffineTransformMakeScale(1.3, 1.3)
                 var trans = CGAffineTransformConcat(scale, spin)
-                sender.transform = trans
-            }, completion: { (isFinished: Bool) -> Void in
-                UIView.animateWithDuration(0.1, animations: {
+                button.transform = trans
+                }, completion: { (isFinished: Bool) -> Void in
+                    UIView.animateWithDuration(0.1, animations: {
                         // then make it shrink and stay rotated.
-                        var spin = CGAffineTransformMakeRotation(halfQuarter)
+                        var spin = CGAffineTransformMakeRotation(0)
                         var scale = CGAffineTransformMakeScale(1, 1)
                         var trans = CGAffineTransformConcat(scale, spin)
-                        sender.transform = trans
-                    }
-                )
-            }
-        )
+                        button.transform = trans
+                        }
+                    )
+                }
+            )
+        } else if state == "remove" {
+            // 45 degree
+            let halfQuarter = CGFloat((M_PI * 45.0) / 180.0)
+            UIView.animateWithDuration(0.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.3, options: nil, animations: {
+                    // make spin and scale first.
+                    var spin = CGAffineTransformMakeRotation(halfQuarter)
+                    var scale = CGAffineTransformMakeScale(1.3, 1.3)
+                    var trans = CGAffineTransformConcat(scale, spin)
+                    button.transform = trans
+                }, completion: { (isFinished: Bool) -> Void in
+                    UIView.animateWithDuration(0.1, animations: {
+                            // then make it shrink and stay rotated.
+                            var spin = CGAffineTransformMakeRotation(halfQuarter)
+                            var scale = CGAffineTransformMakeScale(1, 1)
+                            var trans = CGAffineTransformConcat(scale, spin)
+                            button.transform = trans
+                        }
+                    )
+                }
+            )
+        }
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -851,75 +909,88 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         
         if self.searchCourse.active {
             
-            // get out all the data, easy to read.
-            let name = self.filteredCourse[indexPath.row]["name"] as? String
-            let lecturer = self.filteredCourse[indexPath.row]["lecturer"] as? String
-            var credits = Int32()
-            if let c = self.filteredCourse[indexPath.row]["credits"] as? Int {
-                credits = Int32(c)
-            } else {
-                credits = 0
-            }
-            let uuid = self.filteredCourse[indexPath.row]["code"] as? String
-            // year, term, id, type
-            var year = Int32()
-            if let y = self.filteredCourse[indexPath.row]["year"] as? Int {
-                year = Int32(y)
-            }
-            var term = Int32()
-            if let t = self.filteredCourse[indexPath.row]["term"] as? Int {
-                term = Int32(t)
-            }
-            var id = Int32()
-            if let i = self.filteredCourse[indexPath.row]["id"] as? Int {
-                id = Int32(i)
-            }
-            let type = self.filteredCourse[indexPath.row]["_type"] as? String
+            self.userAttempToAddCourseAtIndex(indexPath)
             
-            let courseName = (name != nil) ? name! : "未知課程"
-            let courseLecturer = (lecturer != nil) ? lecturer! : "-"
-            
-            let optionMenu = UIAlertController(title: "\(courseName)", message: "老師：\(courseLecturer)\n學分：\(credits)", preferredStyle: UIAlertControllerStyle.Alert)
-            let ok = UIAlertAction(title: "加入課程", style: UIAlertActionStyle.Default, handler: { (action:UIAlertAction!) -> Void in
-                if !self.isCourseAlreadyAddedToSelectedCourse(self.filteredCourse[indexPath.row]["code"] as! String) {
-                    // if this course is not selected...... add it
-                    var sessions = NSMutableArray()
-                    for i in 1...9 {
-                        let day = self.filteredCourse[indexPath.row]["day_" + "\(i)"]
-                        let session = self.filteredCourse[indexPath.row]["period_" + "\(i)"]
-                        let location = self.filteredCourse[indexPath.row]["location_" + "\(i)"]
-                        
-                        sessions.addObject(["\(day!!)", "\(session!!)", "\(location!!)"])
-                    }
-                    println(sessions)
-                    self.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
-                    // user add their course, set coursesAddedToTimetable to nil
-                    self.coursesAddedToTimetable = nil
-                }
-            })
-            let cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: { (action:UIAlertAction!) -> Void in
-                optionMenu.dismissViewControllerAnimated(true, completion: nil)
-            })
-            
-            optionMenu.addAction(ok)
-            optionMenu.addAction(cancel)
-            dispatch_async(dispatch_get_main_queue()) {
-                self.presentViewController(optionMenu, animated: true, completion: nil)
-            }
         } else if !self.searchCourse.active {
-            println("you tap \(indexPath.row)")
-            let name = self.coursesAddedToTimetable[indexPath.row][0] as! String
-            var alert = UIAlertController(title: "刪除課程", message: "確定刪除：" + name + "\n這堂課嗎？", preferredStyle: UIAlertControllerStyle.Alert)
-            var ok = UIAlertAction(title: "刪除", style: UIAlertActionStyle.Cancel, handler: {(action: UIAlertAction!) in
-                let uuid = self.coursesAddedToTimetable[indexPath.row][3] as! String
-                self.deleteCourseWithUUID(uuid)
-            })
-            var cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Default, handler: nil)
-            alert.addAction(ok)
-            alert.addAction(cancel)
-            dispatch_async(dispatch_get_main_queue()) {
-                self.presentViewController(alert, animated: true, completion: nil)
+            
+            self.userAttempToDeleteCourseAtIndex(indexPath)
+            
+        }
+    }
+    
+    func userAttempToDeleteCourseAtIndex(indexPath: NSIndexPath) {
+        
+        println("you tap \(indexPath.row)")
+        let name = self.coursesAddedToTimetable[indexPath.row][0] as! String
+        var alert = UIAlertController(title: "刪除課程", message: "確定刪除：" + name + "\n這堂課嗎？", preferredStyle: UIAlertControllerStyle.Alert)
+        var ok = UIAlertAction(title: "刪除", style: UIAlertActionStyle.Cancel, handler: {(action: UIAlertAction!) in
+            let uuid = self.coursesAddedToTimetable[indexPath.row][3] as! String
+            self.deleteCourseWithUUID(uuid)
+        })
+        var cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Default, handler: nil)
+        alert.addAction(ok)
+        alert.addAction(cancel)
+        dispatch_async(dispatch_get_main_queue()) {
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func userAttempToAddCourseAtIndex(indexPath: NSIndexPath) {
+        
+        // get out all the data, easy to read.
+        let name = self.filteredCourse[indexPath.row]["name"] as? String
+        let lecturer = self.filteredCourse[indexPath.row]["lecturer"] as? String
+        var credits = Int32()
+        if let c = self.filteredCourse[indexPath.row]["credits"] as? Int {
+            credits = Int32(c)
+        } else {
+            credits = 0
+        }
+        let uuid = self.filteredCourse[indexPath.row]["code"] as? String
+        // year, term, id, type
+        var year = Int32()
+        if let y = self.filteredCourse[indexPath.row]["year"] as? Int {
+            year = Int32(y)
+        }
+        var term = Int32()
+        if let t = self.filteredCourse[indexPath.row]["term"] as? Int {
+            term = Int32(t)
+        }
+        var id = Int32()
+        if let i = self.filteredCourse[indexPath.row]["id"] as? Int {
+            id = Int32(i)
+        }
+        let type = self.filteredCourse[indexPath.row]["_type"] as? String
+        
+        let courseName = (name != nil) ? name! : "未知課程"
+        let courseLecturer = (lecturer != nil) ? lecturer! : "-"
+        
+        let optionMenu = UIAlertController(title: "\(courseName)", message: "老師：\(courseLecturer)\n學分：\(credits)", preferredStyle: UIAlertControllerStyle.Alert)
+        let ok = UIAlertAction(title: "加入課程", style: UIAlertActionStyle.Default, handler: { (action:UIAlertAction!) -> Void in
+            if !self.isCourseAlreadyAddedToSelectedCourse(self.filteredCourse[indexPath.row]["code"] as! String) {
+                // if this course is not selected...... add it
+                var sessions = NSMutableArray()
+                for i in 1...9 {
+                    let day = self.filteredCourse[indexPath.row]["day_" + "\(i)"]
+                    let session = self.filteredCourse[indexPath.row]["period_" + "\(i)"]
+                    let location = self.filteredCourse[indexPath.row]["location_" + "\(i)"]
+                    
+                    sessions.addObject(["\(day!!)", "\(session!!)", "\(location!!)"])
+                }
+                println(sessions)
+                self.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
+                // user add their course, set coursesAddedToTimetable to nil
+                self.coursesAddedToTimetable = nil
             }
+        })
+        let cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: { (action:UIAlertAction!) -> Void in
+            optionMenu.dismissViewControllerAnimated(true, completion: nil)
+        })
+        
+        optionMenu.addAction(ok)
+        optionMenu.addAction(cancel)
+        dispatch_async(dispatch_get_main_queue()) {
+            self.presentViewController(optionMenu, animated: true, completion: nil)
         }
     }
     
