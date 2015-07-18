@@ -170,8 +170,8 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         var ud = NSUserDefaults.standardUserDefaults()
         var front_url = "https://colorgy.io:443/api/"
         var middle_url = "/courses.json?per_page=5000&&&&&access_token="
-//        let school = ud.objectForKey("userSchool") as! String
-        let school = ud.objectForKey("userSelectedSchool") as! String
+        let school = ud.objectForKey("userSchool") as! String
+//        let school = ud.objectForKey("userSelectedSchool") as! String
         var token = ud.objectForKey("ColorgyAccessToken") as! String
         let url = front_url + school.lowercaseString + middle_url + token
         println("安安\n")

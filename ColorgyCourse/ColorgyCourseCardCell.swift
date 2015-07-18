@@ -27,6 +27,7 @@ class ColorgyCourseCardCell: UITableViewCell {
     var colorgyDarkGray = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
     var colorgyDimOrange = UIColor(red: 226/255.0, green: 109/255.0, blue: 90/255.0, alpha: 1)
     var colorgyLightOrange = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
+    var colorgyBackgroundColor: UIColor = UIColor(red: 250/255.0, green: 247/255.0, blue: 247/255.0, alpha: 1)
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -45,7 +46,7 @@ class ColorgyCourseCardCell: UITableViewCell {
         
         // style of cell
         self.selectionStyle = UITableViewCellSelectionStyle.None
-        self.backgroundColor = self.colorgyDarkGray
+        self.backgroundColor = self.colorgyBackgroundColor
     }
 
     override func setSelected(selected: Bool, animated: Bool) {
