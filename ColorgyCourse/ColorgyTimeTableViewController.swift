@@ -189,13 +189,8 @@ class ColorgyTimeTableViewController: UIViewController {
         // this is very important line!
         self.automaticallyAdjustsScrollViewInsets = false
         
-        self.colorgyTimeTableView = self.ColorgyTimeTableView()
-        self.view.addSubview(self.colorgyTimeTableView)
         
         
-        
-        println("=====================")
-        self.detectIfClassHasConflicts()
         
         // status bar frame change notification
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "barChange", name: UIApplicationDidChangeStatusBarFrameNotification, object: nil)
@@ -203,12 +198,27 @@ class ColorgyTimeTableViewController: UIViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "youGo", name: UIApplicationDidEnterBackgroundNotification, object: nil)
         // notify
 //        self.setupNotification()
+
         // animate conflict courses
         self.isAnimating = true
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.colorgyTimeTableView?.removeFromSuperview()
+        self.colorgyTimeTableView = self.ColorgyTimeTableView()
+        self.view.addSubview(self.colorgyTimeTableView)
+        
+        println("=====================")
+        self.detectIfClassHasConflicts()
+        
+        
         self.animateConflictCourses()
         
         self.setupCourseNotification()
-
+        
+        println("im back!")
     }
     
     //MARK:- notification
