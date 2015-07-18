@@ -23,6 +23,9 @@ class ColorgyCourseCardCell: UITableViewCell {
     @IBOutlet weak var credits: UILabel!
     @IBOutlet weak var creditsBackgroundView: UIView!
     
+    @IBOutlet weak var addButton: UIButton!
+    
+    
     
     var colorgyDarkGray = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
     var colorgyDimOrange = UIColor(red: 226/255.0, green: 109/255.0, blue: 90/255.0, alpha: 1)
@@ -36,7 +39,7 @@ class ColorgyCourseCardCell: UITableViewCell {
         // change card color
         self.cardBackgroundView.backgroundColor = self.colorgyLightOrange
         self.cardBackgroundView.layer.masksToBounds = true
-        self.cardBackgroundView.layer.cornerRadius = 5
+        self.cardBackgroundView.layer.cornerRadius = 8
         
         // lecturer color
         self.lecturerBackgorundView.backgroundColor = self.colorgyDimOrange

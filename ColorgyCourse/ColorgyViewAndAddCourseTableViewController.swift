@@ -739,9 +739,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             }
             if let credits = self.filteredCourse[indexPath.row]["credits"] as? Int {
                 var c = credits
-                cell.credits.text = "\(c)"
+//                cell.credits.text = "\(c)"
             } else {
-                cell.credits.text = "-"
+//                cell.credits.text = "-"
             }
             var text = ""
             for i in 1...9 {
@@ -778,6 +778,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             
             return cell
         } else {
+            // user not searching course
             var cell = tableView.dequeueReusableCellWithIdentifier("ColorgyCourseCardCell", forIndexPath: indexPath) as! ColorgyCourseCardCell
             println("now on \(indexPath.row)")
             if let name = self.coursesAddedToTimetable[indexPath.row][0] as? String {
@@ -787,7 +788,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                 cell.code.text = code
             }
             if let credits = self.coursesAddedToTimetable[indexPath.row][2] as? String {
-                cell.credits.text = credits
+//                cell.credits.text = credits
             } else {
                 cell.credits.text = "-"
             }
@@ -809,8 +810,37 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                 cell.cardBackgroundView.backgroundColor = self.colorgyLightOrange
             }
             
+            // add tag to button, makes me eaiser to handle button position.
+            cell.addButton.tag = indexPath.row
+            cell.addButton.addTarget(self, action: "userTapAddCourseButton:", forControlEvents: UIControlEvents.TouchUpInside)
+            
             return cell
         }
+    }
+    
+    func userTapAddCourseButton(sender: UIButton) {
+        
+        println("an!")
+        println(sender.tag)
+        // 45 degree
+        let halfQuarter = CGFloat((M_PI * 45.0) / 180.0)
+        UIView.animateWithDuration(0.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.3, options: nil, animations: {
+                // make spin and scale first.
+                var spin = CGAffineTransformMakeRotation(halfQuarter)
+                var scale = CGAffineTransformMakeScale(1.3, 1.3)
+                var trans = CGAffineTransformConcat(scale, spin)
+                sender.transform = trans
+            }, completion: { (isFinished: Bool) -> Void in
+                UIView.animateWithDuration(0.1, animations: {
+                        // then make it shrink and stay rotated.
+                        var spin = CGAffineTransformMakeRotation(halfQuarter)
+                        var scale = CGAffineTransformMakeScale(1, 1)
+                        var trans = CGAffineTransformConcat(scale, spin)
+                        sender.transform = trans
+                    }
+                )
+            }
+        )
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {

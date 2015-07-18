@@ -95,35 +95,9 @@
                                                 </label>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xu2-im-KwS">
                                                     <rect key="frame" x="503" y="0.0" width="65" height="93"/>
-                                                    <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yPD-EZ-7ZZ">
-                                                            <rect key="frame" x="11" y="18" width="42" height="57"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="width" constant="42" id="CyY-fF-cdm"/>
-                                                                <constraint firstAttribute="height" constant="57" id="twN-eH-G15"/>
-                                                            </constraints>
-                                                            <fontDescription key="fontDescription" name="STHeitiTC-Medium" family="Heiti TC" pointSize="36"/>
-                                                            <color key="textColor" red="0.44313725490196076" green="0.4392156862745098" blue="0.44313725490196076" alpha="1" colorSpace="calibratedRGB"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="學分" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dJX-hX-Lcp">
-                                                            <rect key="frame" x="15" y="64" width="34" height="21"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="height" constant="21" id="W45-7u-eVq"/>
-                                                                <constraint firstAttribute="width" constant="34" id="b0d-QV-D5Z"/>
-                                                            </constraints>
-                                                            <fontDescription key="fontDescription" name="STHeitiTC-Medium" family="Heiti TC" pointSize="17"/>
-                                                            <color key="textColor" red="0.44313725490196076" green="0.4392156862745098" blue="0.44313725490196076" alpha="1" colorSpace="calibratedRGB"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
-                                                    </subviews>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <constraints>
-                                                        <constraint firstItem="yPD-EZ-7ZZ" firstAttribute="bottom" secondItem="dJX-hX-Lcp" secondAttribute="bottom" constant="-10" id="6ek-5G-Yp5"/>
-                                                        <constraint firstAttribute="centerX" secondItem="dJX-hX-Lcp" secondAttribute="centerX" constant="0.5" id="ATv-9G-jmi"/>
                                                         <constraint firstAttribute="width" constant="65" id="bax-6j-kRo"/>
-                                                        <constraint firstAttribute="centerY" secondItem="yPD-EZ-7ZZ" secondAttribute="centerY" id="rEq-pq-zGj"/>
-                                                        <constraint firstAttribute="centerX" secondItem="yPD-EZ-7ZZ" secondAttribute="centerX" constant="0.5" id="vSI-TW-gv4"/>
                                                     </constraints>
                                                 </view>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hzt-ID-Tps">
@@ -147,12 +121,23 @@
                                                         <constraint firstAttribute="centerY" secondItem="tPM-Z9-vDb" secondAttribute="centerY" id="rAp-b9-V7e"/>
                                                     </constraints>
                                                 </view>
+                                                <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w8l-vt-dev">
+                                                    <rect key="frame" x="511" y="23" width="49" height="47"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="49" id="7tr-kQ-Vdn"/>
+                                                        <constraint firstAttribute="height" constant="47" id="Yb8-SN-q80"/>
+                                                    </constraints>
+                                                    <state key="normal" image="add">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                </button>
                                             </subviews>
                                             <color key="backgroundColor" red="0.87689393939393945" green="0.87689393939393945" blue="0.87689393939393945" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
                                                 <constraint firstItem="1gk-Q3-vyy" firstAttribute="trailing" secondItem="Hzt-ID-Tps" secondAttribute="trailing" constant="-73" id="39F-MM-6Jq"/>
                                                 <constraint firstItem="4MO-Ei-8hC" firstAttribute="top" secondItem="ZTb-pp-v6f" secondAttribute="top" constant="13" id="3QY-eE-JzT"/>
                                                 <constraint firstAttribute="bottom" secondItem="xu2-im-KwS" secondAttribute="bottom" id="6BC-Mz-Odf"/>
+                                                <constraint firstItem="w8l-vt-dev" firstAttribute="centerX" secondItem="xu2-im-KwS" secondAttribute="centerX" id="6tn-TS-x5Q"/>
                                                 <constraint firstAttribute="trailing" secondItem="xu2-im-KwS" secondAttribute="trailing" id="93M-vR-8P7"/>
                                                 <constraint firstItem="JKc-JE-ovg" firstAttribute="top" secondItem="1gk-Q3-vyy" secondAttribute="bottom" constant="8" id="AXj-PQ-TFt"/>
                                                 <constraint firstItem="JKc-JE-ovg" firstAttribute="trailing" secondItem="Hzt-ID-Tps" secondAttribute="trailing" constant="-73" id="HMZ-4i-VhB"/>
@@ -161,6 +146,7 @@
                                                 <constraint firstItem="4MO-Ei-8hC" firstAttribute="leading" secondItem="ZTb-pp-v6f" secondAttribute="leading" constant="15" id="epx-2w-nc9"/>
                                                 <constraint firstItem="Hzt-ID-Tps" firstAttribute="top" secondItem="ZTb-pp-v6f" secondAttribute="top" id="fh5-LC-viJ"/>
                                                 <constraint firstItem="JKc-JE-ovg" firstAttribute="leading" secondItem="ZTb-pp-v6f" secondAttribute="leading" constant="15" id="fwu-K1-jkf"/>
+                                                <constraint firstItem="w8l-vt-dev" firstAttribute="centerY" secondItem="xu2-im-KwS" secondAttribute="centerY" id="qco-RH-5qN"/>
                                                 <constraint firstItem="xu2-im-KwS" firstAttribute="top" secondItem="ZTb-pp-v6f" secondAttribute="top" id="shz-c6-8Vf"/>
                                                 <constraint firstItem="1gk-Q3-vyy" firstAttribute="leading" secondItem="ZTb-pp-v6f" secondAttribute="leading" constant="15" id="sy4-FH-G1e"/>
                                                 <constraint firstItem="4MO-Ei-8hC" firstAttribute="trailing" secondItem="Hzt-ID-Tps" secondAttribute="trailing" constant="-73" id="uK4-En-4lr"/>
@@ -176,9 +162,9 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="addButton" destination="w8l-vt-dev" id="LJG-y4-ueo"/>
                                     <outlet property="cardBackgroundView" destination="ZTb-pp-v6f" id="NQT-bJ-sD8"/>
                                     <outlet property="code" destination="1gk-Q3-vyy" id="Mnv-6T-boU"/>
-                                    <outlet property="credits" destination="yPD-EZ-7ZZ" id="dSJ-k4-MX5"/>
                                     <outlet property="creditsBackgroundView" destination="xu2-im-KwS" id="46g-4V-et0"/>
                                     <outlet property="lecturer" destination="tPM-Z9-vDb" id="E90-qX-Z1X"/>
                                     <outlet property="lecturerBackgorundView" destination="Hzt-ID-Tps" id="WXW-bS-Ko6"/>
