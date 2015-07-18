@@ -54,6 +54,8 @@ class ColorgyTimeTableViewController: UIViewController {
     var colorgyOrange: UIColor = UIColor(red: 246/255.0, green: 150/255.0, blue: 114/255.0, alpha: 1)
     var colorgyDarkGray: UIColor = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
     var timetableWhite: UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.6)
+    var timetableBackgroundColor: UIColor = UIColor(red: 250/255.0, green: 247/255.0, blue: 247/255.0, alpha: 1)
+    var timetableLineColor: UIColor = UIColor(red: 216/255.0, green: 216/255.0, blue: 216/255.0, alpha: 1)
     
     // MARK:- school picker
     
@@ -563,7 +565,8 @@ class ColorgyTimeTableViewController: UIViewController {
         
         // set its bounds
         var view = UIScrollView(frame: CGRectMake(0, 0, self.screenWidth, self.screenHeight))
-        view.backgroundColor = self.colorgyDarkGray
+        // background color of timetable
+        view.backgroundColor = self.timetableBackgroundColor
         
         // set timetable scrollview's content size
         // width matches device width
@@ -654,13 +657,14 @@ class ColorgyTimeTableViewController: UIViewController {
         println(self.colorgyTimeTableCell.height)
         view.backgroundColor = self.timetableWhite
         view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.whiteColor().CGColor
+        // outer line of timetable
+        view.layer.borderColor = self.timetableLineColor.CGColor
         view.layer.cornerRadius = 10
         
         // vertical line in this view, to seperate days
         for day in 1...4 {
             var line = UIView(frame: CGRectMake(0, 0, 1, self.headerHeight + self.colorgyTimeTableCell.height * CGFloat(self.courseCount)))
-            line.backgroundColor = UIColor.whiteColor()
+            line.backgroundColor = self.timetableLineColor
             
             line.center.x = self.colorgyTimeTableCell.width * CGFloat(day)
             
@@ -672,7 +676,7 @@ class ColorgyTimeTableViewController: UIViewController {
             var label = UILabel(frame: CGRectMake(0, 0, self.headerWidth, self.headerHeight))
             label.textAlignment = NSTextAlignment.Center
             label.center.y = self.headerHeight / 2
-            label.textColor = UIColor.whiteColor()
+            label.textColor = self.timetableLineColor
             label.center.x = CGFloat(day) * self.colorgyTimeTableCell.width - self.colorgyTimeTableCell.width / 2
             
             label.text = "\(day)"
@@ -703,19 +707,21 @@ class ColorgyTimeTableViewController: UIViewController {
         
         var view = UIView(frame: CGRectMake(self.timetableSpacing, self.timetableSpacing + self.headerHeight + timeOffset, self.sideBarWidth + self.colorgyTimeTableCell.width * CGFloat(5), self.colorgyTimeTableCell.height * courses))
         view.backgroundColor = self.timetableWhite
-        view.layer.borderColor = UIColor.whiteColor().CGColor
+        // outer line of timetable
+        view.layer.borderColor = self.timetableLineColor.CGColor
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 6
         
         // add lines to it
         for i in 1...Int(courses - 1) {
             var line = UIView(frame: CGRectMake(0, 0, self.sideBarWidth + self.colorgyTimeTableCell.width * CGFloat(5), 1))
-            line.backgroundColor = UIColor.whiteColor()
+            line.backgroundColor = self.timetableLineColor
             
             line.center.y = self.colorgyTimeTableCell.height * CGFloat(i)
             view.addSubview(line)
         }
         
+        // adding side period from 0~10 a~d
         switch time {
             case "morning":
                 for i in 1...Int(courses) {
@@ -724,7 +730,7 @@ class ColorgyTimeTableViewController: UIViewController {
                     label.center.y = self.colorgyTimeTableCell.height * CGFloat(i) - self.colorgyTimeTableCell.height / 2
                     // problem here!!!!
                     label.center.x = self.sideBarWidth / 2
-                    label.textColor = UIColor.whiteColor()
+                    label.textColor = self.timetableLineColor
                     label.textAlignment = NSTextAlignment.Center
                     view.addSubview(label)
                 }
@@ -735,7 +741,7 @@ class ColorgyTimeTableViewController: UIViewController {
                     label.center.y = self.colorgyTimeTableCell.height * CGFloat(i) - self.colorgyTimeTableCell.height / 2
                     // problem here!!!!
                     label.center.x = self.sideBarWidth / 2
-                    label.textColor = UIColor.whiteColor()
+                    label.textColor = self.timetableLineColor
                     label.textAlignment = NSTextAlignment.Center
                     view.addSubview(label)
                 }
@@ -747,7 +753,7 @@ class ColorgyTimeTableViewController: UIViewController {
                     label.center.y = self.colorgyTimeTableCell.height * CGFloat(i) - self.colorgyTimeTableCell.height / 2
                     // problem here!!!!
                     label.center.x = self.sideBarWidth / 2
-                    label.textColor = UIColor.whiteColor()
+                    label.textColor = self.timetableLineColor
                     label.textAlignment = NSTextAlignment.Center
                     view.addSubview(label)
                 }

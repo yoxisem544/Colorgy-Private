@@ -11,11 +11,12 @@ import UIKit
 class ColorgyNavigationController: UINavigationController {
 
     var colorgyDarkGray: UIColor = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
+    var colorgyLightOrange = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationBar.barTintColor = self.colorgyDarkGray
+        self.navigationBar.barTintColor = self.colorgyLightOrange
         self.navigationBar.tintColor = UIColor.whiteColor()
         
         self.navigationBar.layer.shadowColor = UIColor.blackColor().CGColor
