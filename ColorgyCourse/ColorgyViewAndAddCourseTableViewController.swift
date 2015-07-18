@@ -751,7 +751,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                         text += location + " "
                     }
                 }
-                cell.location.text = text
+//                cell.location.text = text
             }
             text = ""
             for i in 1...9 {
@@ -798,7 +798,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                 cell.period.text = period
             }
             if let location = self.coursesAddedToTimetable[indexPath.row][5] as? String {
-                cell.location.text = location
+//                cell.location.text = location
             }
             
             if indexPath.row % 2 == 1 {
@@ -814,7 +814,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 140
+        return 110
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
