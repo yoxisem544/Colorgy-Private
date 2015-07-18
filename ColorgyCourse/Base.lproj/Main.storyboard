@@ -37,16 +37,13 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="BcY-gl-ur3">
-                        <barButtonItem key="leftBarButtonItem" image="menu" id="gOK-Kc-Dse"/>
-                        <barButtonItem key="rightBarButtonItem" image="cloud" id="6z4-xK-3SV">
+                        <barButtonItem key="rightBarButtonItem" image="add" id="6z4-xK-3SV">
                             <connections>
-                                <action selector="updateFromCloud:" destination="itp-Zr-oHo" id="FUe-v3-JUt"/>
+                                <action selector="pushToAddCourseView:" destination="itp-Zr-oHo" id="ndV-PE-44t"/>
+                                <segue destination="zc5-9Q-oJx" kind="show" id="nxf-Pc-Rrr"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <connections>
-                        <outlet property="revealMenuButton" destination="gOK-Kc-Dse" id="ZPm-uZ-WLn"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pfw-zb-fZq" sceneMemberID="firstResponder"/>
             </objects>
@@ -209,37 +206,16 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="課表" id="doZ-4e-ijb">
-                        <barButtonItem key="leftBarButtonItem" image="menu" id="126-i7-NCf"/>
                         <barButtonItem key="rightBarButtonItem" image="cloud" id="5xQ-V4-njD">
                             <connections>
                                 <action selector="updateFromCloud:" destination="zc5-9Q-oJx" id="LTQ-oS-RAY"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <connections>
-                        <outlet property="revealMenuButon" destination="126-i7-NCf" id="qhH-DY-e1H"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ChC-xk-GHG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2694" y="726"/>
-        </scene>
-        <!--Item-->
-        <scene sceneID="caM-oY-yFh">
-            <objects>
-                <navigationController id="tjl-k1-Wo2" customClass="ColorgyNavigationController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="p8e-42-vKF"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="HnT-v1-98w">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="zc5-9Q-oJx" kind="relationship" relationship="rootViewController" id="i7z-UB-wlK"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="XfA-JI-sNk" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1874" y="726"/>
+            <point key="canvasLocation" x="3518" y="-92"/>
         </scene>
         <!--ColorgyFB Login View Controller-->
         <scene sceneID="Fxb-FD-Rzs">
@@ -317,7 +293,6 @@
                     </tabBar>
                     <connections>
                         <segue destination="AUs-2t-DyB" kind="relationship" relationship="viewControllers" id="uSh-fM-VlC"/>
-                        <segue destination="tjl-k1-Wo2" kind="relationship" relationship="viewControllers" id="EtG-6k-lb2"/>
                         <segue destination="896-tN-Dvn" kind="relationship" relationship="viewControllers" id="baw-an-uCz"/>
                         <segue destination="c4P-6e-yFm" kind="relationship" relationship="viewControllers" id="yTm-O2-J98"/>
                     </connections>
@@ -347,6 +322,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="add" width="22" height="21"/>
         <image name="cloud" width="28" height="27"/>
         <image name="menu" width="26" height="23"/>
     </resources>

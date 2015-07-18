@@ -44,6 +44,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     var colorgyLightYellow: UIColor = UIColor(red: 244/255.0, green: 188/255.0, blue: 94/255.0, alpha: 1)
     var colorgyDarkGray = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
 //    var colorgyGreen: UIColor = UIColor(red: 42/255.0, green: 171/255.0, blue: 147/255.0, alpha: 1)
+    var colorgyBackgroundColor: UIColor = UIColor(red: 250/255.0, green: 247/255.0, blue: 247/255.0, alpha: 1)
     
     // updating
     var updatingAlert: UIAlertController!
@@ -58,7 +59,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
 
         // tableview style
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
-        self.tableView.backgroundColor = self.colorgyDarkGray
+        self.tableView.backgroundColor = self.colorgyBackgroundColor
         // navi style
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         self.navigationItem.title = "已選課程"
@@ -102,8 +103,10 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         // i want to select tableview while searching
         self.searchCourse.dimsBackgroundDuringPresentation = false
         // change search abr color
+        // tintColor is right button's color
         self.searchCourse.searchBar.tintColor = UIColor.whiteColor()
-        self.searchCourse.searchBar.barTintColor = UIColor(red: 113/255.0, green: 112/255.0, blue: 113/255.0, alpha: 1)
+        // barTintColor is color of surrounding.
+        self.searchCourse.searchBar.barTintColor = self.colorgyLightOrange
 //        self.searchCourse.searchBar.searchBarStyle = UISearchBarStyle.Minimal
         self.tableView.bounces = false
         

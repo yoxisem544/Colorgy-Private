@@ -303,8 +303,16 @@ class ColorgyTimeTableViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    // MARK: - add course button action
+    
+    @IBAction func pushToAddCourseView(sender: AnyObject) {
+        println("push to add course view")
+    }
+    
+    
     // MARK:- update data
     
+    // this part is where you can get new data from server
     @IBAction func updateFromCloud(sender: AnyObject) {
         println("from cloud!!")
         var reachability = Reachability.reachabilityForInternetConnection()
