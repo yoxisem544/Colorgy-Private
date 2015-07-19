@@ -166,7 +166,11 @@ class ColorgyTimeTableViewController: UIViewController {
     // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        // test segue
+        // push every time to see layout
+        self.performSegueWithIdentifier("getCourseDetail", sender: self)
+        
         // Do any additional setup after loading the view.
         println("colorgy timetable view did load!")
         // get screen h & w

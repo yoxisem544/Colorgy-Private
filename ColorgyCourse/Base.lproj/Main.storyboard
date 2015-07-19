@@ -4,6 +4,24 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
     <scenes>
+        <!--Colorgy Course Detail Page View Controller-->
+        <scene sceneID="Dph-JM-sGo">
+            <objects>
+                <viewController id="2gN-Oy-7br" customClass="ColorgyCourseDetailPageViewController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="iEN-EE-14v"/>
+                        <viewControllerLayoutGuide type="bottom" id="zAl-0V-cyv"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="HEh-Yb-Llu">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Jft-8C-Kos" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3508" y="753"/>
+        </scene>
         <!--我的-->
         <scene sceneID="2yO-Xd-KgD">
             <objects>
@@ -44,6 +62,9 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="2gN-Oy-7br" kind="show" identifier="getCourseDetail" id="Kms-in-uMk"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pfw-zb-fZq" sceneMemberID="firstResponder"/>
             </objects>
