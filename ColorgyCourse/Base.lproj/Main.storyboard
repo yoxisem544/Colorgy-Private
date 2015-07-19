@@ -4,7 +4,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
     <scenes>
-        <!--Item-->
+        <!--我的-->
         <scene sceneID="2yO-Xd-KgD">
             <objects>
                 <viewController id="c4P-6e-yFm" customClass="ColorgySideMenuViewController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
@@ -17,11 +17,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item" id="UGm-2b-I2z"/>
+                    <tabBarItem key="tabBarItem" title="我的" image="aboutme" id="UGm-2b-I2z"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AUg-4F-Rpk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="932" y="237"/>
+            <point key="canvasLocation" x="1874" y="1421"/>
         </scene>
         <!--Colorgy Time Table View Controller-->
         <scene sceneID="BiM-tP-yFf">
@@ -47,7 +47,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pfw-zb-fZq" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2686" y="-92"/>
+            <point key="canvasLocation" x="2616" y="-92"/>
         </scene>
         <!--課表-->
         <scene sceneID="j2R-FR-Etu">
@@ -209,13 +209,13 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="THk-vY-HaP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="166" y="-639"/>
+            <point key="canvasLocation" x="892" y="-719"/>
         </scene>
-        <!--Item-->
+        <!--課表-->
         <scene sceneID="Y63-X2-RKf">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="AUs-2t-DyB" customClass="ColorgyNavigationController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="MIO-JU-noh"/>
+                    <tabBarItem key="tabBarItem" title="課表" image="timetable" id="MIO-JU-noh"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="gLX-pq-Rgo">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -252,12 +252,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jwG-Oo-H1g" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2686" y="1533"/>
+            <point key="canvasLocation" x="2616" y="631"/>
         </scene>
-        <!--Tab Bar Controller-->
+        <!--Colorgy Tab Bar Controller-->
         <scene sceneID="Muu-eL-7ze">
             <objects>
-                <tabBarController storyboardIdentifier="ColorgyTabBarService" id="WOS-CQ-Zfe" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="ColorgyTabBarService" id="WOS-CQ-Zfe" customClass="ColorgyTabBarController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
                     <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="5Hw-3e-ptB">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
@@ -272,13 +272,13 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4hU-eW-Lyb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="494" y="1411"/>
+            <point key="canvasLocation" x="892" y="165"/>
         </scene>
-        <!--Item-->
+        <!--活動牆-->
         <scene sceneID="jT5-fJ-TYw">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="896-tN-Dvn" customClass="ColorgyNavigationController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="Myq-vh-80B"/>
+                    <tabBarItem key="tabBarItem" title="活動牆" image="wall" id="Myq-vh-80B"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="fb2-gT-Pgb">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -291,12 +291,15 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JTY-v0-kAV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1874" y="1533"/>
+            <point key="canvasLocation" x="1874" y="637"/>
         </scene>
     </scenes>
     <resources>
+        <image name="aboutme" width="31" height="26"/>
         <image name="add" width="22" height="21"/>
         <image name="cloud" width="28" height="27"/>
         <image name="menu" width="26" height="23"/>
+        <image name="timetable" width="24" height="24"/>
+        <image name="wall" width="26" height="25"/>
     </resources>
 </document>

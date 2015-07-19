@@ -53,6 +53,10 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // test tabbar push hide
+        println("😀 \(self.hidesBottomBarWhenPushed)")
+        self.hidesBottomBarWhenPushed = false
+        
         // tableview delegate and datasource
         self.tableView.delegate = self
         self.tableView.dataSource = self

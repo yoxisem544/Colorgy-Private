@@ -219,6 +219,19 @@ class ColorgyTimeTableViewController: UIViewController {
         self.setupCourseNotification()
         
         println("im back!")
+        
+        // test tabbar push hide
+        // when you push to another view, you need to set back hide to true.
+        // Or bottom bar will disappear when you push to another view
+        self.hidesBottomBarWhenPushed = true
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        // when you push to another view, you need to set back hide to false.
+        // Or bottom bar will not appear again
+        self.hidesBottomBarWhenPushed = false
     }
     
     //MARK:- notification
