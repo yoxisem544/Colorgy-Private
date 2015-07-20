@@ -17,6 +17,8 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     let detailInformationContainerViewSpacing: CGFloat = 15
     let detailInformationContentCellHeight: CGFloat = 41
     let headerAndDetailInformationSpacing: CGFloat = 23
+    // this is content card spacing
+    let contentSpacing: CGFloat = 13
     
     // color
     let colorgyDimOrange: UIColor = UIColor(red: 226/255.0, green: 109/255.0, blue: 90/255.0, alpha: 1)
@@ -30,9 +32,11 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     
     var colorgyDetailContentView: UIScrollView!
 
+    // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        
         // Do any additional setup after loading the view.
         println("you are now in detail view")
         
@@ -50,6 +54,9 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         content.addObject(["地點", "San Francisco"])
         content.addObject(["日期", "Oct 10"])
         content.addObject(["代碼", "A1234567890"])
+        content.addObject(["特", "A1234567890"])
+        content.addObject(["別", "A1234567890"])
+        content.addObject(["做的", "可以丟鎮列他幫你處理"])
         
         // add detail information
         var detailInformationView = self.DetailInformationContainerViewWithContent(content)
@@ -58,11 +65,24 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         detailInformationView.frame.origin.y = detailHeaderView.frame.height + self.headerAndDetailInformationSpacing
         self.colorgyDetailContentView.addSubview(detailInformationView)
         
+        // buttons
+        var button = self.pushButtonWithTitle("課程評論", selector: "yo")!
+        button.center.x = detailHeaderView.center.x
+        button.frame.origin.y = detailInformationView.frame.origin.y + detailInformationView.frame.height + self.contentSpacing
+        self.colorgyDetailContentView.addSubview(button)
+        
+        // classmates
+        var classmatesView = self.MyClassmatesViewWithClassmates([])
+        classmatesView.center.x = detailHeaderView.center.x
+        classmatesView.frame.origin.y = button.frame.origin.y + button.frame.height + self.contentSpacing
+        self.colorgyDetailContentView.addSubview(classmatesView)
+        
         self.view.addSubview(self.colorgyDetailContentView)
         
         self.view.backgroundColor = self.timetableBackgroundColor
     }
     
+    // container of detail view, scrollview
     func DetailContentView() -> UIScrollView {
         
         var detailContentView = UIScrollView(frame: CGRectMake(0, 0, self.view.frame.width, self.view.frame.height))
@@ -217,9 +237,10 @@ class ColorgyCourseDetailPageViewController: UIViewController {
             let count = content?.count
             for index in 1...(count! - 1) {
                 let lineThickness: CGFloat = 1
-                var line = UIView(frame: CGRectMake(0, 0, containerView.frame.width, lineThickness))
+                var line = UIView(frame: CGRectMake(0, 0, containerView.frame.width - 4, lineThickness))
                 line.backgroundColor = self.timetableLineColor
                 line.center.y = titleBackgroundViewHeight + self.detailInformationContentCellHeight * CGFloat(index)
+                line.center.x = containerView.center.x
                 
                 containerView.addSubview(line)
                 
@@ -233,6 +254,157 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         return containerView
     }
 
+    // MARK: - buttons
+    func pushButtonWithTitle(title: String, selector: String) -> UIView? {
+        
+        let titleBackgroundViewHeight: CGFloat = 49
+        
+        let containerHeight: CGFloat = titleBackgroundViewHeight
+        var containerView = UIView(frame: CGRectMake(0, 0, self.view.frame.width - 2 * self.detailInformationContainerViewSpacing, containerHeight))
+        containerView.layer.cornerRadius = 8
+        containerView.layer.masksToBounds = true
+        containerView.backgroundColor = UIColor.whiteColor()
+        
+        // title of "詳細資訊"
+        let titleSpacing: CGFloat = 20
+        let titleFontSize: CGFloat = 18
+        var informationTitle = UILabel(frame: CGRectMake(titleSpacing, 0, containerView.frame.width - titleSpacing, titleFontSize))
+        informationTitle.font = UIFont(name: "STHeitiTC-Medium", size: titleFontSize)
+        informationTitle.textColor = self.colorgyDarkGray
+        informationTitle.text = title
+        
+        // background view of title
+        var titleBackgroundView = UIButton(frame: CGRectMake(0, 0, containerView.frame.width, titleBackgroundViewHeight))
+        titleBackgroundView.backgroundColor = self.timetableLineColor
+        
+        // add title to its background
+        titleBackgroundView.addSubview(informationTitle)
+        informationTitle.center.y = titleBackgroundView.center.y
+        
+        // disclosure button
+        var disclosureView = UIImageView(image: UIImage(named: "disclosure"))
+        let spaceToRight: CGFloat = 26
+        let xOffset = titleBackgroundView.frame.width - disclosureView.frame.width - spaceToRight
+        disclosureView.frame.origin.x = xOffset
+        disclosureView.center.y = informationTitle.center.y
+        titleBackgroundView.addSubview(disclosureView)
+        
+        containerView.addSubview(titleBackgroundView)
+        
+        // touch handle
+        titleBackgroundView.addTarget(self, action: "pushButtonTouchDown:", forControlEvents: UIControlEvents.TouchDown)
+        titleBackgroundView.addTarget(self, action: "pushButtonTouchDragEnter:", forControlEvents: UIControlEvents.TouchDragEnter)
+        titleBackgroundView.addTarget(self, action: "pushButtonTouchDragExit:", forControlEvents: UIControlEvents.TouchDragExit)
+        titleBackgroundView.addTarget(self, action: "pushButtonTouchCancel:", forControlEvents: UIControlEvents.TouchCancel)
+        titleBackgroundView.addTarget(self, action: "pushButtonTouchDown:", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        return containerView
+    }
+    
+    func pushButtonTouchDown(button: UIButton) {
+        println("pushButtonTouchDown")
+        
+        UIView.animateWithDuration(0.1, animations: {
+            button.backgroundColor = self.colorgyGray
+        })
+    }
+    
+    func pushButtonTouchDragEnter(button: UIButton) {
+        println("pushButtonTouchDragEnter")
+        
+        UIView.animateWithDuration(0.1, animations: {
+            button.backgroundColor = self.colorgyGray
+        })
+    }
+    
+    func pushButtonTouchDragExit(button: UIButton) {
+        println("pushButtonTouchDragExit")
+        
+        UIView.animateWithDuration(0.1, animations: {
+            button.backgroundColor = self.timetableLineColor
+        })
+    }
+    
+    func pushButtonTouchCancel(button: UIButton) {
+        println("pushButtonTouchCancel")
+        
+        UIView.animateWithDuration(0.1, animations: {
+            button.backgroundColor = self.timetableLineColor
+        })
+    }
+    
+    // MARK: - my classmates.
+    func MyClassmatesViewWithClassmates(classmates: NSMutableArray?) -> UIView {
+        
+        let titleBackgroundViewHeight: CGFloat = 49
+        
+        let containerHeight: CGFloat = titleBackgroundViewHeight
+        var containerView = UIView(frame: CGRectMake(0, 0, self.view.frame.width - 2 * self.detailInformationContainerViewSpacing, containerHeight))
+        containerView.layer.cornerRadius = 8
+        containerView.layer.masksToBounds = true
+        containerView.backgroundColor = UIColor.whiteColor()
+        
+        // title of "詳細資訊"
+        let titleSpacing: CGFloat = 20
+        let titleFontSize: CGFloat = 18
+        var informationTitle = UILabel(frame: CGRectMake(titleSpacing, 0, containerView.frame.width - titleSpacing, titleFontSize))
+        informationTitle.font = UIFont(name: "STHeitiTC-Medium", size: titleFontSize)
+        informationTitle.textColor = self.colorgyDarkGray
+        informationTitle.text = "我的同學"
+        
+        // background view of title
+        var titleBackgroundView = UIView(frame: CGRectMake(0, 0, containerView.frame.width, titleBackgroundViewHeight))
+        titleBackgroundView.backgroundColor = self.timetableLineColor
+        
+        // add title to its background
+        titleBackgroundView.addSubview(informationTitle)
+        informationTitle.center.y = titleBackgroundView.center.y
+        
+        if classmates != nil {
+            // classmate ball height
+            let classmateTopSpacing: CGFloat = 27
+            let classmateToLeftSpacing: CGFloat = 26
+            let classmateToClassmateSpacing: CGFloat = 18
+            let everyRowClassmateCounts: CGFloat = 5
+            let classmateWidth: CGFloat = (containerView.frame.width - 2 * classmateToLeftSpacing - (everyRowClassmateCounts - 1) * classmateToClassmateSpacing) / everyRowClassmateCounts
+            println(classmateWidth)
+            
+            // calculate rows
+//            let rows = classmates?.count
+            let rows = 3
+            
+            for row in 1...rows {
+                // generate classmates!
+                let classmatesContainerViewHeight: CGFloat = classmateWidth + classmateToClassmateSpacing
+                var classmatesContainerView = UIView(frame: CGRectMake(0, titleBackgroundViewHeight + classmateTopSpacing + CGFloat(row - 1) * classmatesContainerViewHeight, containerView.frame.width, classmatesContainerViewHeight))
+                for i in 1...5 {
+                    var classmatePhoto = UIImageView(frame: CGRectMake(classmateToLeftSpacing + CGFloat(i - 1) * (classmateWidth + classmateToClassmateSpacing), 0, classmateWidth, classmateWidth))
+                    classmatePhoto.image = UIImage(named: "1-2.jpg")
+                    classmatePhoto.layer.masksToBounds = true
+                    classmatePhoto.layer.cornerRadius = classmatePhoto.frame.width / 2
+                    classmatesContainerView.addSubview(classmatePhoto)
+                }
+                
+                containerView.addSubview(classmatesContainerView)
+            }
+            // adjust height of outer container view.
+            // do something
+            let classmatesContainerViewHeight: CGFloat = classmateWidth + classmateToClassmateSpacing
+            containerView.frame.size.height = containerView.frame.height + classmateTopSpacing + classmatesContainerViewHeight * CGFloat(rows)
+        }
+        
+        
+        
+        
+        
+        containerView.addSubview(titleBackgroundView)
+        
+        
+        
+        return containerView
+    }
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
