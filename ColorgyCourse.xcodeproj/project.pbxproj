@@ -30,6 +30,7 @@
 		63A85F191B5E0CD3000438B1 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A85F181B5E0CD3000438B1 /* SwiftyJSON.swift */; };
 		63C96ADE1AFE0CD9003ED287 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63C96ADD1AFE0CD9003ED287 /* FacebookSDK.framework */; };
 		63DD0DAE1B069F2700582DEF /* ColorgyCourseCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DD0DAD1B069F2700582DEF /* ColorgyCourseCardCell.swift */; };
+		63EDEAF71B5F64C5001990A1 /* SwiftyJSON.swift in Frameworks */ = {isa = PBXBuildFile; fileRef = 63A85F181B5E0CD3000438B1 /* SwiftyJSON.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63EDEAF71B5F64C5001990A1 /* SwiftyJSON.swift in Frameworks */,
 				6324DA921B13696C00DF2F6C /* CoreData.framework in Frameworks */,
 				63C96ADE1AFE0CD9003ED287 /* FacebookSDK.framework in Frameworks */,
 				04ADBE4C9FEF8C3E1636FF9B /* libPods-ColorgyCourse.a in Frameworks */,

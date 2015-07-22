@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import SwiftyJSON
+//import SwiftyJSON
 
 class ColorgyCourseDetailPageViewController: UIViewController {
     
@@ -72,7 +72,8 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         self.detailHeaderView = self.DetailHeaderView()!
         self.colorgyDetailContentView.addSubview(self.detailHeaderView)
         self.colorgyDetailContentView.contentInset.top = 64
-        self.colorgyDetailContentView.contentOffset.y = -64
+//        self.colorgyDetailContentView.contentOffset.y = -64
+        self.colorgyDetailContentView.contentOffset.y = 64
         
         // content
         var content = NSMutableArray()
@@ -80,7 +81,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         content.addObject(["日期", "Oct 10"])
         content.addObject(["代碼", "A1234567890"])
 
-        
+        println(self.courseCode)
         // add detail information
         self.detailInformationView = self.DetailInformationContainerViewWithContent(content)
         // move information view to header view's bottom
@@ -501,7 +502,8 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         titleBackgroundView.addSubview(informationTitle)
         informationTitle.center.y = titleBackgroundView.center.y
         
-        if classmates != nil {
+        // not nil and not zero 0
+        if (classmates != nil) && (classmates?.count != 0) {
             // classmate ball height
             let classmateTopSpacing: CGFloat = 27
             let classmateToLeftSpacing: CGFloat = 26
@@ -541,12 +543,19 @@ class ColorgyCourseDetailPageViewController: UIViewController {
                         
                         var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( Double(offset) * 0.2 * Double(NSEC_PER_SEC)))
                         dispatch_after(delay, dispatch_get_main_queue()) {
-                            classmatePhoto.image = self.getUserAvatarWithUserId("\(userId)")
+                            var image = self.getUserAvatarWithUserId("\(userId)")
+                            classmatePhoto.image = (image == nil) ? UIImage(named: "1-2.jpg") : image
+                            println(classmatePhoto.image)
                             var transition = CATransition()
-                            transition.duration = 1.0
+                            transition.duration = 0.4
                             transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
                             transition.type = kCATransitionFade
                             classmatePhoto.layer.addAnimation(transition, forKey: nil)
+                            UIView.animateWithDuration(0.7, delay: 0, options: UIViewAnimationOptions.Autoreverse, animations: {
+                                    classmatePhoto.transform = CGAffineTransformMakeScale(1.3, 1.3)
+                                }, completion: { (isFinished: Bool) -> Void in
+                                    classmatePhoto.transform = CGAffineTransformMakeScale(1, 1)
+                            })
                         }
                     }
                     classmatePhoto.layer.masksToBounds = true
