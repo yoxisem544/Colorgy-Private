@@ -206,6 +206,9 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="2gN-Oy-7br" kind="show" identifier="showDetailCourse" id="k0A-Ds-7bf"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ChC-xk-GHG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -323,4 +326,7 @@
         <image name="timetable" width="24" height="24"/>
         <image name="wall" width="26" height="25"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="k0A-Ds-7bf"/>
+    </inferredMetricsTieBreakers>
 </document>

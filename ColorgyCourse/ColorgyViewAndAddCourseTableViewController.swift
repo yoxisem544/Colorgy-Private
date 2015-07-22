@@ -37,6 +37,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     // indicaotr
     var indicator: UIActivityIndicatorView!
     
+    // MARK: - push segue
+    var pushSegueCode: String!
+    
     // MARK: - color
     var colorgyDimOrange: UIColor = UIColor(red: 226/255.0, green: 109/255.0, blue: 90/255.0, alpha: 1)
     var colorgyLightOrange: UIColor = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
@@ -960,9 +963,15 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             println("searching, you tapped \(self.filteredCourse[indexPath.row])")
 //            self.userAttempToAddCourseAtIndex(indexPath.row, warning: false)
             
+            // FIXME: will occur nil!! big problem
+            self.pushSegueCode = self.filteredCourse[indexPath.row]["code"] as! String
+            performSegueWithIdentifier("showDetailCourse", sender: self)
+            
         } else if !self.searchCourse.active {
             println("outside searching, you tapped \(self.coursesAddedToTimetable[indexPath.row])")
 //            self.userAttempToDeleteCourseAtIndex(indexPath.row, warning: false)
+            self.pushSegueCode = self.coursesAddedToTimetable[indexPath.row][3] as! String
+            performSegueWithIdentifier("showDetailCourse", sender: self)
         }
     }
     
@@ -1091,6 +1100,18 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                 self.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
                 // user add their course, set coursesAddedToTimetable to nil
                 self.coursesAddedToTimetable = nil
+            }
+        }
+    }
+    
+    // MARK: - segue
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if segue.identifier == "showDetailCourse" {
+            if self.pushSegueCode != nil {
+                var vc = segue.destinationViewController as! ColorgyCourseDetailPageViewController
+                
+                vc.pushWithCourseCode(self.pushSegueCode)
             }
         }
     }
