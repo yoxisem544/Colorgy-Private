@@ -190,23 +190,7 @@ class ColorgyTimeTableViewController: UIViewController {
         // this is very important line!
         self.automaticallyAdjustsScrollViewInsets = false
         
-        
-        
-        
-        // status bar frame change notification
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "barChange", name: UIApplicationDidChangeStatusBarFrameNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "youRBack", name: UIApplicationDidBecomeActiveNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "youGo", name: UIApplicationDidEnterBackgroundNotification, object: nil)
-        // notify
-//        self.setupNotification()
-
-        // animate conflict courses
-        self.isAnimating = true
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        
+        // generate timetable scrollview
         self.colorgyTimeTableView?.removeFromSuperview()
         self.colorgyTimeTableView = self.ColorgyTimeTableView()
         self.view.addSubview(self.colorgyTimeTableView)
@@ -222,6 +206,30 @@ class ColorgyTimeTableViewController: UIViewController {
         println("im back!")
         
         println(self.getDataFromDatabase())
+        // generate timetable scrollview
+        
+        // status bar frame change notification
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "barChange", name: UIApplicationDidChangeStatusBarFrameNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "youRBack", name: UIApplicationDidBecomeActiveNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "youGo", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        // notify
+//        self.setupNotification()
+
+        // animate conflict courses
+        self.isAnimating = true
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.refreshTimetableCourseCells()
+        
+        self.detectIfClassHasConflicts()
+        
+        
+        self.animateConflictCourses()
+        
+        self.setupCourseNotification()
         
         // test tabbar push hide
         // when you push to another view, you need to set back hide to true.
@@ -627,19 +635,51 @@ class ColorgyTimeTableViewController: UIViewController {
         // before track courses position, init courseOnTimetable first
         self.coursesOnTimetable = NSMutableArray()
         // prepare gesture
+        // updateTimetableCourse will return views....
         if let views = self.updateTimetableCourse() {
+            // this part will add gesture to views.
             for v in views {
                 let tap = UITapGestureRecognizer()
                 tap.numberOfTouchesRequired = 1
                 tap.addTarget(self, action: "tapOnCourseCellView:")
                 v.addGestureRecognizer(tap)
                 view.addSubview(v)
-                coursesOnTimetable.addObject(v)
+                self.coursesOnTimetable.addObject(v)
             }
         }
         
         
         return view as UIScrollView
+    }
+    
+    func refreshTimetableCourseCells() {
+        
+        if self.coursesOnTimetable != nil {
+            for cell in self.coursesOnTimetable {
+                if let viewcell = cell as? UIView {
+                    // remove views
+                    viewcell.removeFromSuperview()
+                }
+            }
+        }
+        
+        // update timetableview
+        // this will return array of uiviews
+        // before track courses position, init courseOnTimetable first
+        self.coursesOnTimetable = NSMutableArray()
+        // prepare gesture
+        // updateTimetableCourse will return views....
+        if let views = self.updateTimetableCourse() {
+            // this part will add gesture to views.
+            for v in views {
+                let tap = UITapGestureRecognizer()
+                tap.numberOfTouchesRequired = 1
+                tap.addTarget(self, action: "tapOnCourseCellView:")
+                v.addGestureRecognizer(tap)
+                self.colorgyTimeTableView.addSubview(v)
+                self.coursesOnTimetable.addObject(v)
+            }
+        }
     }
     
     func tapOnCourseCellView(gesture: UITapGestureRecognizer) {
