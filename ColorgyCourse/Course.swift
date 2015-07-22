@@ -50,5 +50,4 @@ class Course: NSManagedObject {
     @NSManaged var location_7: String!
     @NSManaged var location_8: String!
     @NSManaged var location_9: String!
-
 }

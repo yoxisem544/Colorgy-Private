@@ -53,7 +53,11 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     // classmatesView --> contains classmates who choose this course
     var classmatesView: UIView!
     
+    // view contents
     var classmatesData: NSMutableArray!
+    var name: String!
+    var lecturer: String!
+    var detailContents: NSMutableArray!
     
     // MARK: - view
     override func viewDidLoad() {
@@ -78,7 +82,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         self.colorgyDetailContentView = self.DetailContentView()
         
         // add detail header card
-        self.detailHeaderView = self.DetailHeaderView()!
+        self.detailHeaderView = self.DetailHeaderView(self.name, lecturer: self.lecturer)!
         self.colorgyDetailContentView.addSubview(self.detailHeaderView)
         // Inset to top
         self.colorgyDetailContentView.contentInset.top = 64
@@ -93,7 +97,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
 
         println(self.courseCode)
         // add detail information
-        self.detailInformationView = self.DetailInformationContainerViewWithContent(content)
+        self.detailInformationView = self.DetailInformationContainerViewWithContent(self.detailContents)
         // move information view to header view's bottom
         // set position
         self.detailInformationView.center.x = self.detailHeaderView.center.x
@@ -119,6 +123,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         self.view.backgroundColor = self.timetableBackgroundColor
     }
     
+    // MARK: - server communication
     // download data from server
     func getCourseInformationFromServer() {
         
@@ -139,9 +144,32 @@ class ColorgyCourseDetailPageViewController: UIViewController {
             // unpack response object using JSON
             let json = JSON(responseObject)
             // need lecturer and course name, get it out
-            let name = json["name"]
-            let lecturer = json["lecturer"]
+            let name = json["name"].string
+            let lecturer = json["lecturer"].string
             println("n  \(name), l \(lecturer)")
+            // TODO: 增加詳細資料陣列
+            self.name = (name != nil) ? name : ""
+            self.lecturer = (lecturer != nil) ? lecturer : ""
+            
+            // init detailContents
+            // FIXME: nil handling....!!1important
+            self.detailContents = NSMutableArray()
+            let credits = json["credits"].int
+            let general_code = json["general_code"].string
+            let school = json[""]
+            let location = self.getLocationWithCourseJSON(json)
+            
+            println("😀")
+            println()
+            
+            self.detailContents.addObject(["學分", "\(credits!)"])
+            self.detailContents.addObject(["代碼", general_code!])
+            self.detailContents.addObject(["上課教室", location])
+            self.detailContents.addObject(["時間", ""])
+
+
+            
+            self.getLocationWithCourseJSON(json)
             
             // after getting course information, get classmates
             // never call this before you get lecturer? not sure heehee.
@@ -152,6 +180,93 @@ class ColorgyCourseDetailPageViewController: UIViewController {
                 // TODO: 處理錯誤GET
                 println("error \(responseObject)")
         })
+    }
+    
+    // MARK: - handle location, period
+    func getLocationWithCourseJSON(json: JSON) -> String {
+        
+        var locations = [String]()
+        
+        if let location_1 = json["location_1"].string {
+            if !self.isLocationRepeatInArray(locations, location: location_1) {
+                // not repeated
+                locations.append(location_1)
+            }
+        }
+        if let location_2 = json["location_2"].string {
+            if !self.isLocationRepeatInArray(locations, location: location_2) {
+                // not repeated
+                locations.append(location_2)
+            }
+        }
+        if let location_3 = json["location_3"].string {
+            if !self.isLocationRepeatInArray(locations, location: location_3) {
+                // not repeated
+                locations.append(location_3)
+            }
+        }
+        if let location_4 = json["location_4"].string {
+            if !self.isLocationRepeatInArray(locations, location: location_4) {
+                // not repeated
+                locations.append(location_4)
+            }
+        }
+        if let location_5 = json["location_5"].string {
+            if !self.isLocationRepeatInArray(locations, location: location_5) {
+                // not repeated
+                locations.append(location_5)
+            }
+        }
+        if let location_6 = json["location_6"].string {
+            if !self.isLocationRepeatInArray(locations, location: location_6) {
+                // not repeated
+                locations.append(location_6)
+            }
+        }
+        if let location_7 = json["location_7"].string {
+            if !self.isLocationRepeatInArray(locations, location: location_7) {
+                // not repeated
+                locations.append(location_7)
+            }
+        }
+        if let location_8 = json["location_8"].string {
+            if !self.isLocationRepeatInArray(locations, location: location_8) {
+                // not repeated
+                locations.append(location_8)
+            }
+        }
+        if let location_9 = json["location_9"].string {
+            if !self.isLocationRepeatInArray(locations, location: location_9) {
+                // not repeated
+                locations.append(location_9)
+            }
+        }
+
+        var locationString = ""
+
+        for (index: Int, value: String) in enumerate(locations) {
+            locationString += value
+            if index != (locations.count - 1) {
+                locationString += " "
+            }
+        }
+        
+        return locationString
+    }
+    
+    func isLocationRepeatInArray(array: [String], location: String) -> Bool {
+        
+        if array.count == 0 {
+            return false
+        } else {
+            for loca in array {
+                if loca == location {
+                    return true
+                }
+            }
+            
+            return false
+        }
     }
     
     // this function will get called after getting classmates' data
@@ -214,7 +329,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         // get response data back
         var responseData = NSURLConnection.sendSynchronousRequest(req, returningResponse: response, error: nil)
 
-        println(responseData)
+//        println(responseData)
         var err: NSError?
         // need to check if data truly comes back.
         // or json serialization will fail.
@@ -254,7 +369,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     
     // MARK: - detail header view and its contents.
     // TODO: add name, lecturer to this function
-    func DetailHeaderView() -> UIView? {
+    func DetailHeaderView(name: String, lecturer: String) -> UIView? {
         
         var detailHeaderView = UIView(frame: CGRectMake(0, 0, self.view.frame.width, self.headerViewHeight))
         detailHeaderView.backgroundColor = self.colorgyDimOrange
@@ -269,14 +384,14 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         
         // lecturer label
         let offsetHeightToContentView: CGFloat = 22
-        let lecturerLabel = self.LowerLeftLecturerNameViewWithName("小ㄐㄐ")
+        let lecturerLabel = self.LowerLeftLecturerNameViewWithName(lecturer)
         lecturerLabel.frame.origin.y = contentView.center.y + contentView.bounds.height / 2 + offsetHeightToContentView
         lecturerLabel.frame.origin.x = self.lowerLeftContentSpacing
         detailHeaderView.addSubview(lecturerLabel)
         
         // course label
         let offsetHeightToLecturerLabel: CGFloat = 13
-        let courseLabel = self.LowerLeftTitleViewWithCourseName("網友們分享請將內容拍照存檔並寄信給管理員，再附上你個人的PS 經管理員")
+        let courseLabel = self.LowerLeftTitleViewWithCourseName(name)
         courseLabel.frame.origin.y = lecturerLabel.center.y + lecturerLabel.bounds.height / 2 + offsetHeightToLecturerLabel
         courseLabel.frame.origin.x = self.lowerLeftContentSpacing
         detailHeaderView.addSubview(courseLabel)
