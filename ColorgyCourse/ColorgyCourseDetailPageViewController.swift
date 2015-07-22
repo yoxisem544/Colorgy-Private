@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftyJSON
 
 class ColorgyCourseDetailPageViewController: UIViewController {
     
@@ -30,12 +31,37 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     // background color
     var timetableBackgroundColor: UIColor = UIColor(red: 250/255.0, green: 247/255.0, blue: 247/255.0, alpha: 1)
     
+    
+    
+    // MARK: - data from push segue
+    var courseCode: String!
+    
+    func pushWithCourseCode(code: String) {
+        println("course code set!😁")
+        self.courseCode = code
+    }
+    
+    // access to every view
     var colorgyDetailContentView: UIScrollView!
-
+    var detailHeaderView: UIView!
+    var detailInformationView: UIView!
+    var classmatesView: UIView!
+    
+    var classmatesData: NSMutableArray!
+    
     // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.getCourseInformationFromServer()
+        // never adjust this for me.....fuck
+        // this is very important line!
+        self.automaticallyAdjustsScrollViewInsets = false
+        
+//        self.testData()
+    }
+    
+    func setupDetailContentViews() {
         
         // Do any additional setup after loading the view.
         println("you are now in detail view")
@@ -43,8 +69,10 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         self.colorgyDetailContentView = self.DetailContentView()
         
         // add detail header card
-        var detailHeaderView = self.DetailHeaderView()!
-        self.colorgyDetailContentView.addSubview(detailHeaderView)
+        self.detailHeaderView = self.DetailHeaderView()!
+        self.colorgyDetailContentView.addSubview(self.detailHeaderView)
+        self.colorgyDetailContentView.contentInset.top = 64
+        self.colorgyDetailContentView.contentOffset.y = -64
         
         // content
         var content = NSMutableArray()
@@ -59,27 +87,104 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         content.addObject(["做的", "可以丟鎮列他幫你處理"])
         
         // add detail information
-        var detailInformationView = self.DetailInformationContainerViewWithContent(content)
+        self.detailInformationView = self.DetailInformationContainerViewWithContent(content)
         // move information view to header view's bottom
-        detailInformationView.center.x = detailHeaderView.center.x
-        detailInformationView.frame.origin.y = detailHeaderView.frame.height + self.headerAndDetailInformationSpacing
-        self.colorgyDetailContentView.addSubview(detailInformationView)
+        self.detailInformationView.center.x = self.detailHeaderView.center.x
+        self.detailInformationView.frame.origin.y = self.detailHeaderView.frame.height + self.headerAndDetailInformationSpacing
+        self.colorgyDetailContentView.addSubview(self.detailInformationView)
         
         // buttons
         var button = self.pushButtonWithTitle("課程評論", selector: "yo")!
-        button.center.x = detailHeaderView.center.x
-        button.frame.origin.y = detailInformationView.frame.origin.y + detailInformationView.frame.height + self.contentSpacing
+        button.center.x = self.detailHeaderView.center.x
+        button.frame.origin.y = self.detailInformationView.frame.origin.y + self.detailInformationView.frame.height + self.contentSpacing
         self.colorgyDetailContentView.addSubview(button)
         
         // classmates
-        var classmatesView = self.MyClassmatesViewWithClassmates([])
-        classmatesView.center.x = detailHeaderView.center.x
-        classmatesView.frame.origin.y = button.frame.origin.y + button.frame.height + self.contentSpacing
-        self.colorgyDetailContentView.addSubview(classmatesView)
+        self.classmatesView = self.MyClassmatesViewWithClassmates(self.classmatesData)
+        self.classmatesView.center.x = self.detailHeaderView.center.x
+        self.classmatesView.frame.origin.y = button.frame.origin.y + button.frame.height + self.contentSpacing
+        self.colorgyDetailContentView.addSubview(self.classmatesView)
         
         self.view.addSubview(self.colorgyDetailContentView)
         
         self.view.backgroundColor = self.timetableBackgroundColor
+    }
+    
+    // download data from server
+    func getCourseInformationFromServer() {
+        
+        let ud = NSUserDefaults.standardUserDefaults()
+        // get user name and  school
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        let access_token = ud.objectForKey("ColorgyAccessToken") as! String
+        let userSchool = ud.objectForKey("userSchool") as! String
+        let course = self.courseCode
+        afManager.GET("https://colorgy.io:443/api/v1/" + userSchool.lowercaseString + "/courses/" + course + ".json?access_token=" + access_token, parameters: nil, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+            
+            let json = JSON(responseObject)
+            // need lecturer and course name
+            let name = json["name"]
+            let lecturer = json["lecturer"]
+            println("n  \(name), l \(lecturer)")
+            
+            // after getting course information, get classmates
+            self.getClassmatesFromServer()
+            
+            
+            }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                println("error \(responseObject)")
+        })
+    }
+    
+    func getClassmatesFromServer() {
+        
+        let ud = NSUserDefaults.standardUserDefaults()
+        // get user name and  school
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        let access_token = ud.objectForKey("ColorgyAccessToken") as! String
+        let course = self.courseCode
+        afManager.GET("https://colorgy.io:443/api/v1/user_courses.json?filter%5Bcourse_code%5D=" + course + "&access_token=" + access_token, parameters: nil, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+            
+            self.classmatesData = NSMutableArray()
+//            println(responseObject)
+            let json = JSON(responseObject)
+            println("count of json is \(json.count)")
+            for (key: String, classmate: JSON) in json {
+                println(classmate["user_id"])
+                let id = classmate["user_id"].double
+                var object = NSMutableArray()
+                object.addObject(id!)
+                object.addObject("url")
+                object.addObject(UIImage(named: "1-2.jpg")!)
+                
+                self.classmatesData.addObject(object)
+            }
+            
+            // after getting classmates, setup views
+            self.setupDetailContentViews()
+            
+            
+            }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                println("error \(responseObject)")
+        })
+    }
+    
+    // get data
+    func testData() {
+        let ud = NSUserDefaults.standardUserDefaults()
+        // get user name and  school
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        let access_token = ud.objectForKey("ColorgyAccessToken") as! String
+        let userSchool = ud.objectForKey("userSchool") as! String
+        let course = self.courseCode
+        afManager.GET("https://colorgy.io:443/api/v1/" + userSchool.lowercaseString + "/courses/" + course + ".json?access_token=" + access_token, parameters: nil, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                println(responseObject)
+                let json = JSON(responseObject)
+                println(json)
+                println(json["name"])
+            }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                println("errpr \(responseObject)")
+        })
     }
     
     // container of detail view, scrollview
@@ -370,14 +475,20 @@ class ColorgyCourseDetailPageViewController: UIViewController {
             println(classmateWidth)
             
             // calculate rows
-//            let rows = classmates?.count
-            let rows = 3
+            var rows = (classmates?.count)! / Int(everyRowClassmateCounts)
+            if ((classmates?.count)! % Int(everyRowClassmateCounts)) != 0 {
+                println("rows is \(rows)")
+                rows = rows + 1
+                println("rows is \(rows)")
+            }
+//            let rows = 10
             
             for row in 1...rows {
                 // generate classmates!
                 let classmatesContainerViewHeight: CGFloat = classmateWidth + classmateToClassmateSpacing
                 var classmatesContainerView = UIView(frame: CGRectMake(0, titleBackgroundViewHeight + classmateTopSpacing + CGFloat(row - 1) * classmatesContainerViewHeight, containerView.frame.width, classmatesContainerViewHeight))
-                for i in 1...5 {
+                var counts = (row == rows) ? (classmates?.count)! % Int(everyRowClassmateCounts) : 5
+                for i in 1...counts {
                     var classmatePhoto = UIImageView(frame: CGRectMake(classmateToLeftSpacing + CGFloat(i - 1) * (classmateWidth + classmateToClassmateSpacing), 0, classmateWidth, classmateWidth))
                     classmatePhoto.image = UIImage(named: "1-2.jpg")
                     classmatePhoto.layer.masksToBounds = true

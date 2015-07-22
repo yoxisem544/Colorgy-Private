@@ -57,7 +57,8 @@ class ColorgyTimeTableViewController: UIViewController {
     var timetableBackgroundColor: UIColor = UIColor(red: 250/255.0, green: 247/255.0, blue: 247/255.0, alpha: 1)
     var timetableLineColor: UIColor = UIColor(red: 216/255.0, green: 216/255.0, blue: 216/255.0, alpha: 1)
     
-    // MARK:- school picker
+    // MARK: - push segue
+    var pushSegueCode: String!
     
     // upadting alert view
     var updatingAlert: UIAlertController!
@@ -167,10 +168,6 @@ class ColorgyTimeTableViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // test segue
-        // push every time to see layout
-        self.performSegueWithIdentifier("getCourseDetail", sender: self)
-        
         // Do any additional setup after loading the view.
         println("colorgy timetable view did load!")
         // get screen h & w
@@ -223,6 +220,8 @@ class ColorgyTimeTableViewController: UIViewController {
         self.setupCourseNotification()
         
         println("im back!")
+        
+        println(self.getDataFromDatabase())
         
         // test tabbar push hide
         // when you push to another view, you need to set back hide to true.
@@ -656,6 +655,7 @@ class ColorgyTimeTableViewController: UIViewController {
         let courses = self.conflictCourses[day - 1][session - 1]
         println(courses.count)
         var message = ""
+        var courseName = ""
         var title = "課程資訊"
         if courses.count > 1 {
             title = "衝堂囉！"
@@ -667,6 +667,7 @@ class ColorgyTimeTableViewController: UIViewController {
                 if subview.isKindOfClass(UILabel) && subview.tag == 1 {
                     let label = subview as! UILabel
                     message += "課程名稱：" + label.text! + "\n"
+                    courseName = label.text!
                 } else if subview.isKindOfClass(UILabel) && subview.tag == 2 {
                     let label = subview as! UILabel
                     message += "教室位置：" + label.text! + "\n"
@@ -681,7 +682,45 @@ class ColorgyTimeTableViewController: UIViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
         let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Cancel, handler: nil)
         alert.addAction(ok)
-        self.presentViewController(alert, animated: true, completion: nil)
+        // show alert!
+//        self.presentViewController(alert, animated: true, completion: nil)
+        if let code = self.getCourseCodeWithCourseName(courseName) {
+            println(code)
+            self.pushSegueCode = code
+            // push segue
+            performSegueWithIdentifier("getCourseDetail", sender: self)
+        }
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if segue.identifier == "getCourseDetail" {
+            if self.pushSegueCode != nil {
+                var vc = segue.destinationViewController as! ColorgyCourseDetailPageViewController
+                
+                vc.pushWithCourseCode(self.pushSegueCode)
+            }
+        }
+    }
+    
+    func getCourseCodeWithCourseName(name: String?) -> String? {
+        
+        let courses = self.getDataFromDatabase()
+        
+        if courses != nil {
+            for course in courses! {
+                // check if name match
+                if course.name == name {
+                    return course.uuid
+                }
+            }
+        } else {
+            // no data in db, so return nil
+            return nil
+        }
+        
+        // if no course match, return nil
+        return nil
     }
     
     func ColorgyTimeTableColumnView() -> UIView {
