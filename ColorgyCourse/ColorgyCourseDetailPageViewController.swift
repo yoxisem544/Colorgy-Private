@@ -79,12 +79,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         content.addObject(["地點", "San Francisco"])
         content.addObject(["日期", "Oct 10"])
         content.addObject(["代碼", "A1234567890"])
-        content.addObject(["地點", "San Francisco"])
-        content.addObject(["日期", "Oct 10"])
-        content.addObject(["代碼", "A1234567890"])
-        content.addObject(["特", "A1234567890"])
-        content.addObject(["別", "A1234567890"])
-        content.addObject(["做的", "可以丟鎮列他幫你處理"])
+
         
         // add detail information
         self.detailInformationView = self.DetailInformationContainerViewWithContent(content)
@@ -155,7 +150,12 @@ class ColorgyCourseDetailPageViewController: UIViewController {
                 var object = NSMutableArray()
                 object.addObject(id!)
                 object.addObject("url")
-                object.addObject(UIImage(named: "1-2.jpg")!)
+                let userId = Int(id!)
+//                if let image = self.getUserAvatarWithUserId("\(userId)") {
+//                    object.addObject(image)
+//                } else {
+//                    object.addObject(UIImage(named: "1-2.jpg")!)
+//                }
                 
                 self.classmatesData.addObject(object)
             }
@@ -167,6 +167,42 @@ class ColorgyCourseDetailPageViewController: UIViewController {
             }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
                 println("error \(responseObject)")
         })
+    }
+    
+    func getUserAvatarWithUserId(userId: String) -> UIImage? {
+        
+        let ud = NSUserDefaults.standardUserDefaults()
+        // get user name and  school
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        let access_token = ud.objectForKey("ColorgyAccessToken") as! String
+        let course = self.courseCode
+        
+        var image: UIImage?
+        
+        var url = "https://colorgy.io:443/api/v1/users/" + userId + ".json?access_token=" + access_token
+        println(url)
+        var req = NSURLRequest(URL: NSURL(string: url)!)
+        var response: AutoreleasingUnsafeMutablePointer<NSURLResponse?> = nil
+        var responseData = NSURLConnection.sendSynchronousRequest(req, returningResponse: response, error: nil)
+
+        println(responseData)
+        var err: NSError?
+        var jsonResult: NSDictionary = (NSJSONSerialization.JSONObjectWithData(responseData!, options: NSJSONReadingOptions.MutableContainers, error: &err) as? NSDictionary)!
+
+        if let responseObject = responseData {
+            let json = JSON(jsonResult)
+            println(json)
+            let avatarUrl = json["avatar_url"].string
+            if avatarUrl != nil {
+                let avatarImage = UIImage(data: NSData(contentsOfURL: NSURL(string: avatarUrl!)!)!)
+                return avatarImage
+            } else {
+                return nil
+            }
+        }
+
+        
+        return nil
     }
     
     // get data
@@ -470,7 +506,9 @@ class ColorgyCourseDetailPageViewController: UIViewController {
             let classmateTopSpacing: CGFloat = 27
             let classmateToLeftSpacing: CGFloat = 26
             let classmateToClassmateSpacing: CGFloat = 18
-            let everyRowClassmateCounts: CGFloat = 5
+            // min is 2, you can change row showing count here
+            // 10 is max is think....
+            let everyRowClassmateCounts: CGFloat = 3
             let classmateWidth: CGFloat = (containerView.frame.width - 2 * classmateToLeftSpacing - (everyRowClassmateCounts - 1) * classmateToClassmateSpacing) / everyRowClassmateCounts
             println(classmateWidth)
             
@@ -485,12 +523,32 @@ class ColorgyCourseDetailPageViewController: UIViewController {
             
             for row in 1...rows {
                 // generate classmates!
+                // this region will generate outer frame of photo
+                // after this, get image.
                 let classmatesContainerViewHeight: CGFloat = classmateWidth + classmateToClassmateSpacing
                 var classmatesContainerView = UIView(frame: CGRectMake(0, titleBackgroundViewHeight + classmateTopSpacing + CGFloat(row - 1) * classmatesContainerViewHeight, containerView.frame.width, classmatesContainerViewHeight))
-                var counts = (row == rows) ? (classmates?.count)! % Int(everyRowClassmateCounts) : 5
+                var counts = (row == rows) ? (classmates?.count)! % Int(everyRowClassmateCounts) : Int(everyRowClassmateCounts)
+                // 如果最後一行，且人數剛好填滿everyRowClassmatesCounts，的exception
+                if (row == rows) && ((classmates?.count)! % Int(everyRowClassmateCounts) == 0) {
+                    counts = Int(everyRowClassmateCounts)
+                }
                 for i in 1...counts {
                     var classmatePhoto = UIImageView(frame: CGRectMake(classmateToLeftSpacing + CGFloat(i - 1) * (classmateWidth + classmateToClassmateSpacing), 0, classmateWidth, classmateWidth))
                     classmatePhoto.image = UIImage(named: "1-2.jpg")
+                    dispatch_async(dispatch_get_main_queue()) {
+                        let offset = (i - 1) + (row - 1) * Int(everyRowClassmateCounts)
+                        let userId: Int = self.classmatesData[offset][0] as! Int
+                        
+                        var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( Double(offset) * 0.2 * Double(NSEC_PER_SEC)))
+                        dispatch_after(delay, dispatch_get_main_queue()) {
+                            classmatePhoto.image = self.getUserAvatarWithUserId("\(userId)")
+                            var transition = CATransition()
+                            transition.duration = 1.0
+                            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+                            transition.type = kCATransitionFade
+                            classmatePhoto.layer.addAnimation(transition, forKey: nil)
+                        }
+                    }
                     classmatePhoto.layer.masksToBounds = true
                     classmatePhoto.layer.cornerRadius = classmatePhoto.frame.width / 2
                     classmatesContainerView.addSubview(classmatePhoto)
