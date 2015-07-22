@@ -21,7 +21,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     // this is content card spacing
     let contentSpacing: CGFloat = 13
     
-    // color
+    // MARK: - color
     let colorgyDimOrange: UIColor = UIColor(red: 226/255.0, green: 109/255.0, blue: 90/255.0, alpha: 1)
     let colorgyLightOrange: UIColor = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
     var colorgyDarkGray = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
@@ -34,6 +34,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     
     
     // MARK: - data from push segue
+    // get code from root view, display information using this code.
     var courseCode: String!
     
     func pushWithCourseCode(code: String) {
@@ -42,9 +43,14 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     }
     
     // access to every view
+    // colorgyDetailContentView --> a scroll view contains all of the contents.
     var colorgyDetailContentView: UIScrollView!
+    // detailHeaderView --> a view contains title, lecturer, and credits.
     var detailHeaderView: UIView!
+    // detailInformationView --> contains things like location: TR312
+    // feed array [title: String, content: String], it will auto generate for you.
     var detailInformationView: UIView!
+    // classmatesView --> contains classmates who choose this course
     var classmatesView: UIView!
     
     var classmatesData: NSMutableArray!
@@ -61,19 +67,23 @@ class ColorgyCourseDetailPageViewController: UIViewController {
 //        self.testData()
     }
     
+    // call this function after you get:
+    // self.classmatesData --> you need this to generate classmates view.
     func setupDetailContentViews() {
         
         // Do any additional setup after loading the view.
         println("you are now in detail view")
         
+        // init this view --> scrollview
         self.colorgyDetailContentView = self.DetailContentView()
         
         // add detail header card
         self.detailHeaderView = self.DetailHeaderView()!
         self.colorgyDetailContentView.addSubview(self.detailHeaderView)
+        // Inset to top
         self.colorgyDetailContentView.contentInset.top = 64
-//        self.colorgyDetailContentView.contentOffset.y = -64
-        self.colorgyDetailContentView.contentOffset.y = 64
+        self.colorgyDetailContentView.contentOffset.y = -64
+//        self.colorgyDetailContentView.contentOffset.y = 64
         
         // content
         var content = NSMutableArray()
@@ -85,17 +95,20 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         // add detail information
         self.detailInformationView = self.DetailInformationContainerViewWithContent(content)
         // move information view to header view's bottom
+        // set position
         self.detailInformationView.center.x = self.detailHeaderView.center.x
         self.detailInformationView.frame.origin.y = self.detailHeaderView.frame.height + self.headerAndDetailInformationSpacing
         self.colorgyDetailContentView.addSubview(self.detailInformationView)
         
+        // TODO: 用一個view把buttons包起來
         // buttons
         var button = self.pushButtonWithTitle("課程評論", selector: "yo")!
+        // set position to header view's bottom
         button.center.x = self.detailHeaderView.center.x
         button.frame.origin.y = self.detailInformationView.frame.origin.y + self.detailInformationView.frame.height + self.contentSpacing
         self.colorgyDetailContentView.addSubview(button)
         
-        // classmates
+        // classmates, contains classmates' profile photo
         self.classmatesView = self.MyClassmatesViewWithClassmates(self.classmatesData)
         self.classmatesView.center.x = self.detailHeaderView.center.x
         self.classmatesView.frame.origin.y = button.frame.origin.y + button.frame.height + self.contentSpacing
@@ -109,29 +122,39 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     // download data from server
     func getCourseInformationFromServer() {
         
+        
         let ud = NSUserDefaults.standardUserDefaults()
         // get user name and  school
         let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
         let access_token = ud.objectForKey("ColorgyAccessToken") as! String
         let userSchool = ud.objectForKey("userSchool") as! String
         let course = self.courseCode
+        
+        // get classmate user id, in order to get photo
+        // generate array like [id, url, uiimage]
+        // but now i only use id....
+        
         afManager.GET("https://colorgy.io:443/api/v1/" + userSchool.lowercaseString + "/courses/" + course + ".json?access_token=" + access_token, parameters: nil, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
             
+            // unpack response object using JSON
             let json = JSON(responseObject)
-            // need lecturer and course name
+            // need lecturer and course name, get it out
             let name = json["name"]
             let lecturer = json["lecturer"]
             println("n  \(name), l \(lecturer)")
             
             // after getting course information, get classmates
+            // never call this before you get lecturer? not sure heehee.
             self.getClassmatesFromServer()
             
             
             }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                // TODO: 處理錯誤GET
                 println("error \(responseObject)")
         })
     }
     
+    // this function will get called after getting classmates' data
     func getClassmatesFromServer() {
         
         let ud = NSUserDefaults.standardUserDefaults()
@@ -141,37 +164,39 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         let course = self.courseCode
         afManager.GET("https://colorgy.io:443/api/v1/user_courses.json?filter%5Bcourse_code%5D=" + course + "&access_token=" + access_token, parameters: nil, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
             
+            // first, init self.classmatesData as NSMutableArray
             self.classmatesData = NSMutableArray()
 //            println(responseObject)
+            // this response object is a array. 是陣列
             let json = JSON(responseObject)
             println("count of json is \(json.count)")
+            // check subscript of JSON, need enumarate.......
             for (key: String, classmate: JSON) in json {
                 println(classmate["user_id"])
                 let id = classmate["user_id"].double
                 var object = NSMutableArray()
-                object.addObject(id!)
-                object.addObject("url")
-                let userId = Int(id!)
-//                if let image = self.getUserAvatarWithUserId("\(userId)") {
-//                    object.addObject(image)
-//                } else {
-//                    object.addObject(UIImage(named: "1-2.jpg")!)
-//                }
-                
-                self.classmatesData.addObject(object)
+                // id must not be nil. If nil, then skip it
+                if id != nil {
+                    self.classmatesData.addObject(id!)
+                }
             }
             
             // after getting classmates, setup views
+            // DO NOT CALL THIS along!
+            // this function depends on classmatesData. and lecturer, name.
             self.setupDetailContentViews()
             
             
             }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                // TODO: 處理錯誤GET
                 println("error \(responseObject)")
         })
     }
     
     func getUserAvatarWithUserId(userId: String) -> UIImage? {
         
+        // i dont use AFNetworking here.
+        // i dont want async here.
         let ud = NSUserDefaults.standardUserDefaults()
         // get user name and  school
         let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
@@ -182,23 +207,34 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         
         var url = "https://colorgy.io:443/api/v1/users/" + userId + ".json?access_token=" + access_token
         println(url)
+        // first, init a request using url.
         var req = NSURLRequest(URL: NSURL(string: url)!)
+        // then you need a response type as follow.
         var response: AutoreleasingUnsafeMutablePointer<NSURLResponse?> = nil
+        // get response data back
         var responseData = NSURLConnection.sendSynchronousRequest(req, returningResponse: response, error: nil)
 
         println(responseData)
         var err: NSError?
-        var jsonResult: NSDictionary = (NSJSONSerialization.JSONObjectWithData(responseData!, options: NSJSONReadingOptions.MutableContainers, error: &err) as? NSDictionary)!
-
-        if let responseObject = responseData {
-            let json = JSON(jsonResult)
-            println(json)
-            let avatarUrl = json["avatar_url"].string
-            if avatarUrl != nil {
-                let avatarImage = UIImage(data: NSData(contentsOfURL: NSURL(string: avatarUrl!)!)!)
-                return avatarImage
-            } else {
-                return nil
+        // need to check if data truly comes back.
+        // or json serialization will fail.
+        if responseData != nil {
+            var jsonResult: NSDictionary = (NSJSONSerialization.JSONObjectWithData(responseData!, options: NSJSONReadingOptions.MutableContainers, error: &err) as? NSDictionary)!
+            
+            // if successfully serialize this data, use JSON to unpack it.
+            if let responseObject = responseData {
+                let json = JSON(jsonResult)
+                // get out user's avatar url.
+                let avatarUrl = json["avatar_url"].string
+                if avatarUrl != nil {
+                    // check if data is returned.....or, it crash
+                    if let data = NSData(contentsOfURL: NSURL(string: avatarUrl!)!) {
+                        let avatarImage = UIImage(data: data)
+                        return avatarImage
+                    }
+                } else {
+                    return nil
+                }
             }
         }
 
@@ -206,24 +242,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         return nil
     }
     
-    // get data
-    func testData() {
-        let ud = NSUserDefaults.standardUserDefaults()
-        // get user name and  school
-        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
-        let access_token = ud.objectForKey("ColorgyAccessToken") as! String
-        let userSchool = ud.objectForKey("userSchool") as! String
-        let course = self.courseCode
-        afManager.GET("https://colorgy.io:443/api/v1/" + userSchool.lowercaseString + "/courses/" + course + ".json?access_token=" + access_token, parameters: nil, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
-                println(responseObject)
-                let json = JSON(responseObject)
-                println(json)
-                println(json["name"])
-            }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
-                println("errpr \(responseObject)")
-        })
-    }
-    
+    // MARK: - container --> scrollview
     // container of detail view, scrollview
     func DetailContentView() -> UIScrollView {
         
@@ -234,6 +253,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     }
     
     // MARK: - detail header view and its contents.
+    // TODO: add name, lecturer to this function
     func DetailHeaderView() -> UIView? {
         
         var detailHeaderView = UIView(frame: CGRectMake(0, 0, self.view.frame.width, self.headerViewHeight))
@@ -529,23 +549,35 @@ class ColorgyCourseDetailPageViewController: UIViewController {
                 // after this, get image.
                 let classmatesContainerViewHeight: CGFloat = classmateWidth + classmateToClassmateSpacing
                 var classmatesContainerView = UIView(frame: CGRectMake(0, titleBackgroundViewHeight + classmateTopSpacing + CGFloat(row - 1) * classmatesContainerViewHeight, containerView.frame.width, classmatesContainerViewHeight))
+                
+                // determine row counts.
                 var counts = (row == rows) ? (classmates?.count)! % Int(everyRowClassmateCounts) : Int(everyRowClassmateCounts)
                 // 如果最後一行，且人數剛好填滿everyRowClassmatesCounts，的exception
                 if (row == rows) && ((classmates?.count)! % Int(everyRowClassmateCounts) == 0) {
                     counts = Int(everyRowClassmateCounts)
                 }
+                
+                // loop through
                 for i in 1...counts {
                     var classmatePhoto = UIImageView(frame: CGRectMake(classmateToLeftSpacing + CGFloat(i - 1) * (classmateWidth + classmateToClassmateSpacing), 0, classmateWidth, classmateWidth))
+                    // default image.
                     classmatePhoto.image = UIImage(named: "1-2.jpg")
+                    
+                    classmatePhoto.layer.masksToBounds = true
+                    classmatePhoto.layer.cornerRadius = classmatePhoto.frame.width / 2
+                    classmatesContainerView.addSubview(classmatePhoto)
+                    
                     dispatch_async(dispatch_get_main_queue()) {
                         let offset = (i - 1) + (row - 1) * Int(everyRowClassmateCounts)
-                        let userId: Int = self.classmatesData[offset][0] as! Int
+                        let userId: Int = self.classmatesData[offset] as! Int
                         
                         var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( Double(offset) * 0.2 * Double(NSEC_PER_SEC)))
                         dispatch_after(delay, dispatch_get_main_queue()) {
                             var image = self.getUserAvatarWithUserId("\(userId)")
+                            // if user's image is broken or nil.
+                            // set it back to default.
                             classmatePhoto.image = (image == nil) ? UIImage(named: "1-2.jpg") : image
-                            println(classmatePhoto.image)
+                            // this is layer transition.
                             var transition = CATransition()
                             transition.duration = 0.4
                             transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
@@ -558,9 +590,6 @@ class ColorgyCourseDetailPageViewController: UIViewController {
                             })
                         }
                     }
-                    classmatePhoto.layer.masksToBounds = true
-                    classmatePhoto.layer.cornerRadius = classmatePhoto.frame.width / 2
-                    classmatesContainerView.addSubview(classmatePhoto)
                 }
                 
                 containerView.addSubview(classmatesContainerView)
@@ -569,20 +598,18 @@ class ColorgyCourseDetailPageViewController: UIViewController {
             // do something
             let classmatesContainerViewHeight: CGFloat = classmateWidth + classmateToClassmateSpacing
             containerView.frame.size.height = containerView.frame.height + classmateTopSpacing + classmatesContainerViewHeight * CGFloat(rows)
+        } else {
+            // no classmate.......
+            // expand a little bit.
+            containerView.frame.size.height += 30
         }
-        
-        
-        
-        
-        
+     
         containerView.addSubview(titleBackgroundView)
-        
-        
         
         return containerView
     }
     
-    
+    // MARK: - mem warning
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
