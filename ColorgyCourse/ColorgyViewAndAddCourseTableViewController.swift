@@ -40,6 +40,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     // MARK: - push segue
     var pushSegueCode: String!
     
+    // MARK: - alert delete course button
+    var buttonPendingToDelete: UIButton!
+    
     // MARK: - color
     var colorgyDimOrange: UIColor = UIColor(red: 226/255.0, green: 109/255.0, blue: 90/255.0, alpha: 1)
     var colorgyLightOrange: UIColor = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
@@ -862,6 +865,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         }
     }
     
+    
     func userTapAddCourseButton(sender: UIButton) {
         
         println("an!")
@@ -873,7 +877,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             println("user not searching")
             println(self.coursesAddedToTimetable[index])
             // user is deleting course
-            self.userAttempToDeleteCourseAtIndex(index, warning: false)
+            self.buttonPendingToDelete = sender
+            self.alertUserWhenDeletingLocalCourseOnButton(sender)
+//            self.userAttempToDeleteCourseAtIndex(index, warning: false)
         } else {
             println("inside search box")
             println(self.filteredCourse[index])
@@ -908,6 +914,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         }
     }
     
+    // this animates button
     func animateAddButton(button: UIButton, state: String) {
         
         if state == "add" {
@@ -1102,6 +1109,102 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                 self.coursesAddedToTimetable = nil
             }
         }
+    }
+    
+    // MARK: - alert when delete
+    func alertUserWhenDeletingLocalCourseOnButton(button: UIButton) {
+        
+        var tabBarView = self.tabBarController?.view
+        var w = self.tabBarController?.view.frame.width
+        var h = self.tabBarController?.view.frame.height
+        var dimBackground = UIView(frame: CGRectMake(0, 0, w!, h!))
+        
+        
+        // dim view with this view
+        dimBackground.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.8)
+        
+        self.tabBarController?.view.addSubview(dimBackground)
+        
+        var deleteImage = UIImageView(image: UIImage(named: "deleteCourse"))
+        var deleteButton = UIButton(frame: deleteImage.frame)
+        deleteButton.setImage(deleteImage.image, forState: UIControlState.Normal)
+        dimBackground.addSubview(deleteButton)
+        
+        var preserveImage = UIImageView(image: UIImage(named: "preserveCourse"))
+        var preserveButton = UIButton(frame: preserveImage.frame)
+        preserveButton.setImage(preserveImage.image, forState: UIControlState.Normal)
+        dimBackground.addSubview(preserveButton)
+        
+        var y = self.tabBarController?.view.frame.height
+        var x = self.tabBarController?.view.frame.width
+        deleteButton.center.x = 0.3 * x!
+        preserveButton.center.x = 0.7 * x!
+        deleteButton.center.y = 0.85 * y!
+        preserveButton.center.y = 0.85 * y!
+        
+        // tap to dismiss dim view
+        var tap = UITapGestureRecognizer(target: self, action: "dismissDimView:")
+        dimBackground.addGestureRecognizer(tap)
+        // tap on button
+        deleteButton.tag = button.tag
+        preserveButton.tag = button.tag
+
+        deleteButton.addTarget(self, action: "pressDeleteCourseButton:", forControlEvents: UIControlEvents.TouchUpInside)
+        preserveButton.addTarget(self, action: "pressPreserveCourseButton:", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        // animation of dim view
+        dimBackground.alpha = 0
+        deleteButton.transform = CGAffineTransformMakeTranslation(0, 300)
+        preserveButton.transform = CGAffineTransformMakeTranslation(0, 300)
+        UIView.animateWithDuration(0.3, animations: {
+                dimBackground.alpha = 1
+            }, completion: { (isFinished: Bool) -> Void in
+                UIView.animateWithDuration(0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.1, options: nil, animations: {
+                        deleteButton.transform = CGAffineTransformMakeTranslation(0, 0)
+                    }, completion: nil)
+                UIView.animateWithDuration(0.3, delay: 0.1, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.1, options: nil, animations: {
+                        preserveButton.transform = CGAffineTransformMakeTranslation(0, 0)
+                    }, completion: nil)
+            })
+    }
+    
+    func dismissDimView(gesture: UITapGestureRecognizer) {
+        
+        println("TAPP \(gesture.view?.superview)")
+        self.dismissAlertView(gesture.view!)
+        
+    }
+    
+    func pressDeleteCourseButton(button: UIButton) {
+        
+        var view = button.superview
+        self.dismissAlertView(view!)
+        println("delete \(button.tag)")
+        self.userAttempToDeleteCourseAtIndex(button.tag, warning: false)
+        self.tableView.reloadData()
+    }
+    
+    func pressPreserveCourseButton(button: UIButton) {
+        
+        var view = button.superview
+        self.dismissAlertView(view!)
+        println("preserve")
+        // change button state.
+        var sender = self.buttonPendingToDelete
+        if self.getAddButtonState(sender) == "add" {
+            self.animateAddButton(sender, state: "remove")
+        } else {
+            self.animateAddButton(sender, state: "add")
+        }
+    }
+    
+    func dismissAlertView(view: UIView) {
+        
+        UIView.animateWithDuration(0.3, animations: {
+                view.alpha = 0
+            }, completion: { (isFinished: Bool) -> Void in
+                view.removeFromSuperview()
+            })
     }
     
     // MARK: - segue
