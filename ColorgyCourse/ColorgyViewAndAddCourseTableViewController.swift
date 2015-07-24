@@ -1205,6 +1205,13 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             }, completion: { (isFinished: Bool) -> Void in
                 view.removeFromSuperview()
             })
+        // change button state.
+        var sender = self.buttonPendingToDelete
+        if self.getAddButtonState(sender) == "add" {
+            self.animateAddButton(sender, state: "remove")
+        } else {
+            self.animateAddButton(sender, state: "add")
+        }
     }
     
     // MARK: - segue
