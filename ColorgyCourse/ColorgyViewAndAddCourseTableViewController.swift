@@ -331,72 +331,113 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         afManager.responseSerializer = AFJSONResponseSerializer()
         
         var ud = NSUserDefaults.standardUserDefaults()
-        let refresh_token = ud.objectForKey("ColorgyRefreshToken") as! String
+        if let refresh_token = ud.objectForKey("ColorgyRefreshToken") as? String {
+            // no refresh token need to login again
         println(refresh_token)
         
-        let params = [
-            "grant_type": "refresh_token",
-            // 應用程式ID application id, in colorgy server
-            "client_id": "ad2d3492de7f83f0708b5b1db0ac7041f9179f78a168171013a4458959085ba4",
-            "client_secret": "d9de77450d6365ca8bd6717bbf8502dfb4a088e50962258d5d94e7f7211596a3",
-            "refresh_token": refresh_token
-        ]
-        
-        afManager.POST("https://colorgy.io/oauth/token?", parameters: params, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
-            println("ok! refresh!")
-            println(responseObject)
-            let token = responseObject["access_token"] as! String
-            let created_at = String(stringInterpolationSegment: responseObject["created_at"])
-            let expires_in = String(stringInterpolationSegment: responseObject["expires_in"])
-            let refresh_token = responseObject["refresh_token"] as! String
-            let token_type = responseObject["token_type"] as! String
+            let params = [
+                "grant_type": "refresh_token",
+                // 應用程式ID application id, in colorgy server
+                "client_id": "ad2d3492de7f83f0708b5b1db0ac7041f9179f78a168171013a4458959085ba4",
+                "client_secret": "d9de77450d6365ca8bd6717bbf8502dfb4a088e50962258d5d94e7f7211596a3",
+                "refresh_token": refresh_token
+            ]
             
-            
-            ud.setObject(token, forKey: "ColorgyAccessToken")
-            ud.setObject(created_at, forKey: "ColorgyCreatedTime")
-            ud.setObject(expires_in, forKey: "ColorgyExpireTime")
-            ud.setObject(refresh_token, forKey: "ColorgyRefreshToken")
-            ud.setObject(token_type, forKey: "ColorgyTokenType")
-            ud.synchronize()
-            }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
-                println("error!!!")
-                self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
-                var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 0.5 * Double(NSEC_PER_SEC)))
-                dispatch_after(delay, dispatch_get_main_queue()) {
-                    let alert = UIAlertController(title: "錯誤", message: "與伺服器驗證過期，請重新登入！", preferredStyle: UIAlertControllerStyle.Alert)
-                    let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            afManager.POST("https://colorgy.io/oauth/token?", parameters: params, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                println("ok! refresh!")
+                println(responseObject)
+                let token = responseObject["access_token"] as! String
+                let created_at = String(stringInterpolationSegment: responseObject["created_at"])
+                let expires_in = String(stringInterpolationSegment: responseObject["expires_in"])
+                let refresh_token = responseObject["refresh_token"] as! String
+                let token_type = responseObject["token_type"] as! String
+                
+                
+                ud.setObject(token, forKey: "ColorgyAccessToken")
+                ud.setObject(created_at, forKey: "ColorgyCreatedTime")
+                ud.setObject(expires_in, forKey: "ColorgyExpireTime")
+                ud.setObject(refresh_token, forKey: "ColorgyRefreshToken")
+                ud.setObject(token_type, forKey: "ColorgyTokenType")
+                ud.synchronize()
+                }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                    println("error!!!")
+                    self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
+                    var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 0.5 * Double(NSEC_PER_SEC)))
+                    dispatch_after(delay, dispatch_get_main_queue()) {
+                        let alert = UIAlertController(title: "錯誤", message: "與伺服器驗證過期，請重新登入！", preferredStyle: UIAlertControllerStyle.Alert)
+                        let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+                            
+                            var ud = NSUserDefaults.standardUserDefaults()
+                            ud.setObject(nil, forKey: "isLogin")
+                            ud.setObject(nil, forKey: "loginTpye")
+                            ud.setObject(nil, forKey: "smallFBProfilePhoto")
+                            ud.setObject(nil, forKey: "bigFBProfilePhoto")
+                            ud.setObject(nil, forKey: "ColorgyAccessToken")
+                            ud.setObject(nil, forKey: "ColorgyCreatedTime")
+                            ud.setObject(nil, forKey: "ColorgyExpireTime")
+                            ud.setObject(nil, forKey: "ColorgyRefreshToken")
+                            ud.setObject(nil, forKey: "ColorgyTokenType")
+                            //                    ud.setObject(nil, forKey: "courseDataFromServer")
+                            ud.setObject(nil, forKey: "userName")
+                            ud.setObject(nil, forKey: "userSchool")
+                            ud.synchronize()
+                            
+                            FBSession.activeSession().closeAndClearTokenInformation()
+                            
+                            self.logoutAnimation()
+                            
+                            var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                            dispatch_after(delay, dispatch_get_main_queue()) {
+                                var storyboard = UIStoryboard(name: "Main", bundle: nil)
+                                var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
+                                self.presentViewController(vc, animated: true, completion: nil)
+                            }
+                        })
                         
-                        var ud = NSUserDefaults.standardUserDefaults()
-                        ud.setObject(nil, forKey: "isLogin")
-                        ud.setObject(nil, forKey: "loginTpye")
-                        ud.setObject(nil, forKey: "smallFBProfilePhoto")
-                        ud.setObject(nil, forKey: "bigFBProfilePhoto")
-                        ud.setObject(nil, forKey: "ColorgyAccessToken")
-                        ud.setObject(nil, forKey: "ColorgyCreatedTime")
-                        ud.setObject(nil, forKey: "ColorgyExpireTime")
-                        ud.setObject(nil, forKey: "ColorgyRefreshToken")
-                        ud.setObject(nil, forKey: "ColorgyTokenType")
-                        //                    ud.setObject(nil, forKey: "courseDataFromServer")
-                        ud.setObject(nil, forKey: "userName")
-                        ud.setObject(nil, forKey: "userSchool")
-                        ud.synchronize()
-                        
-                        FBSession.activeSession().closeAndClearTokenInformation()
-                        
-                        self.logoutAnimation()
-                        
-                        var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
-                        dispatch_after(delay, dispatch_get_main_queue()) {
-                            var storyboard = UIStoryboard(name: "Main", bundle: nil)
-                            var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
-                            self.presentViewController(vc, animated: true, completion: nil)
-                        }
-                    })
+                        alert.addAction(ok)
+                        self.presentViewController(alert, animated: true, completion: nil)
+                    }
+            })
+        } else {
+            // this part of code was copied from the failure part above
+            println("error!!!")
+            self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
+            var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 0.5 * Double(NSEC_PER_SEC)))
+            dispatch_after(delay, dispatch_get_main_queue()) {
+                let alert = UIAlertController(title: "錯誤", message: "與伺服器驗證過期，請重新登入！", preferredStyle: UIAlertControllerStyle.Alert)
+                let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
                     
-                    alert.addAction(ok)
-                    self.presentViewController(alert, animated: true, completion: nil)
-                }
-        })
+                    var ud = NSUserDefaults.standardUserDefaults()
+                    ud.setObject(nil, forKey: "isLogin")
+                    ud.setObject(nil, forKey: "loginTpye")
+                    ud.setObject(nil, forKey: "smallFBProfilePhoto")
+                    ud.setObject(nil, forKey: "bigFBProfilePhoto")
+                    ud.setObject(nil, forKey: "ColorgyAccessToken")
+                    ud.setObject(nil, forKey: "ColorgyCreatedTime")
+                    ud.setObject(nil, forKey: "ColorgyExpireTime")
+                    ud.setObject(nil, forKey: "ColorgyRefreshToken")
+                    ud.setObject(nil, forKey: "ColorgyTokenType")
+                    //                    ud.setObject(nil, forKey: "courseDataFromServer")
+                    ud.setObject(nil, forKey: "userName")
+                    ud.setObject(nil, forKey: "userSchool")
+                    ud.synchronize()
+                    
+                    FBSession.activeSession().closeAndClearTokenInformation()
+                    
+                    self.logoutAnimation()
+                    
+                    var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+                    dispatch_after(delay, dispatch_get_main_queue()) {
+                        var storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
+                        self.presentViewController(vc, animated: true, completion: nil)
+                    }
+                })
+                
+                alert.addAction(ok)
+                self.presentViewController(alert, animated: true, completion: nil)
+            }
+        }
     }
     
     func logoutAnimation() {

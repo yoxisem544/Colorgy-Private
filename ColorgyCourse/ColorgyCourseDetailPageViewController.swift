@@ -38,6 +38,8 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     // get code from root view, display information using this code.
     var courseCode: String!
     
+    var indexTappedOnClassmate: Int!
+    
     func pushWithCourseCode(code: String) {
         println("course code set!😁")
         self.courseCode = code
@@ -107,6 +109,9 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     // call this function after you get:
     // self.classmatesData --> you need this to generate classmates view.
     func setupDetailContentViews() {
+        
+        // set nav title
+        self.navigationItem.title = self.name
         
         // Do any additional setup after loading the view.
         println("you are now in detail view")
@@ -738,6 +743,14 @@ class ColorgyCourseDetailPageViewController: UIViewController {
 //                                }, completion: { (isFinished: Bool) -> Void in
 //                                    classmatePhoto.transform = CGAffineTransformMakeScale(1, 1)
 //                            })
+                            
+                            // tap on classmate
+                            println("offset \(offset), data \(userId)")
+                            // tag user
+                            classmatePhoto.tag = userId
+                            var tap = UITapGestureRecognizer(target: self, action: "tapOnClassmate:")
+                            classmatePhoto.addGestureRecognizer(tap)
+                            classmatePhoto.userInteractionEnabled = true
                         }
                     }
                 }
@@ -757,6 +770,26 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         containerView.addSubview(titleBackgroundView)
         
         return containerView
+    }
+    
+    func tapOnClassmate(gesture: UITapGestureRecognizer) {
+        
+        var userId = gesture.view?.tag
+        
+        self.indexTappedOnClassmate = userId
+        self.performSegueWithIdentifier("getClassmatePage", sender: self)
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if segue.identifier == "getClassmatePage" {
+            // set back button to no string
+            var backButton = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.Plain, target: nil, action: nil)
+            self.navigationItem.backBarButtonItem = backButton
+            
+            var vc = segue.destinationViewController as! ColorgyClassmatePersonalPageViewController
+            vc.setupClassmateId(self.indexTappedOnClassmate)
+        }
     }
     
     // MARK: - mem warning
