@@ -31,6 +31,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     // background color
     var timetableBackgroundColor: UIColor = UIColor(red: 250/255.0, green: 247/255.0, blue: 247/255.0, alpha: 1)
     
+    var colorgyLightYellow: UIColor = UIColor(red: 244/255.0, green: 188/255.0, blue: 94/255.0, alpha: 1)
     
     
     // MARK: - data from push segue
@@ -59,16 +60,48 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     var lecturer: String!
     var detailContents: NSMutableArray!
     
+    //spinner
+    var spinner: UIImageView!
+    
     // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.setupSpinner()
+        self.spinner.center = self.view.center
+        self.view.addSubview(self.spinner)
+        self.animateSpinner()
 
         self.getCourseInformationFromServer()
+        
         // never adjust this for me.....fuck
         // this is very important line!
         self.automaticallyAdjustsScrollViewInsets = false
         
 //        self.testData()
+    }
+    
+    //MARK: - spinner
+    func setupSpinner() {
+        
+        self.spinner = UIImageView(image: UIImage(named: "spinner"))
+    }
+    
+    func animateSpinner() {
+        
+        var rotationAnimation = CABasicAnimation(keyPath: "transform.rotation.z")
+        rotationAnimation.toValue = 2 * M_PI
+        rotationAnimation.duration = 3
+        rotationAnimation.cumulative = true
+        rotationAnimation.repeatCount = 200
+        
+        self.spinner.layer.addAnimation(rotationAnimation, forKey: "rotationAnimation")
+    }
+    
+    func stopAnimatingAndRemoveSpinner() {
+        
+        self.spinner.layer.removeAllAnimations()
+        self.spinner.removeFromSuperview()
     }
     
     // call this function after you get:
@@ -300,6 +333,8 @@ class ColorgyCourseDetailPageViewController: UIViewController {
             // DO NOT CALL THIS along!
             // this function depends on classmatesData. and lecturer, name.
             self.setupDetailContentViews()
+            // after setup, stop spinner
+            self.stopAnimatingAndRemoveSpinner()
             
             
             }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
@@ -582,7 +617,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         println("pushButtonTouchDown")
         
         UIView.animateWithDuration(0.1, animations: {
-            button.backgroundColor = self.colorgyGray
+            button.backgroundColor = self.colorgyLightYellow
         })
     }
     
@@ -590,7 +625,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         println("pushButtonTouchDragEnter")
         
         UIView.animateWithDuration(0.1, animations: {
-            button.backgroundColor = self.colorgyGray
+            button.backgroundColor = self.colorgyLightYellow
         })
     }
     
@@ -698,11 +733,11 @@ class ColorgyCourseDetailPageViewController: UIViewController {
                             transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
                             transition.type = kCATransitionFade
                             classmatePhoto.layer.addAnimation(transition, forKey: nil)
-                            UIView.animateWithDuration(0.7, delay: 0, options: UIViewAnimationOptions.Autoreverse, animations: {
-                                    classmatePhoto.transform = CGAffineTransformMakeScale(1.3, 1.3)
-                                }, completion: { (isFinished: Bool) -> Void in
-                                    classmatePhoto.transform = CGAffineTransformMakeScale(1, 1)
-                            })
+//                            UIView.animateWithDuration(0.7, delay: 0, options: UIViewAnimationOptions.Autoreverse, animations: {
+//                                    classmatePhoto.transform = CGAffineTransformMakeScale(1.3, 1.3)
+//                                }, completion: { (isFinished: Bool) -> Void in
+//                                    classmatePhoto.transform = CGAffineTransformMakeScale(1, 1)
+//                            })
                         }
                     }
                 }
