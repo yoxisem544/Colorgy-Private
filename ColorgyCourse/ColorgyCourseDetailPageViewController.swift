@@ -408,12 +408,13 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     }
     
     // MARK: - detail header view and its contents.
-    // TODO: add name, lecturer to this function
     func DetailHeaderView(name: String, lecturer: String) -> UIView? {
         
         var detailHeaderView = UIView(frame: CGRectMake(0, 0, self.view.frame.width, self.headerViewHeight))
         detailHeaderView.backgroundColor = self.colorgyDimOrange
         detailHeaderView.layer.cornerRadius = 5
+        // grow back the radius
+        detailHeaderView.frame.size.height += detailHeaderView.layer.cornerRadius
         
         // upper right corner view
         var contentView = self.UpperRightCornerContentView()!
@@ -440,8 +441,16 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         
         println(position)
         
+        var headerMask = UIView(frame: detailHeaderView.frame)
+        headerMask.frame.size.height -= detailHeaderView.layer.cornerRadius
+//        headerMask.frame.origin.y = (detailHeaderView.layer.cornerRadius)
+//        headerMask.backgroundColor = UIColor.blueColor()
+        headerMask.addSubview(detailHeaderView)
+        detailHeaderView.frame.origin.y -= detailHeaderView.layer.cornerRadius
+        headerMask.layer.masksToBounds = true
         
-        return detailHeaderView
+        return headerMask
+//        return detailHeaderView
     }
     
     func UpperRightCornerContentView() -> UIView? {
