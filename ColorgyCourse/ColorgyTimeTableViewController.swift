@@ -53,7 +53,7 @@ class ColorgyTimeTableViewController: UIViewController {
     // color region
     var colorgyOrange: UIColor = UIColor(red: 246/255.0, green: 150/255.0, blue: 114/255.0, alpha: 1)
     var colorgyDarkGray: UIColor = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
-    var timetableWhite: UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.6)
+    var timetableWhite: UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
     var timetableBackgroundColor: UIColor = UIColor(red: 239/255.0, green: 238/255.0, blue: 238/255.0, alpha: 1)
     var colorgyBackgroundColor: UIColor = UIColor(red: 239/255.0, green: 238/255.0, blue: 238/255.0, alpha: 1)
     var timetableLineColor: UIColor = UIColor(red: 216/255.0, green: 216/255.0, blue: 216/255.0, alpha: 1)
@@ -626,6 +626,7 @@ class ColorgyTimeTableViewController: UIViewController {
         view.addSubview(self.ColorgyTimeTableRowSessionView("morning"))
         view.addSubview(self.ColorgyTimeTableRowSessionView("afternoon"))
         view.addSubview(self.ColorgyTimeTableRowSessionView("night"))
+        view.addSubview(self.ColorgyTimeTableColumnSeperatorLine(view))
         
         // add course here
 //        view.addSubview(self.CourseViewAtDay(1, session: "A"))
@@ -762,6 +763,28 @@ class ColorgyTimeTableViewController: UIViewController {
         
         // if no course match, return nil
         return nil
+    }
+    
+    func ColorgyTimeTableColumnSeperatorLine(view: UIScrollView) -> UIView {
+        
+        var lineContainer = UIView(frame: view.frame)
+        
+        var offset = CGSizeMake(self.timetableSpacing + self.sideBarWidth, self.timetableSpacing + self.headerHeight)
+        
+        // draw lines
+        for i in 1...5 {
+            var moveALittleBit = -CGFloat(0.125 * Double(i - 1))
+            if i == 2 {
+                moveALittleBit -= 0.2
+            }
+            var line = UIView(frame: CGRectMake(moveALittleBit + offset.width + CGFloat(i - 1) * self.colorgyTimeTableCell.width, offset.height, 1, self.colorgyTimeTableCell.height * CGFloat(self.courseCount)))
+            line.backgroundColor = self.timetableLineColor
+            
+            lineContainer.addSubview(line)
+        }
+        
+        
+        return lineContainer
     }
     
     func ColorgyTimeTableColumnView() -> UIView {
