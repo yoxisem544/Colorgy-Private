@@ -126,6 +126,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         self.colorgyDetailContentView.contentInset.top = 64
         self.colorgyDetailContentView.contentOffset.y = -64
 //        self.colorgyDetailContentView.contentOffset.y = 64
+        self.colorgyDetailContentView.contentInset.bottom = 49
         
         // content
         var content = NSMutableArray()
@@ -155,6 +156,18 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         self.classmatesView.center.x = self.detailHeaderView.center.x
         self.classmatesView.frame.origin.y = button.frame.origin.y + button.frame.height + self.contentSpacing
         self.colorgyDetailContentView.addSubview(self.classmatesView)
+        
+        // adjust colorgyDetailContentView's height
+        var height = self.classmatesView.frame.origin.y + self.classmatesView.frame.height + 26
+        if height < (self.view.frame.height - 64 - 49) {
+            height = self.view.frame.height - 64 - 49
+        }
+        self.colorgyDetailContentView.contentSize.height = height
+        
+//        var point = UIView(frame: CGRectMake(0, 0, 30, 30))
+//        point.backgroundColor = UIColor.redColor()
+//        point.center.y = height
+//        self.colorgyDetailContentView.addSubview(point)
         
         self.view.addSubview(self.colorgyDetailContentView)
         

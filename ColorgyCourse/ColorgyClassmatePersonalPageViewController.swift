@@ -14,10 +14,49 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
     var spinner: UIImageView!
     
     // size
-    var headerViewHeight: CGFloat = 190
+    var profileHeaderViewHeight: CGFloat = 190
     
     // views
     var classmateContentScrollView: UIScrollView!
+    var profileHeaderView: UIView!
+    
+    // MARK: - timetableview
+    var colorgyTimeTableView: UIView!
+    
+    // MARK: - declaration
+    // screen h & w
+    var screenWidth: CGFloat!
+    var screenHeight: CGFloat!
+    
+    // time table cell h & w
+    var colorgyTimeTableCell: CGSize!
+    
+    // spacing of timetable and background view
+    var timetableSpacing: CGFloat = 14
+    
+    // side bar h & w
+    var sideBarWidth: CGFloat = 37
+    // maybe we dont need height....
+    var sideBarHeight: CGFloat!
+    
+    // header bar h & w
+    // header bar height is fixed not sure if this is good
+    var headerHeight: CGFloat = 42
+    var headerWidth: CGFloat!
+    
+    // var course count
+    // for 0 to 10 and A to D
+    // we got 11 + 4 = 15 courses
+    var courseCount: Int = 15
+    
+    // MARK: - color declaration
+    // color region
+    var colorgyOrange: UIColor = UIColor(red: 246/255.0, green: 150/255.0, blue: 114/255.0, alpha: 1)
+    var colorgyDarkGray: UIColor = UIColor(red: 74/255.0, green: 74/255.0, blue: 74/255.0, alpha: 1)
+    var timetableWhite: UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+    var timetableBackgroundColor: UIColor = UIColor(red: 239/255.0, green: 238/255.0, blue: 238/255.0, alpha: 1)
+    var colorgyBackgroundColor: UIColor = UIColor(red: 239/255.0, green: 238/255.0, blue: 238/255.0, alpha: 1)
+    var timetableLineColor: UIColor = UIColor(red: 216/255.0, green: 216/255.0, blue: 216/255.0, alpha: 1)
     
     // MARK: - get data from segue
     var classmateId: Int!
@@ -43,22 +82,233 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
         var a = self.getUserAvatarWithUserId("\(self.classmateId)")
         println(a)
         
-        self.view.addSubview(self.DetailHeaderView()!)
-        
         // set back button to no string
         var backButton = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.Plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backButton
         
         // never adjust this for me.....fuck
         // this is very important line!
+        self.automaticallyAdjustsScrollViewInsets = true
+        
+        // timetable require
+        // get screen h & w
+        self.screenHeight = self.view.frame.height
+        self.screenWidth = self.view.frame.width
+        
+        // setup time table cell h & w
+        // size of cell can be defined after known screen width, spacing, and side bar width
+        var cellWidth = (self.screenWidth - 2 * self.timetableSpacing - self.sideBarWidth) / 5
+        // cause cell is a square so width is equal to height
+        var cellHeight = cellWidth
+        self.colorgyTimeTableCell = CGSizeMake(cellWidth, cellHeight)
+        // also header bar width is equal to cell width
+        self.headerWidth = cellWidth
+        
+        // style of nav bar
+        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        self.navigationItem.title = "課表"
+        // never adjust this for me.....fuck
+        // this is very important line!
         self.automaticallyAdjustsScrollViewInsets = false
         
+        // generate timetable scrollview
+        self.colorgyTimeTableView?.removeFromSuperview()
+        self.colorgyTimeTableView = self.ColorgyTimeTableView()
+        // header
+        self.profileHeaderView = self.DetailHeaderView()!
+        
+        // move to header's bottom
+        self.colorgyTimeTableView.frame.origin.y = self.profileHeaderView.frame.height + 26
+        println(self.colorgyTimeTableView.frame.origin.y)
+        
+        self.classmateContentScrollView = UIScrollView(frame: self.view.frame)
+        self.classmateContentScrollView.contentInset.top = 64
+        self.classmateContentScrollView.contentInset.bottom = 49
+        self.classmateContentScrollView.contentSize = CGSizeMake(self.view.frame.width, self.profileHeaderView.frame.height + 26 + self.colorgyTimeTableView.frame.height)
+        
+        self.classmateContentScrollView.addSubview(self.profileHeaderView)
+        self.classmateContentScrollView.addSubview(self.colorgyTimeTableView)
+        
+        println("self.colorgyTimeTableView.frame \(self.colorgyTimeTableView.frame)")
+        println("self.classmateContentScrollView.contentSize \(self.classmateContentScrollView.contentSize)")
+        println("self.profileHeaderView.frame \(self.profileHeaderView.frame)")
+        
+        self.view.addSubview(self.classmateContentScrollView)
+    }
+    
+    // MARK: - timetable grid view and content view
+    func ColorgyTimeTableView() -> UIView {
+        
+        // set its bounds
+        var height = self.colorgyTimeTableCell.height * 15 + self.timetableSpacing * 2 + self.headerHeight
+        var view = UIView(frame: CGRectMake(0, 0, self.screenWidth, height))
+        // background color of timetable
+        view.backgroundColor = self.timetableBackgroundColor
+        
+//        // set timetable scrollview's content size
+//        // width matches device width
+//        // height is headerBarHeight and coursescount height and some spacing
+//        view.contentSize = CGSizeMake(self.screenWidth, self.headerHeight + self.colorgyTimeTableCell.height * CGFloat(self.courseCount) + CGFloat(2) * self.timetableSpacing)
+//        // this is nav bar height -> 64
+//        view.contentInset.top = 64
+//        // this is tab bar height -> 49
+//        view.contentInset.bottom = 49
+//        view.contentOffset.y = -64
+        
+        // add grid view
+        view.addSubview(self.ColorgyTimeTableColumnView())
+        view.addSubview(self.ColorgyTimeTableRowSessionView("morning"))
+        view.addSubview(self.ColorgyTimeTableRowSessionView("afternoon"))
+        view.addSubview(self.ColorgyTimeTableRowSessionView("night"))
+        view.addSubview(self.ColorgyTimeTableColumnSeperatorLine(view))
+        
+
+        
+        return view as UIView
+    }
+    
+    func ColorgyTimeTableColumnSeperatorLine(view: UIView) -> UIView {
+        
+        var lineContainer = UIView(frame: view.frame)
+        
+        var offset = CGSizeMake(self.timetableSpacing + self.sideBarWidth, self.timetableSpacing + self.headerHeight)
+        
+        // draw lines
+        for i in 1...5 {
+            var moveALittleBit = -CGFloat(0.125 * Double(i - 1))
+            if i == 2 {
+                moveALittleBit -= 0.2
+            }
+            var line = UIView(frame: CGRectMake(moveALittleBit + offset.width + CGFloat(i - 1) * self.colorgyTimeTableCell.width, offset.height, 1, self.colorgyTimeTableCell.height * CGFloat(self.courseCount)))
+            line.backgroundColor = self.timetableLineColor
+            
+            lineContainer.addSubview(line)
+        }
+        
+        
+        return lineContainer
+    }
+    
+    func ColorgyTimeTableColumnView() -> UIView {
+        // this view is vertical view
+        // this is days from mon to fri
+        var view = UIView(frame: CGRectMake(self.timetableSpacing + self.sideBarWidth, 0.0 + self.timetableSpacing, self.colorgyTimeTableCell.width * 5, self.headerHeight + self.colorgyTimeTableCell.height * CGFloat(self.courseCount)))
+        println(view.frame)
+        println(self.colorgyTimeTableCell.height)
+        view.backgroundColor = self.timetableWhite
+        view.layer.borderWidth = 1
+        // outer line of timetable
+        view.layer.borderColor = self.timetableLineColor.CGColor
+        view.layer.cornerRadius = 10
+        
+        // vertical line in this view, to seperate days
+        for day in 1...4 {
+            var line = UIView(frame: CGRectMake(0, 0, 1, self.headerHeight + self.colorgyTimeTableCell.height * CGFloat(self.courseCount)))
+            line.backgroundColor = self.timetableLineColor
+            
+            line.center.x = self.colorgyTimeTableCell.width * CGFloat(day)
+            
+            view.addSubview(line)
+        }
+        
+        // add day label
+        for day in 1...5 {
+            var label = UILabel(frame: CGRectMake(0, 0, self.headerWidth, self.headerHeight))
+            label.textAlignment = NSTextAlignment.Center
+            label.center.y = self.headerHeight / 2
+            label.textColor = self.timetableLineColor
+            label.center.x = CGFloat(day) * self.colorgyTimeTableCell.width - self.colorgyTimeTableCell.width / 2
+            
+            label.text = "\(day)"
+            
+            view.addSubview(label)
+        }
+        
+        return view as UIView
+    }
+    
+    func ColorgyTimeTableRowSessionView(time: NSString) -> UIView {
+        
+        var courses: CGFloat!
+        var timeOffset: CGFloat!
+        switch time {
+        case "morning":
+            courses = 5
+            timeOffset = 0
+        case "afternoon":
+            courses = 5
+            timeOffset = self.colorgyTimeTableCell.height * CGFloat(6)
+        case "night":
+            courses = 4
+            timeOffset = self.colorgyTimeTableCell.height * CGFloat(11)
+        default:
+            break
+        }
+        
+        var view = UIView(frame: CGRectMake(self.timetableSpacing, self.timetableSpacing + self.headerHeight + timeOffset, self.sideBarWidth + self.colorgyTimeTableCell.width * CGFloat(5), self.colorgyTimeTableCell.height * courses))
+        view.backgroundColor = self.timetableWhite
+        // outer line of timetable
+        view.layer.borderColor = self.timetableLineColor.CGColor
+        view.layer.borderWidth = 1
+        view.layer.cornerRadius = 6
+        
+        // add lines to it
+        for i in 1...Int(courses - 1) {
+            var line = UIView(frame: CGRectMake(0, 0, self.sideBarWidth + self.colorgyTimeTableCell.width * CGFloat(5), 1))
+            line.backgroundColor = self.timetableLineColor
+            
+            line.center.y = self.colorgyTimeTableCell.height * CGFloat(i)
+            view.addSubview(line)
+        }
+        
+        // adding side period from 0~10 a~d
+        switch time {
+        case "morning":
+            for i in 1...Int(courses) {
+                var label = UILabel(frame: CGRectMake(0, 0, self.sideBarWidth, self.sideBarWidth))
+                label.text = "\(i-1)"
+                label.center.y = self.colorgyTimeTableCell.height * CGFloat(i) - self.colorgyTimeTableCell.height / 2
+                // problem here!!!!
+                label.center.x = self.sideBarWidth / 2
+                label.textColor = self.timetableLineColor
+                label.textAlignment = NSTextAlignment.Center
+                view.addSubview(label)
+            }
+        case "afternoon":
+            for i in 1...Int(courses) {
+                var label = UILabel(frame: CGRectMake(0, 0, self.sideBarWidth, self.sideBarWidth))
+                label.text = "\(i+5)"
+                label.center.y = self.colorgyTimeTableCell.height * CGFloat(i) - self.colorgyTimeTableCell.height / 2
+                // problem here!!!!
+                label.center.x = self.sideBarWidth / 2
+                label.textColor = self.timetableLineColor
+                label.textAlignment = NSTextAlignment.Center
+                view.addSubview(label)
+            }
+        case "night":
+            var nightCourse = ["A", "B", "C", "D"]
+            for i in 1...Int(courses) {
+                var label = UILabel(frame: CGRectMake(0, 0, self.sideBarWidth, self.sideBarWidth))
+                label.text = "\(nightCourse[i-1])"
+                label.center.y = self.colorgyTimeTableCell.height * CGFloat(i) - self.colorgyTimeTableCell.height / 2
+                // problem here!!!!
+                label.center.x = self.sideBarWidth / 2
+                label.textColor = self.timetableLineColor
+                label.textAlignment = NSTextAlignment.Center
+                view.addSubview(label)
+            }
+        default:
+            break
+        }
+        
+        // add session to it
+        return view as UIView
     }
     
     // MARK: - header view
     func DetailHeaderView() -> UIView? {
         
-        var detailHeaderView = UIView(frame: CGRectMake(0, 0, self.view.frame.width, self.headerViewHeight))
+        var detailHeaderView = UIView(frame: CGRectMake(0, 0, self.view.frame.width, self.profileHeaderViewHeight))
         detailHeaderView.backgroundColor = UIColor.blueColor()
         detailHeaderView.layer.cornerRadius = 5
         // grow back the radius
