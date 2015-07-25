@@ -165,12 +165,9 @@ class ColorgyTimeTableViewController: UIViewController {
             }, completion: nil)
     }
     
-    // MARK: - view
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    // preload data
+    func preloadData() {
         
-        // Do any additional setup after loading the view.
-        println("colorgy timetable view did load!")
         // get screen h & w
         self.screenHeight = self.view.frame.height
         self.screenWidth = self.view.frame.width
@@ -183,6 +180,16 @@ class ColorgyTimeTableViewController: UIViewController {
         self.colorgyTimeTableCell = CGSizeMake(cellWidth, cellHeight)
         // also header bar width is equal to cell width
         self.headerWidth = cellWidth
+    }
+    
+    // MARK: - view
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // Do any additional setup after loading the view.
+        println("colorgy timetable view did load!")
+        
+        self.preloadData()
         
         // style of nav bar
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]

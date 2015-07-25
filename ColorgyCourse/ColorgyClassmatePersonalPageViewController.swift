@@ -19,6 +19,10 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
     // views
     var classmateContentScrollView: UIScrollView!
     var profileHeaderView: UIView!
+    var userCoverPhotoImageView: UIImageView!
+    var userAvatarImageView: UIImageView!
+    var userNameLabel: UILabel!
+    var userSchoolLabel: UILabel!
     
     // MARK: - timetableview
     var colorgyTimeTableView: UIView!
@@ -65,30 +69,10 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
         
         self.classmateId = id
     }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-        println(self.classmateId)
-        
-        // add spinner
-        self.setupSpinner()
-        self.spinner.center = self.view.center
-        self.view.addSubview(self.spinner)
-        self.animateSpinner()
-        
-        self.getUserCourseDataWithUserId("\(self.classmateId)")
-        var a = self.getUserAvatarWithUserId("\(self.classmateId)")
-        println(a)
-        
-        // set back button to no string
-        var backButton = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.Plain, target: nil, action: nil)
-        self.navigationItem.backBarButtonItem = backButton
-        
-        // never adjust this for me.....fuck
-        // this is very important line!
-        self.automaticallyAdjustsScrollViewInsets = true
+    
+    
+    // preload data
+    func preloadData() {
         
         // timetable require
         // get screen h & w
@@ -110,6 +94,31 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
         // never adjust this for me.....fuck
         // this is very important line!
         self.automaticallyAdjustsScrollViewInsets = false
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Do any additional setup after loading the view.
+        println(self.classmateId)
+        self.view.backgroundColor = self.timetableBackgroundColor
+        // add spinner
+        self.setupSpinner()
+        self.spinner.center = self.view.center
+        self.view.addSubview(self.spinner)
+        self.animateSpinner()
+        
+        self.getUserCourseDataWithUserId("\(self.classmateId)")
+        
+        // set back button to no string
+        var backButton = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.Plain, target: nil, action: nil)
+        self.navigationItem.backBarButtonItem = backButton
+        
+        // never adjust this for me.....fuck
+        // this is very important line!
+        self.automaticallyAdjustsScrollViewInsets = true
+        
+        self.preloadData()
         
         // generate timetable scrollview
         self.colorgyTimeTableView?.removeFromSuperview()
@@ -129,11 +138,43 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
         self.classmateContentScrollView.addSubview(self.profileHeaderView)
         self.classmateContentScrollView.addSubview(self.colorgyTimeTableView)
         
-        println("self.colorgyTimeTableView.frame \(self.colorgyTimeTableView.frame)")
-        println("self.classmateContentScrollView.contentSize \(self.classmateContentScrollView.contentSize)")
-        println("self.profileHeaderView.frame \(self.profileHeaderView.frame)")
-        
         self.view.addSubview(self.classmateContentScrollView)
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            var userImage = self.getUserAvatarWithUserId("\(self.classmateId)")
+            if userImage.avatar != nil {
+                self.userAvatarImageView.image = userImage.avatar
+            }
+            if userImage.coverPhoto != nil {
+                self.userCoverPhotoImageView.image = userImage.coverPhoto
+            }
+            
+            var transition = CATransition()
+            transition.duration = 0.4
+            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            transition.type = kCATransitionFade
+            self.userAvatarImageView.layer.addAnimation(transition, forKey: nil)
+            self.userNameLabel.layer.addAnimation(transition, forKey: nil)
+            
+        }
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            var name = self.getUserNameWithUserId("\(self.classmateId)")
+            if name != nil {
+                self.userNameLabel.text = name!
+            }
+            var transition = CATransition()
+            transition.duration = 0.4
+            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            transition.type = kCATransitionFade
+            self.userNameLabel.layer.addAnimation(transition, forKey: nil)
+        }
+        
+        self.stopAnimatingAndRemoveSpinner()
     }
     
     // MARK: - timetable grid view and content view
@@ -145,24 +186,12 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
         // background color of timetable
         view.backgroundColor = self.timetableBackgroundColor
         
-//        // set timetable scrollview's content size
-//        // width matches device width
-//        // height is headerBarHeight and coursescount height and some spacing
-//        view.contentSize = CGSizeMake(self.screenWidth, self.headerHeight + self.colorgyTimeTableCell.height * CGFloat(self.courseCount) + CGFloat(2) * self.timetableSpacing)
-//        // this is nav bar height -> 64
-//        view.contentInset.top = 64
-//        // this is tab bar height -> 49
-//        view.contentInset.bottom = 49
-//        view.contentOffset.y = -64
-        
         // add grid view
         view.addSubview(self.ColorgyTimeTableColumnView())
         view.addSubview(self.ColorgyTimeTableRowSessionView("morning"))
         view.addSubview(self.ColorgyTimeTableRowSessionView("afternoon"))
         view.addSubview(self.ColorgyTimeTableRowSessionView("night"))
         view.addSubview(self.ColorgyTimeTableColumnSeperatorLine(view))
-        
-
         
         return view as UIView
     }
@@ -308,12 +337,61 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
     // MARK: - header view
     func DetailHeaderView() -> UIView? {
         
-        var detailHeaderView = UIView(frame: CGRectMake(0, 0, self.view.frame.width, self.profileHeaderViewHeight))
-        detailHeaderView.backgroundColor = UIColor.blueColor()
+        var detailHeaderView = UIImageView(frame: CGRectMake(0, 0, self.view.frame.width, self.profileHeaderViewHeight))
+        detailHeaderView.backgroundColor = UIColor.grayColor()
         detailHeaderView.layer.cornerRadius = 5
         // grow back the radius
         detailHeaderView.frame.size.height += detailHeaderView.layer.cornerRadius
+        self.userCoverPhotoImageView = detailHeaderView
+        self.userCoverPhotoImageView.layer.masksToBounds = true
+        self.userCoverPhotoImageView.contentMode = UIViewContentMode.ScaleAspectFill
         
+        // dim view on cover
+        var dim = UIView(frame: self.userCoverPhotoImageView.frame)
+        dim.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.8)
+        self.userCoverPhotoImageView.addSubview(dim)
+        
+//        var visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Dark)) as UIVisualEffectView
+//        visualEffectView.frame = self.userCoverPhotoImageView.bounds
+//        self.userCoverPhotoImageView.addSubview(visualEffectView)
+        
+        var leftSpacing: CGFloat = 29
+        // user contents
+        // avatar
+        self.userAvatarImageView = UIImageView(frame: CGRectMake(0, 0, 85, 85))
+        self.userAvatarImageView.layer.borderColor = UIColor.whiteColor().CGColor
+        self.userAvatarImageView.layer.borderWidth = 5
+        self.userAvatarImageView.layer.cornerRadius = self.userAvatarImageView.frame.width / 2
+        self.userAvatarImageView.layer.masksToBounds = true
+        
+        // name label
+        var nameFontSize: CGFloat = 19
+        self.userNameLabel = UILabel(frame: CGRectMake(0, 0, self.view.frame.width - self.userAvatarImageView.frame.width - leftSpacing, nameFontSize))
+        self.userNameLabel.font = UIFont(name: "STHeitiTC-Medium", size: nameFontSize)
+        self.userNameLabel.textColor = UIColor.whiteColor()
+        
+        // school label
+        var schoolFontSize: CGFloat = 11
+        self.userSchoolLabel = UILabel(frame: CGRectMake(0, 0, self.view.frame.width - self.userAvatarImageView.frame.width - leftSpacing, schoolFontSize))
+        self.userSchoolLabel.font = UIFont(name: "STHeitiTC-Medium", size: schoolFontSize)
+        self.userSchoolLabel.textColor = UIColor.whiteColor()
+        
+        // position name, shcool, avatar
+        self.userAvatarImageView.frame.origin.x = leftSpacing
+        self.userAvatarImageView.frame.origin.y = self.profileHeaderViewHeight - leftSpacing - self.userAvatarImageView.frame.height
+        // name to avatar's right
+        self.userNameLabel.center.y = self.userAvatarImageView.center.y
+        var labelAvatarSpacing: CGFloat = 13
+        self.userNameLabel.frame.origin.x = self.userAvatarImageView.frame.width + leftSpacing + labelAvatarSpacing
+        // school to name's top
+        self.userSchoolLabel.center = self.userNameLabel.center
+        var topSpacing: CGFloat = 6
+        self.userSchoolLabel.center.y -= (self.userSchoolLabel.frame.height + self.userNameLabel.frame.height) / 2 + topSpacing
+        
+        // add views
+        detailHeaderView.addSubview(self.userAvatarImageView)
+        detailHeaderView.addSubview(self.userNameLabel)
+        detailHeaderView.addSubview(self.userSchoolLabel)
         
         var headerMask = UIView(frame: detailHeaderView.frame)
         headerMask.frame.size.height -= detailHeaderView.layer.cornerRadius
@@ -384,6 +462,48 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
 //        return nil
     }
     
+    func getUserNameWithUserId(userId: String) -> String? {
+        
+        let ud = NSUserDefaults.standardUserDefaults()
+        // get user name and  school
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        let access_token = ud.objectForKey("ColorgyAccessToken") as! String
+        
+        var url = "https://colorgy.io:443/api/v1/users/" + userId + ".json?access_token=" + access_token
+        println(url)
+        // first, init a request using url.
+        var req = NSURLRequest(URL: NSURL(string: url)!)
+        // then you need a response type as follow.
+        var response: AutoreleasingUnsafeMutablePointer<NSURLResponse?> = nil
+        // get response data back
+        var responseData = NSURLConnection.sendSynchronousRequest(req, returningResponse: response, error: nil)
+        
+        //        println(responseData)
+        var err: NSError?
+        // need to check if data truly comes back.
+        // or json serialization will fail.
+        if responseData != nil {
+            // FIXME: 強制拆有危險
+            var jsonResult: NSDictionary = (NSJSONSerialization.JSONObjectWithData(responseData!, options: NSJSONReadingOptions.MutableContainers, error: &err) as? NSDictionary)!
+            
+            // if successfully serialize this data, use JSON to unpack it.
+            if let responseObject = responseData {
+                println("user info")
+                println(responseObject)
+                let json = JSON(jsonResult)
+                
+                var name: String?
+                if let n = json["name"].string {
+                    name = n
+                }
+                return name
+                
+            }
+        }
+        
+        return nil
+    }
+    
     func getUserAvatarWithUserId(userId: String) -> (avatar: UIImage?, coverPhoto: UIImage?) {
         
         // i dont use AFNetworking here.
@@ -409,6 +529,7 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
         // need to check if data truly comes back.
         // or json serialization will fail.
         if responseData != nil {
+            // FIXME: 強制拆有危險
             var jsonResult: NSDictionary = (NSJSONSerialization.JSONObjectWithData(responseData!, options: NSJSONReadingOptions.MutableContainers, error: &err) as? NSDictionary)!
             
             // if successfully serialize this data, use JSON to unpack it.
