@@ -23,6 +23,8 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
     var userAvatarImageView: UIImageView!
     var userNameLabel: UILabel!
     var userSchoolLabel: UILabel!
+    var userCourses: [UIView]!
+    var courseData: [[String]]!
     
     // MARK: - timetableview
     var colorgyTimeTableView: UIView!
@@ -70,6 +72,8 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
         self.classmateId = id
     }
     
+    // MARK: - push segue
+    var pushCourseCode: String!
     
     // preload data
     func preloadData() {
@@ -108,7 +112,7 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
         self.view.addSubview(self.spinner)
         self.animateSpinner()
         
-        self.getUserCourseDataWithUserId("\(self.classmateId)")
+        
         
         // set back button to no string
         var backButton = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.Plain, target: nil, action: nil)
@@ -173,6 +177,8 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
             transition.type = kCATransitionFade
             self.userNameLabel.layer.addAnimation(transition, forKey: nil)
         }
+        
+        self.getUserCourseDataWithUserId("\(self.classmateId)")
         
         self.stopAnimatingAndRemoveSpinner()
     }
@@ -433,6 +439,116 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    // MARK: - add course cell region
+    func courseCellMake(courseName: String, location: String, day: Int, session: Int) -> UIView? {
+        
+        var view = UIView(frame: CGRectMake(0, 0, self.colorgyTimeTableCell.width - 1, self.colorgyTimeTableCell.height - 1))
+        var label = UILabel(frame: CGRectMake(0, 3, self.colorgyTimeTableCell.width - 1, (self.colorgyTimeTableCell.height - 1) * 0.6))
+        
+        view.layer.cornerRadius = 5
+        
+        // name label
+        label.text = courseName
+        label.font = UIFont(name: "STHeitiTC-Medium", size: 13)
+        label.textAlignment = NSTextAlignment.Center
+        label.numberOfLines = 4
+        label.textColor = UIColor.whiteColor()
+        label.tag = 1
+        
+        view.addSubview(label)
+        
+        // location label
+        var titlelabel = UILabel(frame: CGRectMake(0, label.bounds.size.height, self.colorgyTimeTableCell.width - 1, (self.colorgyTimeTableCell.height - 1) * 0.4))
+        titlelabel.text = location
+        titlelabel.font = UIFont(name: "STHeitiTC-Medium", size: 11)
+        titlelabel.textAlignment = NSTextAlignment.Center
+        titlelabel.numberOfLines = 1
+        titlelabel.textColor = UIColor.whiteColor()
+        titlelabel.tag = 2
+        
+        view.addSubview(titlelabel)
+        
+        var x = self.timetableSpacing + self.sideBarWidth - self.colorgyTimeTableCell.width / 2 + CGFloat(day) * self.colorgyTimeTableCell.width
+        var y = self.timetableSpacing + self.headerHeight - self.colorgyTimeTableCell.width / 2 + CGFloat(session) * self.colorgyTimeTableCell.width
+        
+        view.center = CGPointMake(x, y)
+        
+        
+        if day < 6 && day > 0 && session > 0 {
+            // some day and session are smaller then 0
+            return view
+        } else {
+            return nil
+        }
+    }
+    
+    func refreshTimeTable() {
+        
+        println("refredshing😡 \(self.userCourses.count)")
+        if self.userCourses != nil {
+            for cell in self.userCourses! {
+                println(self.colorgyTimeTableView)
+                cell.backgroundColor = UIColor.brownColor()
+                self.colorgyTimeTableView.addSubview(cell)
+                
+                // ges
+                let tap = UITapGestureRecognizer()
+                tap.numberOfTouchesRequired = 1
+                tap.addTarget(self, action: "tapOnCourseCellView:")
+                cell.addGestureRecognizer(tap)
+                
+                // animation
+                cell.alpha = 0
+                UIView.animateWithDuration(0.4, animations: {
+                    cell.alpha = 1
+                })
+            }
+        }
+    }
+    
+    func tapOnCourseCellView(gesture: UITapGestureRecognizer) {
+        println("tapppp")
+        println(gesture.view?.frame)
+        let position = self.getCoursePositionOnTimetable(gesture.view?.center)
+
+        println(gesture.view?.subviews[0])
+        if let label = gesture.view?.subviews[0] as? UILabel {
+            let code = self.getCourseCodeWithCourseName(label.text!)
+            println(code)
+            if code != nil {
+                self.pushCourseCode = code!
+                self.performSegueWithIdentifier("classmateToCourseDetail", sender: self)
+            }
+        }
+    }
+    
+    func getCoursePositionOnTimetable(point: CGPoint?) -> (day: Int, session: Int)? {
+        
+        if point != nil {
+            var day = Int((point!.x - self.timetableSpacing - self.sideBarWidth - self.colorgyTimeTableCell.width / 2) / self.colorgyTimeTableCell.width + 0.1) + 1
+            // add 0.1 to prevent 1.99999 -> 1.0000
+            var session = Int(((point!.y - self.timetableSpacing - self.headerHeight - self.colorgyTimeTableCell.width / 2) / self.colorgyTimeTableCell.height + 0.1) + 1)
+            return (day, session)
+        } else {
+            return nil
+        }
+    }
+    
+    func getCourseCodeWithCourseName(name: String) -> String? {
+        
+        for array in self.courseData {
+            let nn = array[0]
+            if nn == name {
+                // match!
+                return array[1]
+            }
+        }
+        
+        return nil
+    }
+        
+//        return nil
+
     // MARK: - server
     func getUserCourseDataWithUserId(userId: String) {
         
@@ -451,15 +567,151 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
             
             // unpack response object using JSON
             let json = JSON(responseObject)
-            println(json)
+            println("😆")
             
+            //init courses container
+            self.userCourses = [UIView]()
+            self.courseData = [[String]]()
+            
+            for (key: String, value: JSON) in json {
+                println(key)
+                println(value)
+                let code = value["course_code"].string
+                let json = self.getCourseInfoWithCourseCode(code!)
+                if json != nil {
+                    let name = json!["name"].string!
+                    // save course code for further usage
+                    self.courseData.append([name, json!["code"].string!])
+                    // need handle course
+                    if let day_1 = json!["day_1"].int {
+                        if let period_1 = json!["period_1"].int {
+                            if let location_1 = json!["location_1"].string {
+                                if let cell = self.courseCellMake(name, location: location_1, day: day_1, session: period_1) {
+                                    self.userCourses.append(cell)
+                                }
+                            }
+                        }
+                    }
+                    if let day_2 = json!["day_2"].int {
+                        if let period_2 = json!["period_2"].int {
+                            if let location_2 = json!["location_2"].string {
+                                if let cell = self.courseCellMake(name, location: location_2, day: day_2, session: period_2) {
+                                    self.userCourses.append(cell)
+                                }
+                            }
+                        }
+                    }
+                    if let day_3 = json!["day_3"].int {
+                        if let period_3 = json!["period_3"].int {
+                            if let location_3 = json!["location_3"].string {
+                                if let cell = self.courseCellMake(name, location: location_3, day: day_3, session: period_3) {
+                                    self.userCourses.append(cell)
+                                }
+                            }
+                        }
+                    }
+                    if let day_4 = json!["day_4"].int {
+                        if let period_4 = json!["period_4"].int {
+                            if let location_4 = json!["location_4"].string {
+                                if let cell = self.courseCellMake(name, location: location_4, day: day_4, session: period_4) {
+                                    self.userCourses.append(cell)
+                                }
+                            }
+                        }
+                    }
+                    if let day_5 = json!["day_5"].int {
+                        if let period_5 = json!["period_5"].int {
+                            if let location_5 = json!["location_5"].string {
+                                if let cell = self.courseCellMake(name, location: location_5, day: day_5, session: period_5) {
+                                    self.userCourses.append(cell)
+                                }
+                            }
+                        }
+                    }
+                    if let day_6 = json!["day_6"].int {
+                        if let period_6 = json!["period_6"].int {
+                            if let location_6 = json!["location_6"].string {
+                                if let cell = self.courseCellMake(name, location: location_6, day: day_6, session: period_6) {
+                                    self.userCourses.append(cell)
+                                }
+                            }
+                        }
+                    }
+                    if let day_7 = json!["day_7"].int {
+                        if let period_7 = json!["period_7"].int {
+                            if let location_7 = json!["location_7"].string {
+                                if let cell = self.courseCellMake(name, location: location_7, day: day_7, session: period_7) {
+                                    self.userCourses.append(cell)
+                                }
+                            }
+                        }
+                    }
+                    if let day_8 = json!["day_8"].int {
+                        if let period_8 = json!["period_8"].int {
+                            if let location_8 = json!["location_8"].string {
+                                if let cell = self.courseCellMake(name, location: location_8, day: day_8, session: period_8) {
+                                    self.userCourses.append(cell)
+                                }
+                            }
+                        }
+                    }
+                    if let day_9 = json!["day_9"].int {
+                        if let period_9 = json!["period_9"].int {
+                            if let location_9 = json!["location_9"].string {
+                                if let cell = self.courseCellMake(name, location: location_9, day: day_9, session: period_9) {
+                                    self.userCourses.append(cell)
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+            
+            println("😆😆😆😆😆😆😆😆")
+            println(self.userCourses)
+            // put these onto timetable
+            self.refreshTimeTable()
             
             }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
                 // TODO: 處理錯誤GET
                 println("error \(responseObject)")
         })
+    }
     
-//        return nil
+    func getCourseInfoWithCourseCode(courseCode: String) -> JSON? {
+        
+        let ud = NSUserDefaults.standardUserDefaults()
+        // get user name and  school
+        let access_token = ud.objectForKey("ColorgyAccessToken") as! String
+        let userSchool = ud.objectForKey("userSchool") as! String
+        
+        var url = "https://colorgy.io:443/api/v1/" + userSchool.lowercaseString + "/courses/" + courseCode + ".json?access_token=" + access_token
+        println(url)
+        // first, init a request using url.
+        var req = NSURLRequest(URL: NSURL(string: url)!)
+        // then you need a response type as follow.
+        var response: AutoreleasingUnsafeMutablePointer<NSURLResponse?> = nil
+        // get response data back
+        var responseData = NSURLConnection.sendSynchronousRequest(req, returningResponse: response, error: nil)
+        
+        //        println(responseData)
+        var err: NSError?
+        // need to check if data truly comes back.
+        // or json serialization will fail.
+        if responseData != nil {
+            // FIXME: 強制拆有危險
+            var jsonResult: NSDictionary = (NSJSONSerialization.JSONObjectWithData(responseData!, options: NSJSONReadingOptions.MutableContainers, error: &err) as? NSDictionary)!
+            
+            // if successfully serialize this data, use JSON to unpack it.
+            if let responseObject = responseData {
+               let json = JSON(jsonResult)
+                return json
+            }
+            
+        }
+        
+        return nil
     }
     
     func getUserNameWithUserId(userId: String) -> String? {
@@ -560,6 +812,17 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
         
         
         return (nil, nil)
+    }
+    
+    // MARK: - puss segue
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if segue.identifier == "classmateToCourseDetail" {
+            
+            var vc = segue.destinationViewController as! ColorgyCourseDetailPageViewController
+            vc.pushWithCourseCode(self.pushCourseCode)
+            
+        }
     }
 
     /*

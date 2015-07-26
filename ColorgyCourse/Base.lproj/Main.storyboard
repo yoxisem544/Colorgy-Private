@@ -23,7 +23,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Jft-8C-Kos" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3508" y="753"/>
+            <point key="canvasLocation" x="3492" y="1263"/>
         </scene>
         <!--Colorgy Classmate Personal Page View Controller-->
         <scene sceneID="hj9-00-fie">
@@ -38,10 +38,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <segue destination="2gN-Oy-7br" kind="show" identifier="classmateToCourseDetail" id="ST2-Jf-Y6A"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a1U-Kb-dcP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4234" y="753"/>
+            <point key="canvasLocation" x="4184" y="283"/>
         </scene>
         <!--我的-->
         <scene sceneID="2yO-Xd-KgD">
@@ -348,6 +351,6 @@
         <image name="wall" width="26" height="25"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="k0A-Ds-7bf"/>
+        <segue reference="ST2-Jf-Y6A"/>
     </inferredMetricsTieBreakers>
 </document>
