@@ -182,9 +182,53 @@ class ColorgyTimeTableViewController: UIViewController {
         self.headerWidth = cellWidth
     }
     
+    func logout() {
+        
+        let alert = UIAlertController(title: "錯誤", message: "請先驗證學校信箱，才能使用喔！", preferredStyle: UIAlertControllerStyle.Alert)
+        let ok = UIAlertAction(title: "好", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            
+            var ud = NSUserDefaults.standardUserDefaults()
+            ud.setObject(nil, forKey: "isLogin")
+            ud.setObject(nil, forKey: "loginTpye")
+            ud.setObject(nil, forKey: "smallFBProfilePhoto")
+            ud.setObject(nil, forKey: "bigFBProfilePhoto")
+            ud.setObject(nil, forKey: "ColorgyAccessToken")
+            ud.setObject(nil, forKey: "ColorgyCreatedTime")
+            ud.setObject(nil, forKey: "ColorgyExpireTime")
+            ud.setObject(nil, forKey: "ColorgyRefreshToken")
+            ud.setObject(nil, forKey: "ColorgyTokenType")
+            //                    ud.setObject(nil, forKey: "courseDataFromServer")
+            ud.setObject(nil, forKey: "userName")
+            ud.setObject(nil, forKey: "userSchool")
+            ud.synchronize()
+            
+            FBSession.activeSession().closeAndClearTokenInformation()
+            
+            self.logoutAnimation()
+            
+            var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
+            dispatch_after(delay, dispatch_get_main_queue()) {
+                var storyboard = UIStoryboard(name: "Main", bundle: nil)
+                var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
+                self.presentViewController(vc, animated: true, completion: nil)
+            }
+        })
+        
+        alert.addAction(ok)
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
     // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        var ud = NSUserDefaults.standardUserDefaults()
+        if let school = ud.objectForKey("userSchool") as? String {
+            if school == "NotYetAuthorized" {
+                self.logout()
+            }
+        }
+        
         
         // Do any additional setup after loading the view.
         println("colorgy timetable view did load!")
