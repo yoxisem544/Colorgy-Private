@@ -179,7 +179,14 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             self.alertUserWIthError("你現在沒有網路唷～～～～～")
         } else {
             println("有往往")
-            self.updateCourseFromServer()
+            let alert = UIAlertController(title: "更新", message: "如果你發現課程資料有錯誤，可以按更新下載最新資料喔！", preferredStyle: UIAlertControllerStyle.Alert)
+            let ok = UIAlertAction(title: "更新", style: UIAlertActionStyle.Cancel, handler: { (action: UIAlertAction!) -> Void in
+                self.updateCourseFromServer()
+            })
+            let cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Default, handler: nil)
+            alert.addAction(ok)
+            alert.addAction(cancel)
+            self.presentViewController(alert, animated: true, completion: nil)
         }
     }
     

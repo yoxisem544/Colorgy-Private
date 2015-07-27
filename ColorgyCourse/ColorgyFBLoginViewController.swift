@@ -585,9 +585,10 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
         let access_token = ud.objectForKey("ColorgyAccessToken") as! String
         afManager.GET("https://colorgy.io/api/v1/me?access_token=" + access_token, parameters: nil, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+            println(responseObject)
                 let name = responseObject["name"] as! String
                 ud.setObject(name, forKey: "userName")
-            ud.synchronize()
+                ud.synchronize()
                 if let res = responseObject["organizations"] as? NSArray {
                     ud.setObject(res[0] as! String, forKey: "userSchool")
                     ud.synchronize()

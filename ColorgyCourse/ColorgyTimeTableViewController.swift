@@ -106,7 +106,9 @@ class ColorgyTimeTableViewController: UIViewController {
                 }
             }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
                 println("error refreshing token, authrication fail!!!")
-                self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
+                if self.updatingAlert != nil {
+                    self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
+                }
                 var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 1 * Double(NSEC_PER_SEC)))
                 dispatch_after(delay, dispatch_get_main_queue()) {
                     let alert = UIAlertController(title: "錯誤", message: "與伺服器驗證過期，請重新登入！", preferredStyle: UIAlertControllerStyle.Alert)
@@ -218,6 +220,226 @@ class ColorgyTimeTableViewController: UIViewController {
         self.presentViewController(alert, animated: true, completion: nil)
     }
     
+    // MARK: - update course refresh table
+    func updateAndRefreshUserCourseData() {
+        
+        var reachability = Reachability.reachabilityForInternetConnection()
+        var networkStatus = reachability.currentReachabilityStatus().value
+        if networkStatus == NotReachable.value {
+            println("沒有往往")
+        } else {
+            println("有往往")
+            // refresh every time
+            self.refreshAccessToken()
+            
+            var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 2 * Double(NSEC_PER_SEC)))
+            dispatch_after(delay, dispatch_get_main_queue()) {
+                // get data
+                let userId = self.getUserId()
+                println("😙😙😙 \(userId)")
+                if userId != nil {
+                    var courseData = self.getUserCourseDataWithUserId("\(userId!)")
+                    println(courseData)
+                    if courseData != nil {
+                        // delete db
+                        self.deleteDataFromDatabase()
+                        
+                        for code in courseData! {
+                            var c = self.getCourseDataWithCourseCode(code)
+                            if c != nil {
+                                // FIXME: 這個是懶趴CODE
+                                println("唧唧切下來 \(c)")
+                                // get out all the data, easy to read.
+                                let name = c!["name"].string
+                                let lecturer = c!["lecturer"].string
+                                var credits = Int32()
+                                if let c = c!["credits"].int {
+                                    credits = Int32(c)
+                                } else {
+                                    credits = 0
+                                }
+                                let uuid = c!["code"].string
+                                // year, term, id, type
+                                var year = Int32()
+                                if let y = c!["year"].int {
+                                    year = Int32(y)
+                                }
+                                var term = Int32()
+                                if let t = c!["term"].int {
+                                    term = Int32(t)
+                                }
+                                var id = Int32()
+                                if let i = c!["id"].int {
+                                    id = Int32(i)
+                                }
+                                let type = c!["_type"].string
+                                
+                                var sessions = NSMutableArray()
+                                for i in 1...9 {
+                                    var dayfuckshit = c!["day_" + "\(i)"].int
+                                    var sessionfuckshit = c!["period_" + "\(i)"].int
+                                    var location = c!["location_" + "\(i)"].string
+                                    
+                                    var day: String?
+                                    var session: String?
+                                    
+                                    if dayfuckshit == nil {
+                                        day = "<null>"
+                                    } else {
+                                        day = "\(dayfuckshit!)"
+                                    }
+                                    if sessionfuckshit == nil {
+                                        session = "<null>"
+                                    } else {
+                                        session = "\(sessionfuckshit!)"
+                                    }
+                                    if location == nil {
+                                        location = ""
+                                    }
+                                    
+                                    sessions.addObject(["\(day!)", "\(session!)", "\(location!)"])
+                                }
+                                println(sessions)
+                                self.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
+                            }
+                        }
+                    }
+                    
+                    // refresh view
+                    self.refreshTimetableCourseCells()
+                }
+            }
+            
+        }
+    }
+    
+    func getCourseDataWithCourseCode(code: String) -> JSON? {
+        
+        let ud = NSUserDefaults.standardUserDefaults()
+        // get user name and  school
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        let access_token = ud.objectForKey("ColorgyAccessToken") as! String
+        let userSchool = ud.objectForKey("userSchool") as! String
+
+        
+        // get classmate user id, in order to get photo
+        // generate array like [id, url, uiimage]
+        // but now i only use id....
+        
+        var url = "https://colorgy.io:443/api/v1/" + userSchool.lowercaseString + "/courses/" + code + ".json?access_token=" + access_token
+        println(url)
+        
+        // first, init a request using url.
+        var req = NSURLRequest(URL: NSURL(string: url)!)
+        // then you need a response type as follow.
+        var response: AutoreleasingUnsafeMutablePointer<NSURLResponse?> = nil
+        // get response data back
+        var responseData = NSURLConnection.sendSynchronousRequest(req, returningResponse: response, error: nil)
+        
+        //        println(responseData)
+        var err: NSError?
+        // need to check if data truly comes back.
+        // or json serialization will fail.
+        if responseData != nil {
+            // FIXME: 強制拆有危險，這裡是array...危險
+            var jsonResult = (NSJSONSerialization.JSONObjectWithData(responseData!, options: NSJSONReadingOptions.MutableContainers, error: &err) as? NSDictionary)!
+            
+            let json = JSON(jsonResult)
+            return json
+        }
+        
+        return nil
+    }
+    
+    func getUserCourseDataWithUserId(userId: String) -> [String]? {
+        
+        // i dont use AFNetworking here.
+        // i dont want async here.
+        let ud = NSUserDefaults.standardUserDefaults()
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        // get user name and  school
+        let access_token = ud.objectForKey("ColorgyAccessToken") as! String
+        
+        var url = "https://colorgy.io:443/api/v1/user_courses.json?filter%5Buser_id%5D=" + userId + "&&&&&&&&&&access_token=" + access_token
+        println(url)
+        
+        
+        // first, init a request using url.
+        var req = NSURLRequest(URL: NSURL(string: url)!)
+        // then you need a response type as follow.
+        var response: AutoreleasingUnsafeMutablePointer<NSURLResponse?> = nil
+        // get response data back
+        var responseData = NSURLConnection.sendSynchronousRequest(req, returningResponse: response, error: nil)
+        
+        //        println(responseData)
+        var err: NSError?
+        // need to check if data truly comes back.
+        // or json serialization will fail.
+        if responseData != nil {
+            // FIXME: 強制拆有危險，這裡是array...危險
+            var jsonResult = (NSJSONSerialization.JSONObjectWithData(responseData!, options: NSJSONReadingOptions.MutableContainers, error: &err) as? NSArray)!
+            
+            var courses = [String]()
+            
+            // if successfully serialize this data, use JSON to unpack it.
+            if let responseObject = responseData {
+                println("😙😙😙")
+                let json = JSON(jsonResult)
+                println("res conunt \(jsonResult.count)")
+                for (key: String, value: JSON) in json {
+                    println("😙😙😙")
+                    println(key)
+                    println(value)
+                    let code = value["course_code"].string
+                    if code != nil {
+                        courses.append(code!)
+                    }
+                }
+                
+                return courses
+            }
+            
+        }
+        
+        return nil
+    }
+    
+    func getUserId() -> Int? {
+        
+        let ud = NSUserDefaults.standardUserDefaults()
+        // get user name and  school
+        let access_token = ud.objectForKey("ColorgyAccessToken") as! String
+        
+        var url = "https://colorgy.io/api/v1/me?access_token=" + access_token
+        println(url)
+        // first, init a request using url.
+        var req = NSURLRequest(URL: NSURL(string: url)!)
+        // then you need a response type as follow.
+        var response: AutoreleasingUnsafeMutablePointer<NSURLResponse?> = nil
+        // get response data back
+        var responseData = NSURLConnection.sendSynchronousRequest(req, returningResponse: response, error: nil)
+        
+        //        println(responseData)
+        var err: NSError?
+        // need to check if data truly comes back.
+        // or json serialization will fail.
+        if responseData != nil {
+            // FIXME: 強制拆有危險
+            var jsonResult: NSDictionary = (NSJSONSerialization.JSONObjectWithData(responseData!, options: NSJSONReadingOptions.MutableContainers, error: &err) as? NSDictionary)!
+            
+            // if successfully serialize this data, use JSON to unpack it.
+            if let responseObject = responseData {
+                let json = JSON(jsonResult)
+                let id = json["id"].int
+                if id != nil {
+                    return id
+                }
+            }
+            
+        }
+        
+        return nil
+    }
     // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -228,6 +450,9 @@ class ColorgyTimeTableViewController: UIViewController {
                 self.logout()
             }
         }
+        
+        // fuck the shit
+        self.updateAndRefreshUserCourseData()
         
         
         // Do any additional setup after loading the view.
@@ -1130,7 +1355,86 @@ class ColorgyTimeTableViewController: UIViewController {
         // if something wrong, return nil.
         return nil
     }
+
+    func deleteDataFromDatabase() {
+        
+        if let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext {
+            let fetchRequest = NSFetchRequest(entityName: "Course")
+            var e: NSError?
+            var course: [Course] = managedObjectContext.executeFetchRequest(fetchRequest, error: &e) as! [Course]
+            if e != nil {
+                println("something error")
+            } else {
+                println("ok count: \(course.count)")
+            }
+            for c in course {
+                managedObjectContext.deleteObject(c)
+            }
+            
+            managedObjectContext.save(&e)
+            if e != nil {
+                println("error \(e)")
+            }
+        }
+    }
     
+    func storeDataToDatabase(name: String?, lecturer: String?, credits: Int32?, uuid: String?, sessions: AnyObject, year: Int32?, term: Int32?, id: Int32?, type: String?) {
+        
+        println("store")
+        // get out managedObjectContext
+        if let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext {
+            
+            // insert a new course, but not yet saved.
+            var course = NSEntityDescription.insertNewObjectForEntityForName("Course", inManagedObjectContext: managedObjectContext) as! Course
+            // assign its value to it's key
+            course.name = name
+            course.lecturer = lecturer
+            course.credits = credits!
+            course.uuid = uuid
+            
+            course.id = id!
+            course.type = type!
+            course.year = year!
+            course.term = term!
+            
+            course.day_1 = sessions[0][0] as! String
+            course.day_2 = sessions[1][0] as! String
+            course.day_3 = sessions[2][0] as! String
+            course.day_4 = sessions[3][0] as! String
+            course.day_5 = sessions[4][0] as! String
+            course.day_6 = sessions[5][0] as! String
+            course.day_7 = sessions[6][0] as! String
+            course.day_8 = sessions[7][0] as! String
+            course.day_9 = sessions[8][0] as! String
+            
+            course.period_1 = sessions[0][1] as! String
+            course.period_2 = sessions[1][1] as! String
+            course.period_3 = sessions[2][1] as! String
+            course.period_4 = sessions[3][1] as! String
+            course.period_5 = sessions[4][1] as! String
+            course.period_6 = sessions[5][1] as! String
+            course.period_7 = sessions[6][1] as! String
+            course.period_8 = sessions[7][1] as! String
+            course.period_9 = sessions[8][1] as! String
+            
+            course.location_1 = sessions[0][2] as! String
+            course.location_2 = sessions[1][2] as! String
+            course.location_3 = sessions[2][2] as! String
+            course.location_4 = sessions[3][2] as! String
+            course.location_5 = sessions[4][2] as! String
+            course.location_6 = sessions[5][2] as! String
+            course.location_7 = sessions[6][2] as! String
+            course.location_8 = sessions[7][2] as! String
+            course.location_9 = sessions[8][2] as! String
+            
+            var e: NSError?
+            // to see if successfully store to db
+            if managedObjectContext.save(&e) != true {
+                // if i got a error
+                println("error \(e)")
+            }
+        }
+    }
     /*
     // MARK: - Navigation
 
