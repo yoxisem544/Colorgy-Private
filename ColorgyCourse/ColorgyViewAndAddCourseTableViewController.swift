@@ -55,9 +55,35 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     // updating
     var updatingAlert: UIAlertController!
     
+    // MARK: - network detect
+    var networkDetecter: NSTimer!
+    func startDetectingNetwork() {
+        
+        self.networkDetecter = NSTimer.scheduledTimerWithTimeInterval(0.3, target: self, selector: "detectNetworking", userInfo: nil, repeats: true)
+    }
+    
+    func detectNetworking() {
+        
+        var reachability = Reachability.reachabilityForInternetConnection()
+        var networkStatus = reachability.currentReachabilityStatus().value
+        if networkStatus == NotReachable.value {
+            println("沒有往往")
+            self.navigationController?.popToRootViewControllerAnimated(true)
+            self.alertUserWIthError("需要有網路才能選課喔！")
+            self.networkDetecter.invalidate()
+            self.networkDetecter = nil
+        } else {
+            println("有往往")
+        }
+    }
+    
+    
     // MARK: - view
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // net work
+        self.startDetectingNetwork()
         
         // test tabbar push hide
         println("😀 \(self.hidesBottomBarWhenPushed)")
