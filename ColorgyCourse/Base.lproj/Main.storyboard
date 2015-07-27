@@ -63,7 +63,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AUg-4F-Rpk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1874" y="1421"/>
+            <point key="canvasLocation" x="892" y="1475"/>
         </scene>
         <!--Colorgy Time Table View Controller-->
         <scene sceneID="BiM-tP-yFf">
@@ -93,6 +93,25 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pfw-zb-fZq" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2616" y="-92"/>
+        </scene>
+        <!--Colorgy Service Page View Controller-->
+        <scene sceneID="RnL-AQ-I2m">
+            <objects>
+                <viewController id="neo-nZ-xbm" customClass="ColorgyServicePageViewController" customModule="ColorgyCourse" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="17O-cz-8dm"/>
+                        <viewControllerLayoutGuide type="bottom" id="Vxe-OH-p37"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="6st-tT-nIf">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="a43-K1-BIr"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wQi-tp-7AC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2616" y="637"/>
         </scene>
         <!--課表-->
         <scene sceneID="j2R-FR-Etu">
@@ -300,7 +319,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jwG-Oo-H1g" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2616" y="631"/>
+            <point key="canvasLocation" x="2516" y="1605"/>
         </scene>
         <!--Colorgy Tab Bar Controller-->
         <scene sceneID="Muu-eL-7ze">
@@ -334,7 +353,7 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="6o6-gb-1bl" kind="relationship" relationship="rootViewController" id="TXI-b0-SMv"/>
+                        <segue destination="neo-nZ-xbm" kind="relationship" relationship="rootViewController" id="s64-Ij-RhS"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JTY-v0-kAV" userLabel="First Responder" sceneMemberID="firstResponder"/>

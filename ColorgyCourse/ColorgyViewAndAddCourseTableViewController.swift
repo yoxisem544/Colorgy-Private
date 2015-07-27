@@ -1185,7 +1185,10 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         
         // tap to dismiss dim view
         var tap = UITapGestureRecognizer(target: self, action: "dismissDimView:")
-        dimBackground.addGestureRecognizer(tap)
+        var delay = dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC)))
+        dispatch_after(delay, dispatch_get_main_queue()) {
+            dimBackground.addGestureRecognizer(tap)
+        }
         // tap on button
         deleteButton.tag = button.tag
         preserveButton.tag = button.tag

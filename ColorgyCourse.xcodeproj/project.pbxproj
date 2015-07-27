@@ -13,6 +13,7 @@
 		631758E21B5B7BED004BCB57 /* ColorgyTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631758E11B5B7BED004BCB57 /* ColorgyTabBarController.swift */; };
 		631758E41B5BAB2E004BCB57 /* ColorgyCourseDetailPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631758E31B5BAB2E004BCB57 /* ColorgyCourseDetailPageViewController.swift */; };
 		631AC3651B5D1F0000232F1A /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 631AC3641B5D1F0000232F1A /* 1.jpg */; };
+		631ACEAD1B662E140055CF8E /* ColorgyServicePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631ACEAC1B662E140055CF8E /* ColorgyServicePageViewController.swift */; };
 		6324DA921B13696C00DF2F6C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6324DA911B13696C00DF2F6C /* CoreData.framework */; };
 		634A67181B2D6CC700BAD03A /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 634A67171B2D6CC700BAD03A /* Reachability.m */; };
 		636FFF7A1AF9086D0012135C /* ColorgySideMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636FFF791AF9086D0012135C /* ColorgySideMenuViewController.swift */; };
@@ -51,6 +52,7 @@
 		631758E11B5B7BED004BCB57 /* ColorgyTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyTabBarController.swift; sourceTree = "<group>"; };
 		631758E31B5BAB2E004BCB57 /* ColorgyCourseDetailPageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyCourseDetailPageViewController.swift; sourceTree = "<group>"; };
 		631AC3641B5D1F0000232F1A /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
+		631ACEAC1B662E140055CF8E /* ColorgyServicePageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyServicePageViewController.swift; sourceTree = "<group>"; };
 		6324DA911B13696C00DF2F6C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		634A67161B2D6CC700BAD03A /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		634A67171B2D6CC700BAD03A /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 		63A29E491AF722DF000494DB /* ColorgyCourse */ = {
 			isa = PBXGroup;
 			children = (
+				631ACEAC1B662E140055CF8E /* ColorgyServicePageViewController.swift */,
 				63A29E4C1AF722DF000494DB /* AppDelegate.swift */,
 				63A29E4E1AF722DF000494DB /* ColorgyCourse.xcdatamodeld */,
 				63A29E751AF72E41000494DB /* Course.swift */,
@@ -344,6 +347,7 @@
 				631758E21B5B7BED004BCB57 /* ColorgyTabBarController.swift in Sources */,
 				636FFF7A1AF9086D0012135C /* ColorgySideMenuViewController.swift in Sources */,
 				63A29E721AF7236C000494DB /* ColorgyFBLoginViewController.swift in Sources */,
+				631ACEAD1B662E140055CF8E /* ColorgyServicePageViewController.swift in Sources */,
 				63A29E4D1AF722DF000494DB /* AppDelegate.swift in Sources */,
 				631008DF1AF771B7008A40E4 /* ColorgyNavigationController.swift in Sources */,
 			);
