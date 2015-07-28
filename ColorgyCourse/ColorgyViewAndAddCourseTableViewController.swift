@@ -56,6 +56,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     var updatingAlert: UIAlertController!
     
     // MARK: - network detect
+    var alertDeletePreserveView: UIView!
     var networkDetecter: NSTimer!
     func startDetectingNetwork() {
         
@@ -67,13 +68,19 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         var reachability = Reachability.reachabilityForInternetConnection()
         var networkStatus = reachability.currentReachabilityStatus().value
         if networkStatus == NotReachable.value {
-            println("沒有往往")
+//            println("沒有往往")
             self.navigationController?.popToRootViewControllerAnimated(true)
             self.alertUserWIthError("需要有網路才能選課喔！")
+            
+            // dismiss alert delete preserve view
+            if self.alertDeletePreserveView != nil {
+                self.alertDeletePreserveView.removeFromSuperview()
+            }
+            
             self.networkDetecter.invalidate()
             self.networkDetecter = nil
         } else {
-            println("有往往")
+//            println("有往往")
         }
     }
     
@@ -963,6 +970,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                 // if user want to add course
                 // user searching and attemp to add course
                 self.userAttempToAddCourseAtIndex(index, warning: false)
+                if let code = self.filteredCourse[index]["code"] as? String {
+                    self.putCourseOnServerWithCourseCode(code)
+                }
             } else if self.getAddButtonState(sender) == "remove" {
                 // if user want to delete course
                 self.buttonPendingToDelete = sender
@@ -1195,6 +1205,8 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         var h = self.tabBarController?.view.frame.height
         var dimBackground = UIView(frame: CGRectMake(0, 0, w!, h!))
         
+        // track this view, dismiss it if no network
+        self.alertDeletePreserveView = dimBackground
         
         // dim view with this view
         dimBackground.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.8)
@@ -1263,6 +1275,11 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         var view = button.superview
         self.dismissAlertView(view!)
         println("delete \(button.tag)")
+        
+        if let code = self.coursesAddedToTimetable[button.tag][3] as? String {
+            self.deleteCourseOnServerWithCourseCode(code)
+        }
+        
         self.userAttempToDeleteCourseAtIndex(button.tag, warning: false)
         self.tableView.reloadData()
     }
@@ -1273,6 +1290,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         self.dismissAlertView(view!)
         println("YOYO searching \(button.tag)")
         self.userAttempToDeleteCourseWhileSearchingAtIndex(button.tag, warning: false)
+        if let code = self.filteredCourse[button.tag]["code"] as? String {
+            self.deleteCourseOnServerWithCourseCode(code)
+        }
     }
     
     func pressPreserveCourseButton(button: UIButton) {
@@ -1303,6 +1323,73 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         } else {
             self.animateAddButton(sender, state: "add")
         }
+    }
+    
+    // MARK: - hanle DELETE PUT course
+    
+    func deleteCourseOnServerWithCourseCode(code: String) {
+        
+        let ud = NSUserDefaults.standardUserDefaults()
+        // get user name and  school
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        let access_token = ud.objectForKey("ColorgyAccessToken") as! String
+
+        
+        afManager.DELETE("https://colorgy.io:443/api/v1/me/user_courses.json?filter%5Bcourse_code%5D=" + code + "&&&&&&&&access_token=" + access_token, parameters: nil, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+            
+            // unpack response object using JSON
+            println("OK DELETE! ")
+            
+            
+            }, failure: { (task: NSURLSessionDataTask!, responseObject: NSError!) in
+                var hi = responseObject.userInfo?[AFNetworkingOperationFailingURLResponseDataErrorKey] as? NSData
+                var 耖幾掰 = NSString(data: hi!, encoding: NSUTF8StringEncoding)
+                println("error \(hi)")
+                // response body header
+                println("幹幹幹 \(耖幾掰)")
+                
+        })
+    }
+    
+    func putCourseOnServerWithCourseCode(code: String) {
+        
+        let ud = NSUserDefaults.standardUserDefaults()
+        // get user name and  school
+        let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
+        let access_token = ud.objectForKey("ColorgyAccessToken") as! String
+        let userSchool = ud.objectForKey("userSchool") as! String
+        
+        // get classmate user id, in order to get photo
+        // generate array like [id, url, uiimage]
+        // but now i only use id....
+        let codeArray = Array(code)
+        let year: String = String(codeArray[0]) + String(codeArray[1]) + String(codeArray[2])
+        let term: String = String(codeArray[3])
+        let uuid = userSchool + "-" + code
+        
+        let params = [
+            // 應用程式ID application id, in colorgy server
+            "user_courses[course_code]": code,
+            "user_courses[course_organization_code]": userSchool.lowercaseString,
+            "user_courses[year]": year,
+            "user_courses[term]": term
+        ]
+        println("PUT! params: \(params)")
+        
+        afManager.PUT("https://colorgy.io:443/api/v1/me/user_courses/" + uuid + ".json?access_token=" + access_token, parameters: params, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+            
+            // unpack response object using JSON
+            let json = JSON(responseObject)
+            println("OK PUT! \(json)")
+            
+            
+            }, failure: { (task: NSURLSessionDataTask!, responseObject: NSError!) in
+                var hi = responseObject.userInfo?[AFNetworkingOperationFailingURLResponseDataErrorKey] as? NSData
+                var 耖幾掰 = NSString(data: hi!, encoding: NSUTF8StringEncoding)
+                println("error \(hi)")
+                println("幹幹幹 \(耖幾掰)")
+
+        })
     }
     
     // MARK: - segue

@@ -451,9 +451,6 @@ class ColorgyTimeTableViewController: UIViewController {
             }
         }
         
-        // fuck the shit
-        self.updateAndRefreshUserCourseData()
-        
         
         // Do any additional setup after loading the view.
         println("colorgy timetable view did load!")
@@ -507,6 +504,8 @@ class ColorgyTimeTableViewController: UIViewController {
         self.animateConflictCourses()
         
         self.setupCourseNotification()
+        
+        self.updateAndRefreshUserCourseData()
         
         // test tabbar push hide
         // when you push to another view, you need to set back hide to true.

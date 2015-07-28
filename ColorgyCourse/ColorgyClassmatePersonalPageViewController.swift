@@ -552,8 +552,6 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
     // MARK: - server
     func getUserCourseDataWithUserId(userId: String) {
         
-        // i dont use AFNetworking here.
-        // i dont want async here.
         let ud = NSUserDefaults.standardUserDefaults()
         let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
         // get user name and  school
