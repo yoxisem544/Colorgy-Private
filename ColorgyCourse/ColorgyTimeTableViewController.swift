@@ -307,6 +307,13 @@ class ColorgyTimeTableViewController: UIViewController {
                     
                     // refresh view
                     self.refreshTimetableCourseCells()
+                    
+                    self.detectIfClassHasConflicts()
+                    
+                    
+                    self.animateConflictCourses()
+                    
+                    self.setupCourseNotification()
                 }
             }
             

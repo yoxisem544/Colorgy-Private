@@ -86,6 +86,15 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     
     
     // MARK: - view
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if self.networkDetecter != nil {
+            self.networkDetecter.invalidate()
+            self.networkDetecter = nil
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
