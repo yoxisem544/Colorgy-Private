@@ -18,6 +18,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
+        // setup Flurry
+        Flurry.startSession("YNVJQRBQ79F96G5Y7GHJ") // replace flurryKey with your own key
+        Flurry.setCrashReportingEnabled(true)       // records app crashing in Flurry
+        Flurry.logEvent("Start Application")        // Example of even logging
+        
+        
         // this line changes status bar text color from black to white
         UIApplication.sharedApplication().setStatusBarStyle(UIStatusBarStyle.LightContent, animated: true)
         

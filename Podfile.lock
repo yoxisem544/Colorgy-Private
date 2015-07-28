@@ -20,11 +20,16 @@ PODS:
   - AFNetworking/UIKit (2.5.3):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - FlurrySDK (6.6.0):
+    - FlurrySDK/FlurrySDK (= 6.6.0)
+  - FlurrySDK/FlurrySDK (6.6.0)
 
 DEPENDENCIES:
   - AFNetworking
+  - FlurrySDK (~> 6.6)
 
 SPEC CHECKSUMS:
   AFNetworking: e1d86c2a96bb5d2e7408da36149806706ee122fe
+  FlurrySDK: 8478625434c06b323338f776758162756d92c3ed
 
 COCOAPODS: 0.38.0

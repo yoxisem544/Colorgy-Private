@@ -4,6 +4,7 @@
 target 'ColorgyCourse' do
   # pod 'SWRevealViewController'
   pod 'AFNetworking'
+  pod 'FlurrySDK', '~>6.6'
 end
 
 target 'ColorgyCourseTests' do

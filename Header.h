@@ -15,4 +15,6 @@
 
 #import "Reachability.h"
 
+#import "Flurry.h"
+
 #endif
