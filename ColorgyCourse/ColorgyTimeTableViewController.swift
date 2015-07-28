@@ -232,8 +232,9 @@ class ColorgyTimeTableViewController: UIViewController {
             // refresh every time
             self.refreshAccessToken()
             
-            var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 5 * Double(NSEC_PER_SEC)))
-            dispatch_after(delay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
+            var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 2 * Double(NSEC_PER_SEC)))
+            dispatch_after(delay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+//            dispatch_after(delay, dispatch_get_main_queue()) {
                 // get data
                 let userId = self.getUserId()
                 println("😙😙😙 \(userId)")
@@ -304,17 +305,17 @@ class ColorgyTimeTableViewController: UIViewController {
                             }
                         }
                     }
-                    
+                
                     // refresh view
-                    self.refreshTimetableCourseCells()
-                    
-                    self.detectIfClassHasConflicts()
-                    
-                    
-                    self.animateConflictCourses()
+                    delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 2 * Double(NSEC_PER_SEC)))
+                    dispatch_after(delay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                        println("refreshing entry")
+                        self.refreshTimetableCourseCells()
+                    }
                     
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
                         // this blocks...
+                        println("setting noti")
                         self.setupCourseNotification()
                     }
                 }
@@ -515,7 +516,7 @@ class ColorgyTimeTableViewController: UIViewController {
 //        
 //        self.setupCourseNotification()
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             // this part is not asnyc
             self.updateAndRefreshUserCourseData()
         }
@@ -954,14 +955,7 @@ class ColorgyTimeTableViewController: UIViewController {
     
     func refreshTimetableCourseCells() {
         
-        if self.coursesOnTimetable != nil {
-            for cell in self.coursesOnTimetable {
-                if let viewcell = cell as? UIView {
-                    // remove views
-                    viewcell.removeFromSuperview()
-                }
-            }
-        }
+        var coursesToDelete = NSMutableArray(array: self.coursesOnTimetable)
         
         // update timetableview
         // this will return array of uiviews
@@ -969,16 +963,33 @@ class ColorgyTimeTableViewController: UIViewController {
         self.coursesOnTimetable = NSMutableArray()
         // prepare gesture
         // updateTimetableCourse will return views....
-        if let views = self.updateTimetableCourse() {
-            // this part will add gesture to views.
-            for v in views {
-                let tap = UITapGestureRecognizer()
-                tap.numberOfTouchesRequired = 1
-                tap.addTarget(self, action: "tapOnCourseCellView:")
-                v.addGestureRecognizer(tap)
-                self.colorgyTimeTableView.addSubview(v)
-                self.coursesOnTimetable.addObject(v)
+        dispatch_async(dispatch_get_main_queue()) {
+            // try async here
+            if let views = self.updateTimetableCourse() {
+                // this part will add gesture to views.
+                for v in views {
+                    let tap = UITapGestureRecognizer()
+                    tap.numberOfTouchesRequired = 1
+                    tap.addTarget(self, action: "tapOnCourseCellView:")
+                    v.addGestureRecognizer(tap)
+                    self.colorgyTimeTableView.addSubview(v)
+                    self.coursesOnTimetable.addObject(v)
+                }
             }
+            println("exit adding course")
+
+        // delete course
+        // TODO: nil>>>>?????
+        for cell in coursesToDelete {
+            if let viewcell = cell as? UIView {
+                // remove views
+                viewcell.removeFromSuperview()
+            }
+        }
+        println("YooYYYooo")
+        println("do conflict and animation")
+        self.detectIfClassHasConflicts()
+        self.animateConflictCourses()
         }
     }
     
