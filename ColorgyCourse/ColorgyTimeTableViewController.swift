@@ -506,8 +506,8 @@ class ColorgyTimeTableViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
 //        
-//        self.refreshTimetableCourseCells()
-//        
+        self.refreshTimetableCourseCells()
+//
 //        self.detectIfClassHasConflicts()
 //        
 //        
