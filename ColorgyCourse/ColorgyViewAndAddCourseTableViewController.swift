@@ -86,15 +86,6 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     
     
     // MARK: - view
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        if self.networkDetecter != nil {
-            self.networkDetecter.invalidate()
-            self.networkDetecter = nil
-        }
-    }
-    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -232,9 +223,24 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         
         println("消司")
         
+        if self.networkDetecter != nil {
+            self.networkDetecter.invalidate()
+            self.networkDetecter = nil
+        }
+        
         if Release().mode {
             // Flurry
+            println("😨😨😨😨😨😨😨😨😨")
             Flurry.endTimedEvent("User Enrolling Course", withParameters: nil)
+        }
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if self.networkDetecter != nil {
+            self.networkDetecter.invalidate()
+            self.networkDetecter = nil
         }
     }
     
