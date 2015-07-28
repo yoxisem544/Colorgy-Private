@@ -232,8 +232,8 @@ class ColorgyTimeTableViewController: UIViewController {
             // refresh every time
             self.refreshAccessToken()
             
-            var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 2 * Double(NSEC_PER_SEC)))
-            dispatch_after(delay, dispatch_get_main_queue()) {
+            var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 5 * Double(NSEC_PER_SEC)))
+            dispatch_after(delay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
                 // get data
                 let userId = self.getUserId()
                 println("😙😙😙 \(userId)")
@@ -313,7 +313,10 @@ class ColorgyTimeTableViewController: UIViewController {
                     
                     self.animateConflictCourses()
                     
-                    self.setupCourseNotification()
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
+                        // this blocks...
+                        self.setupCourseNotification()
+                    }
                 }
             }
             
@@ -477,12 +480,12 @@ class ColorgyTimeTableViewController: UIViewController {
         self.view.addSubview(self.colorgyTimeTableView)
         
         println("=====================")
-        self.detectIfClassHasConflicts()
-        
-        
-        self.animateConflictCourses()
-        
-        self.setupCourseNotification()
+//        self.detectIfClassHasConflicts()
+//        
+//        
+//        self.animateConflictCourses()
+//        
+//        self.setupCourseNotification()
         
         println("im back!")
         
@@ -502,17 +505,20 @@ class ColorgyTimeTableViewController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+//        
+//        self.refreshTimetableCourseCells()
+//        
+//        self.detectIfClassHasConflicts()
+//        
+//        
+//        self.animateConflictCourses()
+//        
+//        self.setupCourseNotification()
         
-        self.refreshTimetableCourseCells()
-        
-        self.detectIfClassHasConflicts()
-        
-        
-        self.animateConflictCourses()
-        
-        self.setupCourseNotification()
-        
-        self.updateAndRefreshUserCourseData()
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
+            // this part is not asnyc
+            self.updateAndRefreshUserCourseData()
+        }
         
         if Release().mode {
             // Flurry
@@ -551,7 +557,7 @@ class ColorgyTimeTableViewController: UIViewController {
                         println("head of session")
                         var thisOneLocation = (session[0] as! UIView).subviews[1] as! UILabel
                         var thisOne = (session[0] as! UIView).subviews[0] as! UILabel
-                        self.setNotificationWithMessage("等一下在" + thisOneLocation.text! + " 上 " + thisOne.text!, day: index + 1, session: i)
+                        self.setNotificationWithMessage("等一下在 " + thisOneLocation.text! + " 上 " + thisOne.text!, day: index + 1, session: i)
                     }
                 } else {
                     println("\(index), \(i)")
@@ -568,7 +574,7 @@ class ColorgyTimeTableViewController: UIViewController {
                             }
                         } else {
                             println("no course infront of ....")
-                            self.setNotificationWithMessage("等一下在" + thisOneLocation.text! + " 上 " + thisOne.text!, day: index + 1, session: i)
+                            self.setNotificationWithMessage("等一下在 " + thisOneLocation.text! + " 上 " + thisOne.text!, day: index + 1, session: i)
                         }
                     }
                 }
@@ -603,7 +609,7 @@ class ColorgyTimeTableViewController: UIViewController {
         
         UIApplication.sharedApplication().scheduleLocalNotification(localnoti)
         println("好的，設定完成")
-        println(UIApplication.sharedApplication().scheduledLocalNotifications)
+//        println(UIApplication.sharedApplication().scheduledLocalNotifications)
     }
     
     func youRBack() {
