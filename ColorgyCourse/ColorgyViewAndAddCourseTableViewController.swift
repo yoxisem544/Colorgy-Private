@@ -95,6 +95,15 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         }
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if Release().mode {
+            // Flurry
+            Flurry.logEvent("User Enrolling Course", timed: true)        // "User Using Time Table"
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -209,6 +218,11 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         super.viewDidDisappear(animated)
         
         println("消司")
+        
+        if Release().mode {
+            // Flurry
+            Flurry.endTimedEvent("User Enrolling Course", withParameters: nil)
+        }
     }
     
     //MARK:- update from cloud

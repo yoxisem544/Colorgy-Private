@@ -18,12 +18,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
-        // setup Flurry
-        Flurry.startSession("YNVJQRBQ79F96G5Y7GHJ") // replace flurryKey with your own key
-        Flurry.setCrashReportingEnabled(true)       // records app crashing in Flurry
-        Flurry.logEvent("Start Application")        // Example of even logging
-        
-        
         // this line changes status bar text color from black to white
         UIApplication.sharedApplication().setStatusBarStyle(UIStatusBarStyle.LightContent, animated: true)
         
@@ -37,6 +31,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // if user is not login, present login view to let user login
         // first, get out user's settings
         var ud = NSUserDefaults.standardUserDefaults()
+        if Release().mode {
+            // setup Flurry
+//            Flurry.startSession("CX3C3VH67FHPZFF7S2J5") // replace flurryKey with your own key
+            Flurry.startSession("X6GB6M2ZG455YCBWQS6H") // for dev
+            Flurry.setCrashReportingEnabled(true)       // records app crashing in Flurry
+            Flurry.logEvent("User Start Application")        // Example of even logging
+        }
         // init window size
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
         // get out main storyboard

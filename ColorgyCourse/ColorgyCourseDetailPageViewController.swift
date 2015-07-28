@@ -82,6 +82,22 @@ class ColorgyCourseDetailPageViewController: UIViewController {
         
 //        self.testData()
     }
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        if Release().mode {
+            // Flurry
+            Flurry.logEvent("User Viewing Course Detail Information", timed: true)
+        }
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        if Release().mode {
+            // Flurry
+            Flurry.endTimedEvent("User Viewing Course Detail Information", withParameters: nil)
+        }
+    }
     
     //MARK: - spinner
     func setupSpinner() {

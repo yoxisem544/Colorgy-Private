@@ -145,8 +145,22 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
         self.view.addSubview(self.classmateContentScrollView)
     }
     
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        if Release().mode {
+            // Flurry
+            Flurry.endTimedEvent("User Viewing Other's Courses", withParameters: nil)
+        }
+    }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        if Release().mode {
+            // Flurry
+            Flurry.logEvent("User Viewing Other's Courses", timed: true)
+        }
         
         dispatch_async(dispatch_get_main_queue()) {
             var userImage = self.getUserAvatarWithUserId("\(self.classmateId)")

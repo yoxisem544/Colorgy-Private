@@ -581,6 +581,20 @@ class ColorgyFBLoginViewController: UIViewController, UITextFieldDelegate {
         // sync setting
         ud.synchronize()
         
+        if let type = ud.objectForKey("loginType") as? String {
+            if type == "fb" {
+                if Release().mode {
+                    // Flurry
+                    Flurry.logEvent("User Login With FB")
+                }
+            } else {
+                if Release().mode {
+                    // Flurry
+                    Flurry.logEvent("User Login With Email")
+                }
+            }
+        }
+        
         // get user name and  school
         let afManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://colorgy.io/oauth/token"))
         let access_token = ud.objectForKey("ColorgyAccessToken") as! String

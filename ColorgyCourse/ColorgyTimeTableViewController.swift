@@ -514,6 +514,11 @@ class ColorgyTimeTableViewController: UIViewController {
         
         self.updateAndRefreshUserCourseData()
         
+        if Release().mode {
+            // Flurry
+            Flurry.logEvent("User Using Time Table", timed: true)        // "User Using Time Table"
+        }
+        
         // test tabbar push hide
         // when you push to another view, you need to set back hide to true.
         // Or bottom bar will disappear when you push to another view
@@ -522,6 +527,11 @@ class ColorgyTimeTableViewController: UIViewController {
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
+        
+        if Release().mode {
+            // Flurry
+            Flurry.endTimedEvent("User Using Time Table", withParameters: nil) // stop "User Using Time Table"
+        }
         
         // when you push to another view, you need to set back hide to false.
         // Or bottom bar will not appear again
