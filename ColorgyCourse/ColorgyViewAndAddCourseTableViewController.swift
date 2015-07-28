@@ -952,7 +952,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             println(self.coursesAddedToTimetable[index])
             // user is deleting course
             self.buttonPendingToDelete = sender
-            self.alertUserWhenDeletingLocalCourseOnButton(sender)
+            self.alertUserWhenDeletingLocalCourseOnButton(sender, isSearchActive: self.searchCourse.active)
 //            self.userAttempToDeleteCourseAtIndex(index, warning: false)
         } else {
             println("inside search box")
@@ -965,7 +965,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                 self.userAttempToAddCourseAtIndex(index, warning: false)
             } else if self.getAddButtonState(sender) == "remove" {
                 // if user want to delete course
-                self.userAttempToDeleteCourseWhileSearchingAtIndex(index, warning: false)
+                self.buttonPendingToDelete = sender
+                self.alertUserWhenDeletingLocalCourseOnButton(sender, isSearchActive: self.searchCourse.active)
+//                self.userAttempToDeleteCourseWhileSearchingAtIndex(index, warning: false)
             }
             
             
@@ -1186,7 +1188,7 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     }
     
     // MARK: - alert when delete
-    func alertUserWhenDeletingLocalCourseOnButton(button: UIButton) {
+    func alertUserWhenDeletingLocalCourseOnButton(button: UIButton, isSearchActive: Bool) {
         
         var tabBarView = self.tabBarController?.view
         var w = self.tabBarController?.view.frame.width
@@ -1225,8 +1227,12 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         // tap on button
         deleteButton.tag = button.tag
         preserveButton.tag = button.tag
-
-        deleteButton.addTarget(self, action: "pressDeleteCourseButton:", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        if isSearchActive {
+            deleteButton.addTarget(self, action: "pressDeleteCourseButtonSearching:", forControlEvents: UIControlEvents.TouchUpInside)
+        } else {
+            deleteButton.addTarget(self, action: "pressDeleteCourseButton:", forControlEvents: UIControlEvents.TouchUpInside)
+        }
         preserveButton.addTarget(self, action: "pressPreserveCourseButton:", forControlEvents: UIControlEvents.TouchUpInside)
         
         // animation of dim view
@@ -1259,6 +1265,14 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         println("delete \(button.tag)")
         self.userAttempToDeleteCourseAtIndex(button.tag, warning: false)
         self.tableView.reloadData()
+    }
+    
+    func pressDeleteCourseButtonSearching(button: UIButton) {
+        
+        var view = button.superview
+        self.dismissAlertView(view!)
+        println("YOYO searching \(button.tag)")
+        self.userAttempToDeleteCourseWhileSearchingAtIndex(button.tag, warning: false)
     }
     
     func pressPreserveCourseButton(button: UIButton) {
