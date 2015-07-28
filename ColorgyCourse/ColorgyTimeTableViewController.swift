@@ -105,6 +105,11 @@ class ColorgyTimeTableViewController: UIViewController {
                     self.updatingAlert.message = "\n正在下載新的課程資料...\n\n\n"
                 }
             }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                
+                if Release().mode {
+                    Flurry.logEvent("User Refresh Token Fail")
+                }
+                
                 println("error refreshing token, authrication fail!!!")
                 if self.updatingAlert != nil {
                     self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
@@ -311,12 +316,6 @@ class ColorgyTimeTableViewController: UIViewController {
                     dispatch_after(delay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
                         println("refreshing entry")
                         self.refreshTimetableCourseCells()
-                    }
-                    
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
-                        // this blocks...
-                        println("setting noti")
-                        self.setupCourseNotification()
                     }
                 }
             }
@@ -978,18 +977,19 @@ class ColorgyTimeTableViewController: UIViewController {
             }
             println("exit adding course")
 
-        // delete course
-        // TODO: nil>>>>?????
-        for cell in coursesToDelete {
-            if let viewcell = cell as? UIView {
-                // remove views
-                viewcell.removeFromSuperview()
+            // delete course
+            // TODO: nil>>>>?????
+            for cell in coursesToDelete {
+                if let viewcell = cell as? UIView {
+                    // remove views
+                    viewcell.removeFromSuperview()
+                }
             }
-        }
-        println("YooYYYooo")
-        println("do conflict and animation")
-        self.detectIfClassHasConflicts()
-        self.animateConflictCourses()
+            println("YooYYYooo")
+            println("do conflict and animation")
+            self.detectIfClassHasConflicts()
+            self.animateConflictCourses()
+            self.setupCourseNotification()
         }
     }
     

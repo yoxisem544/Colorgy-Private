@@ -442,6 +442,11 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                 ud.setObject(token_type, forKey: "ColorgyTokenType")
                 ud.synchronize()
                 }, failure: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
+                    
+                    if Release().mode {
+                        Flurry.logEvent("User Refresh Token Fail")
+                    }
+                    
                     println("error!!!")
                     self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
                     var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 0.5 * Double(NSEC_PER_SEC)))
@@ -482,6 +487,12 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             })
         } else {
             // this part of code was copied from the failure part above
+            // 上下是複製的，不確定哪邊會走道
+            
+            if Release().mode {
+                Flurry.logEvent("User Refresh Token Fail")
+            }
+            
             println("error!!!")
             self.updatingAlert.dismissViewControllerAnimated(false, completion: nil)
             var delay = dispatch_time(DISPATCH_TIME_NOW, Int64( 0.5 * Double(NSEC_PER_SEC)))
