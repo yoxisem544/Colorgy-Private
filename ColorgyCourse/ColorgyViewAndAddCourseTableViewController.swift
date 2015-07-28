@@ -102,6 +102,19 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
             // Flurry
             Flurry.logEvent("User Enrolling Course", timed: true)        // "User Using Time Table"
         }
+        
+        var ud = NSUserDefaults.standardUserDefaults()
+        if ud.objectForKey("courseDataFromServer") == nil {
+            // download for user in the very first time
+            var reachability = Reachability.reachabilityForInternetConnection()
+            var networkStatus = reachability.currentReachabilityStatus().value
+            if networkStatus == NotReachable.value {
+                println("沒有往往")
+            } else {
+                println("有往往")
+                self.updateCourseFromServer()
+            }
+        }
     }
     
     override func viewDidLoad() {
