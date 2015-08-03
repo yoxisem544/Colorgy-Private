@@ -225,6 +225,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
             let general_code = json["general_code"].string
             let school = json[""]
             let location = self.getLocationWithCourseJSON(json)
+            let period = self.getPeriodWithCourseJSON(json)
             
             println("😀")
             println()
@@ -232,7 +233,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
             self.detailContents.addObject(["學分", "\(credits!)"])
             self.detailContents.addObject(["代碼", general_code!])
             self.detailContents.addObject(["上課教室", location])
-            self.detailContents.addObject(["時間", ""])
+            self.detailContents.addObject(["時間", period])
 
 
             
@@ -250,6 +251,69 @@ class ColorgyCourseDetailPageViewController: UIViewController {
     }
     
     // MARK: - handle location, period
+    func getPeriodWithCourseJSON(json: JSON) -> String {
+        
+        var periods = [String]()
+        var dayArray = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        var periodArray = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"]
+        
+        if let day_1 = json["day_1"].int {
+            if let period_1 = json["period_1"].int {
+                periods.append(dayArray[day_1 - 1] + periodArray[period_1 - 1])
+            }
+        }
+        if let day_2 = json["day_2"].int {
+            if let period_2 = json["period_2"].int {
+                periods.append(dayArray[day_2 - 1] + periodArray[period_2 - 1])
+            }
+        }
+        if let day_3 = json["day_3"].int {
+            if let period_3 = json["period_3"].int {
+                periods.append(dayArray[day_3 - 1] + periodArray[period_3 - 1])
+            }
+        }
+        if let day_4 = json["day_4"].int {
+            if let period_4 = json["period_4"].int {
+                periods.append(dayArray[day_4 - 1] + periodArray[period_4 - 1])
+            }
+        }
+        if let day_5 = json["day_5"].int {
+            if let period_5 = json["period_5"].int {
+                periods.append(dayArray[day_5 - 1] + periodArray[period_5 - 1])
+            }
+        }
+        if let day_6 = json["day_6"].int {
+            if let period_6 = json["period_6"].int {
+                periods.append(dayArray[day_6 - 1] + periodArray[period_6 - 1])
+            }
+        }
+        if let day_7 = json["day_7"].int {
+            if let period_7 = json["period_7"].int {
+                periods.append(dayArray[day_7 - 1] + periodArray[period_7 - 1])
+            }
+        }
+        if let day_8 = json["day_8"].int {
+            if let period_8 = json["period_8"].int {
+                periods.append(dayArray[day_8 - 1] + periodArray[period_8 - 1])
+            }
+        }
+        if let day_9 = json["day_9"].int {
+            if let period_9 = json["period_9"].int {
+                periods.append(dayArray[day_9 - 1] + periodArray[period_9 - 1])
+            }
+        }
+        
+        var periodString = ""
+        for (index, value) in enumerate(periods) {
+            periodString += value
+            if index != periods.count {
+                periodString += " "
+            }
+        }
+        
+        return periodString
+    }
+    
     func getLocationWithCourseJSON(json: JSON) -> String {
         
         var locations = [String]()
@@ -557,7 +621,7 @@ class ColorgyCourseDetailPageViewController: UIViewController {
                     var contentCell = UIView(frame: CGRectMake(0, contentTopOffset, containerView.frame.width, self.detailInformationContentCellHeight))
                     // subtitle
                     let subtitleSpacing: CGFloat = 29
-                    let subtitleWidth: CGFloat = 124
+                    let subtitleWidth: CGFloat = 80
                     let subtitleFontSize: CGFloat = 11
                     var subtitle = UILabel(frame: CGRectMake(subtitleSpacing, 0, subtitleWidth, subtitleFontSize))
                     subtitle.font = UIFont(name: "STHeitiTC-Medium", size: subtitleFontSize)

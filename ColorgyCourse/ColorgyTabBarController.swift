@@ -10,10 +10,14 @@ import UIKit
 
 class ColorgyTabBarController: UITabBarController {
 
+    var colorgyOrange: UIColor = UIColor(red: 246/255.0, green: 150/255.0, blue: 114/255.0, alpha: 1)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+//        UITabBar.appearance().tintColor = self.colorgyOrange
+        self.tabBar.tintColor = self.colorgyOrange
     }
 
     override func didReceiveMemoryWarning() {
