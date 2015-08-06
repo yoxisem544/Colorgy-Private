@@ -15,6 +15,7 @@
 		631758E41B5BAB2E004BCB57 /* ColorgyCourseDetailPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631758E31B5BAB2E004BCB57 /* ColorgyCourseDetailPageViewController.swift */; };
 		631AC3651B5D1F0000232F1A /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 631AC3641B5D1F0000232F1A /* 1.jpg */; };
 		631ACEAD1B662E140055CF8E /* ColorgyServicePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631ACEAC1B662E140055CF8E /* ColorgyServicePageViewController.swift */; };
+		632026941B72C5E0003DE21F /* libFlurry_6.7.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 632026931B72C5E0003DE21F /* libFlurry_6.7.0.a */; };
 		6324DA921B13696C00DF2F6C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6324DA911B13696C00DF2F6C /* CoreData.framework */; };
 		634A67181B2D6CC700BAD03A /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 634A67171B2D6CC700BAD03A /* Reachability.m */; };
 		636FFF7A1AF9086D0012135C /* ColorgySideMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636FFF791AF9086D0012135C /* ColorgySideMenuViewController.swift */; };
@@ -55,6 +56,9 @@
 		631758E31B5BAB2E004BCB57 /* ColorgyCourseDetailPageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyCourseDetailPageViewController.swift; sourceTree = "<group>"; };
 		631AC3641B5D1F0000232F1A /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
 		631ACEAC1B662E140055CF8E /* ColorgyServicePageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorgyServicePageViewController.swift; sourceTree = "<group>"; };
+		632026911B72C5E0003DE21F /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
+		632026921B72C5E0003DE21F /* FlurryWatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurryWatch.h; sourceTree = "<group>"; };
+		632026931B72C5E0003DE21F /* libFlurry_6.7.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_6.7.0.a; sourceTree = "<group>"; };
 		6324DA911B13696C00DF2F6C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		634A67161B2D6CC700BAD03A /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		634A67171B2D6CC700BAD03A /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -90,6 +94,7 @@
 				63EDEAF71B5F64C5001990A1 /* SwiftyJSON.swift in Frameworks */,
 				6324DA921B13696C00DF2F6C /* CoreData.framework in Frameworks */,
 				63C96ADE1AFE0CD9003ED287 /* FacebookSDK.framework in Frameworks */,
+				632026941B72C5E0003DE21F /* libFlurry_6.7.0.a in Frameworks */,
 				04ADBE4C9FEF8C3E1636FF9B /* libPods-ColorgyCourse.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -177,6 +182,9 @@
 		63A29E4A1AF722DF000494DB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				632026911B72C5E0003DE21F /* Flurry.h */,
+				632026921B72C5E0003DE21F /* FlurryWatch.h */,
+				632026931B72C5E0003DE21F /* libFlurry_6.7.0.a */,
 				63A29E4B1AF722DF000494DB /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -495,6 +503,10 @@
 				INFOPLIST_FILE = ColorgyCourse/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ColorgyCourse",
+				);
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -521,6 +533,10 @@
 				INFOPLIST_FILE = ColorgyCourse/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ColorgyCourse",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

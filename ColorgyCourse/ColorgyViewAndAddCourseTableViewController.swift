@@ -89,6 +89,9 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
+        // net work
+        self.startDetectingNetwork()
+        
         if Release().mode {
             // Flurry
             Flurry.logEvent("User Enrolling Course", timed: true)        // "User Using Time Table"
@@ -110,9 +113,6 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // net work
-        self.startDetectingNetwork()
         
         // test tabbar push hide
         println("😀 \(self.hidesBottomBarWhenPushed)")
@@ -999,7 +999,6 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         }
     }
     
-    
     func userTapAddCourseButton(sender: UIButton) {
         
         println("an!")
@@ -1219,6 +1218,11 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
                     self.storeDataToDatabase(name, lecturer: lecturer, credits: credits, uuid: uuid, sessions: sessions, year: year, term: term, id: id, type: type)
                     // user add their course, set coursesAddedToTimetable to nil
                     self.coursesAddedToTimetable = nil
+                    
+                    if Release().mode {
+                        // Flurry
+                        Flurry.logEvent("User Add Course On Mobile", timed: true)        // "User Using Time Table"
+                    }
                 }
             })
             let cancel = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: { (action:UIAlertAction!) -> Void in
@@ -1335,6 +1339,11 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         
         self.userAttempToDeleteCourseAtIndex(button.tag, warning: false)
         self.tableView.reloadData()
+        
+        if Release().mode {
+            // Flurry
+            Flurry.logEvent("User Delete Course On Mobile, Not Searching.", timed: true)        // "User Using Time Table"
+        }
     }
     
     func pressDeleteCourseButtonSearching(button: UIButton) {
@@ -1345,6 +1354,11 @@ class ColorgyViewAndAddCourseTableViewController: UITableViewController, UITable
         self.userAttempToDeleteCourseWhileSearchingAtIndex(button.tag, warning: false)
         if let code = self.filteredCourse[button.tag]["code"] as? String {
             self.deleteCourseOnServerWithCourseCode(code)
+        }
+        
+        if Release().mode {
+            // Flurry
+            Flurry.logEvent("User Delete Course On Mobile, Searching.", timed: true)        // "User Using Time Table"
         }
     }
     

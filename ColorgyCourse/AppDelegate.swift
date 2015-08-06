@@ -33,9 +33,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var ud = NSUserDefaults.standardUserDefaults()
         if Release().mode {
             // setup Flurry
+            Flurry.startSession("CX3C3VH67FHPZFF7S2J5") // replace flurryKey with your own key
+//            Flurry.startSession("X6GB6M2ZG455YCBWQS6H") // for dev
+            Flurry.setCrashReportingEnabled(true)       // records app crashing in Flurry
+            Flurry.logEvent("User Start Application")        // Example of even logging
+            Flurry.setDebugLogEnabled(true)
+        } else {
+            // setup Flurry
 //            Flurry.startSession("CX3C3VH67FHPZFF7S2J5") // replace flurryKey with your own key
             Flurry.startSession("X6GB6M2ZG455YCBWQS6H") // for dev
             Flurry.setCrashReportingEnabled(true)       // records app crashing in Flurry
+            Flurry.setDebugLogEnabled(true)
             Flurry.logEvent("User Start Application")        // Example of even logging
         }
         // init window size
