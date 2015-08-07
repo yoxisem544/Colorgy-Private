@@ -56,6 +56,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             var vc = storyboard.instantiateViewControllerWithIdentifier("colorgyFBLoginView") as! ColorgyFBLoginViewController
             self.window?.rootViewController = vc
             self.window?.makeKeyAndVisible()
+        } else if ud.objectForKey("isGuideShown") == nil {
+            //show guide
+            var vc = storyboard.instantiateViewControllerWithIdentifier("showGuideViewController") as! GuideViewController
+            self.window?.rootViewController = vc
+            self.window?.makeKeyAndVisible()
         } else {
             var vc = storyboard.instantiateViewControllerWithIdentifier("ColorgyTabBarService") as! UITabBarController
             self.window?.rootViewController = vc

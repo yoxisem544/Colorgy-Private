@@ -818,7 +818,8 @@ class ColorgyCourseDetailPageViewController: UIViewController {
                 for i in 1...counts {
                     var classmatePhoto = UIImageView(frame: CGRectMake(classmateToLeftSpacing + CGFloat(i - 1) * (classmateWidth + classmateToClassmateSpacing), 0, classmateWidth, classmateWidth))
                     // default image.
-                    classmatePhoto.image = UIImage(named: "1-2.jpg")
+//                    classmatePhoto.image = UIImage(named: "1-2.jpg")
+                    classmatePhoto.backgroundColor = self.colorgyGray
                     
                     classmatePhoto.layer.masksToBounds = true
                     classmatePhoto.layer.cornerRadius = classmatePhoto.frame.width / 2
@@ -833,13 +834,13 @@ class ColorgyCourseDetailPageViewController: UIViewController {
                             var image = self.getUserAvatarWithUserId("\(userId)")
                             // if user's image is broken or nil.
                             // set it back to default.
-                            classmatePhoto.image = (image == nil) ? UIImage(named: "1-2.jpg") : image
+                            classmatePhoto.image = (image == nil) ? nil : image
                             // this is layer transition.
-                            var transition = CATransition()
-                            transition.duration = 0.4
-                            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-                            transition.type = kCATransitionFade
-                            classmatePhoto.layer.addAnimation(transition, forKey: nil)
+//                            var transition = CATransition()
+//                            transition.duration = 0.4
+//                            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+//                            transition.type = kCATransitionFade
+//                            classmatePhoto.layer.addAnimation(transition, forKey: nil)
 //                            UIView.animateWithDuration(0.7, delay: 0, options: UIViewAnimationOptions.Autoreverse, animations: {
 //                                    classmatePhoto.transform = CGAffineTransformMakeScale(1.3, 1.3)
 //                                }, completion: { (isFinished: Bool) -> Void in

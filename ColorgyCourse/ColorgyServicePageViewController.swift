@@ -43,8 +43,8 @@ class ColorgyServicePageViewController: UIViewController, UIWebViewDelegate {
         self.webview.loadRequest(reqObj)
         
         //// add bar items
-        var nextPage = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FastForward, target: self, action: "goForward")
-        var previousPage = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Rewind, target: self, action: "goBack")
+        var nextPage = UIBarButtonItem(image: UIImage(named: "forward"), style: UIBarButtonItemStyle.Done, target: self, action: "goForward")
+        var previousPage = UIBarButtonItem(image: UIImage(named: "backward"), style: UIBarButtonItemStyle.Done, target: self, action: "goBack")
         self.navigationItem.setLeftBarButtonItems([previousPage, nextPage], animated: false)
         
         var reload = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Refresh, target: self, action: "reloadPage")

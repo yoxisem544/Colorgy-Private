@@ -64,6 +64,16 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
     var colorgyBackgroundColor: UIColor = UIColor(red: 239/255.0, green: 238/255.0, blue: 238/255.0, alpha: 1)
     var timetableLineColor: UIColor = UIColor(red: 216/255.0, green: 216/255.0, blue: 216/255.0, alpha: 1)
     
+    // timetable colors
+    var cellColors = [
+        UIColor(red: 247/255.0, green: 107/255.0, blue: 156/255.0, alpha: 1),
+        UIColor(red: 244/255.0, green: 188/255.0, blue: 94/255.0, alpha: 1),
+        UIColor(red: 3/255.0, green: 207/255.0, blue: 174/255.0, alpha: 1),
+        UIColor(red: 7/255.0, green: 148/255.0, blue: 191/255.0, alpha: 1),
+        UIColor(red: 248/255.0, green: 149/255.0, blue: 128/255.0, alpha: 1),
+        UIColor(red: 25/255.0, green: 203/255.0, blue: 245/255.0, alpha: 1)
+    ]
+    
     // MARK: - get data from segue
     var classmateId: Int!
     
@@ -502,7 +512,7 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
         if self.userCourses != nil {
             for cell in self.userCourses! {
                 println(self.colorgyTimeTableView)
-                cell.backgroundColor = UIColor.brownColor()
+//                cell.backgroundColor = self.cellColors[index % 6]
                 self.colorgyTimeTableView.addSubview(cell)
                 
                 // ges
@@ -591,6 +601,8 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
                 let code = value["course_code"].string
                 let json = self.getCourseInfoWithCourseCode(code!)
                 if json != nil {
+                    var index = key.toInt()
+                    var cellColor = self.cellColors[index! % 6]
                     let name = json!["name"].string!
                     // save course code for further usage
                     self.courseData.append([name, json!["code"].string!])
@@ -599,6 +611,7 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
                         if let period_1 = json!["period_1"].int {
                             if let location_1 = json!["location_1"].string {
                                 if let cell = self.courseCellMake(name, location: location_1, day: day_1, session: period_1) {
+                                    cell.backgroundColor = cellColor
                                     self.userCourses.append(cell)
                                 }
                             }
@@ -608,6 +621,7 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
                         if let period_2 = json!["period_2"].int {
                             if let location_2 = json!["location_2"].string {
                                 if let cell = self.courseCellMake(name, location: location_2, day: day_2, session: period_2) {
+                                    cell.backgroundColor = cellColor
                                     self.userCourses.append(cell)
                                 }
                             }
@@ -617,6 +631,7 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
                         if let period_3 = json!["period_3"].int {
                             if let location_3 = json!["location_3"].string {
                                 if let cell = self.courseCellMake(name, location: location_3, day: day_3, session: period_3) {
+                                    cell.backgroundColor = cellColor
                                     self.userCourses.append(cell)
                                 }
                             }
@@ -626,6 +641,7 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
                         if let period_4 = json!["period_4"].int {
                             if let location_4 = json!["location_4"].string {
                                 if let cell = self.courseCellMake(name, location: location_4, day: day_4, session: period_4) {
+                                    cell.backgroundColor = cellColor
                                     self.userCourses.append(cell)
                                 }
                             }
@@ -635,6 +651,7 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
                         if let period_5 = json!["period_5"].int {
                             if let location_5 = json!["location_5"].string {
                                 if let cell = self.courseCellMake(name, location: location_5, day: day_5, session: period_5) {
+                                    cell.backgroundColor = cellColor
                                     self.userCourses.append(cell)
                                 }
                             }
@@ -644,6 +661,7 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
                         if let period_6 = json!["period_6"].int {
                             if let location_6 = json!["location_6"].string {
                                 if let cell = self.courseCellMake(name, location: location_6, day: day_6, session: period_6) {
+                                    cell.backgroundColor = cellColor
                                     self.userCourses.append(cell)
                                 }
                             }
@@ -653,6 +671,7 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
                         if let period_7 = json!["period_7"].int {
                             if let location_7 = json!["location_7"].string {
                                 if let cell = self.courseCellMake(name, location: location_7, day: day_7, session: period_7) {
+                                    cell.backgroundColor = cellColor
                                     self.userCourses.append(cell)
                                 }
                             }
@@ -662,6 +681,7 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
                         if let period_8 = json!["period_8"].int {
                             if let location_8 = json!["location_8"].string {
                                 if let cell = self.courseCellMake(name, location: location_8, day: day_8, session: period_8) {
+                                    cell.backgroundColor = cellColor
                                     self.userCourses.append(cell)
                                 }
                             }
@@ -671,6 +691,7 @@ class ColorgyClassmatePersonalPageViewController: UIViewController {
                         if let period_9 = json!["period_9"].int {
                             if let location_9 = json!["location_9"].string {
                                 if let cell = self.courseCellMake(name, location: location_9, day: day_9, session: period_9) {
+                                    cell.backgroundColor = cellColor
                                     self.userCourses.append(cell)
                                 }
                             }

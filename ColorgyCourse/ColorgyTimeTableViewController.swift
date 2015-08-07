@@ -58,6 +58,16 @@ class ColorgyTimeTableViewController: UIViewController {
     var colorgyBackgroundColor: UIColor = UIColor(red: 239/255.0, green: 238/255.0, blue: 238/255.0, alpha: 1)
     var timetableLineColor: UIColor = UIColor(red: 216/255.0, green: 216/255.0, blue: 216/255.0, alpha: 1)
     
+    // timetable colors
+    var cellColors = [
+        UIColor(red: 247/255.0, green: 107/255.0, blue: 156/255.0, alpha: 1),
+        UIColor(red: 244/255.0, green: 188/255.0, blue: 94/255.0, alpha: 1),
+        UIColor(red: 3/255.0, green: 207/255.0, blue: 174/255.0, alpha: 1),
+        UIColor(red: 7/255.0, green: 148/255.0, blue: 191/255.0, alpha: 1),
+        UIColor(red: 248/255.0, green: 149/255.0, blue: 128/255.0, alpha: 1),
+        UIColor(red: 25/255.0, green: 203/255.0, blue: 245/255.0, alpha: 1)
+    ]
+    
     // MARK: - push segue
     var pushSegueCode: String!
     
@@ -1298,67 +1308,68 @@ class ColorgyTimeTableViewController: UIViewController {
             return nil
         }
         
-        for course in courses! {
+        for (index, course) in enumerate(courses!) {
+            var cellColor = self.cellColors[index % 6]
             if course.day_1 != "<null>" {
                 var v = self.addCourseWith(course.name, location: course.location_1, day: course.day_1.toInt()!, session: course.period_1.toInt()!)
                 if v != nil {
-                    v!.backgroundColor = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
+                    v!.backgroundColor = cellColor
                     timetableViews.append(v!)
                 }
             }
             if course.day_2 != "<null>" {
                 var v = self.addCourseWith(course.name, location: course.location_2, day: course.day_2.toInt()!, session: course.period_2.toInt()!)
                 if v != nil {
-                    v!.backgroundColor = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
+                    v!.backgroundColor = cellColor
                     timetableViews.append(v!)
                 }
             }
             if course.day_3 != "<null>" {
                 var v = self.addCourseWith(course.name, location: course.location_3, day: course.day_3.toInt()!, session: course.period_3.toInt()!)
                 if v != nil {
-                    v!.backgroundColor = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
+                    v!.backgroundColor = cellColor
                     timetableViews.append(v!)
                 }
             }
             if course.day_4 != "<null>" {
                 var v = self.addCourseWith(course.name, location: course.location_4, day: course.day_4.toInt()!, session: course.period_4.toInt()!)
                 if v != nil {
-                    v!.backgroundColor = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
+                    v!.backgroundColor = cellColor
                     timetableViews.append(v!)
                 }
             }
             if course.day_5 != "<null>" {
                 var v = self.addCourseWith(course.name, location: course.location_5, day: course.day_5.toInt()!, session: course.period_5.toInt()!)
                 if v != nil {
-                    v!.backgroundColor = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
+                    v!.backgroundColor = cellColor
                     timetableViews.append(v!)
                 }
             }
             if course.day_6 != "<null>" {
                 var v = self.addCourseWith(course.name, location: course.location_6, day: course.day_6.toInt()!, session: course.period_6.toInt()!)
                 if v != nil {
-                    v!.backgroundColor = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
+                    v!.backgroundColor = cellColor
                     timetableViews.append(v!)
                 }
             }
             if course.day_7 != "<null>" {
                 var v = self.addCourseWith(course.name, location: course.location_7, day: course.day_7.toInt()!, session: course.period_7.toInt()!)
                 if v != nil {
-                    v!.backgroundColor = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
+                    v!.backgroundColor = cellColor
                     timetableViews.append(v!)
                 }
             }
             if course.day_8 != "<null>" {
                 var v = self.addCourseWith(course.name, location: course.location_8, day: course.day_8.toInt()!, session: course.period_8.toInt()!)
                 if v != nil {
-                    v!.backgroundColor = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
+                    v!.backgroundColor = cellColor
                     timetableViews.append(v!)
                 }
             }
             if course.day_9 != "<null>" {
                 var v = self.addCourseWith(course.name, location: course.location_9, day: course.day_9.toInt()!, session: course.period_9.toInt()!)
                 if v != nil {
-                    v!.backgroundColor = UIColor(red: 248/255.0, green: 150/255.0, blue: 128/255.0, alpha: 1)
+                    v!.backgroundColor = cellColor
                     timetableViews.append(v!)
                 }
             }
