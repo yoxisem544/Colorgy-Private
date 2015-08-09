@@ -5,6 +5,8 @@ target 'ColorgyCourse' do
   # pod 'SWRevealViewController'
   pod 'AFNetworking'
   # pod 'FlurrySDK', '~>6.6'
+  pod 'Fabric'
+  pod 'Crashlytics'
 end
 
 target 'ColorgyCourseTests' do

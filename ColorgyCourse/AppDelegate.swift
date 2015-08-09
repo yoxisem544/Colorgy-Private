@@ -9,6 +9,9 @@
 import UIKit
 import CoreData
 
+import Fabric
+import Crashlytics
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -46,6 +49,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Flurry.setDebugLogEnabled(true)
             Flurry.logEvent("User Start Application")        // Example of even logging
         }
+        // crashlytics
+        Fabric.with([Crashlytics()])
         // init window size
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
         // get out main storyboard
