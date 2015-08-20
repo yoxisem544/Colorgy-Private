@@ -55,8 +55,12 @@ class ColorgyUserPriofileViewController: UIViewController {
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = imageView.frame.width / 2
         var ud = NSUserDefaults.standardUserDefaults()
-        var profilePhoto = UIImage(data: ud.objectForKey("bigFBProfilePhoto") as! NSData)
-        imageView.image = profilePhoto!
+        
+        if let data = ud.objectForKey("bigFBProfilePhoto") as? NSData {
+            var profilePhoto = UIImage(data: data)
+            imageView.image = profilePhoto!
+        }
+        
         
         imageView.layer.borderColor = UIColor.whiteColor().CGColor
         imageView.layer.borderWidth = 5
