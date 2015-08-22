@@ -170,7 +170,7 @@ class ColorgyUserPriofileViewController: UIViewController {
         if let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext {
             let fetchRequest = NSFetchRequest(entityName: "Course")
             var e: NSError?
-            var course: [Course] = managedObjectContext.executeFetchRequest(fetchRequest, error: &e) as! [Course]
+            var course: [CourseInDB] = managedObjectContext.executeFetchRequest(fetchRequest, error: &e) as! [CourseInDB]
             if e != nil {
                 println("something error")
             } else {

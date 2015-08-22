@@ -134,7 +134,7 @@ class ColorgyUserProfileViewController: UIViewController {
             var userCourses = NSMutableArray()
             // collect user course uuid
             if coursesInDB != nil {
-                for course: Course in coursesInDB! {
+                for course: CourseInDB in coursesInDB! {
                     userCourses.addObject(course.uuid)
                 }
             }

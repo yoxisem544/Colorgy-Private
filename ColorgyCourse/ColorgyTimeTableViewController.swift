@@ -724,7 +724,7 @@ class ColorgyTimeTableViewController: UIViewController {
                 var userCourses = NSMutableArray()
                 // collect user course uuid
                 if coursesInDB != nil {
-                    for course: Course in coursesInDB! {
+                    for course: CourseInDB in coursesInDB! {
                         userCourses.addObject(course.uuid)
                     }
                 }
@@ -1379,12 +1379,12 @@ class ColorgyTimeTableViewController: UIViewController {
     }
     
     //MARK:- db operation
-    func getDataFromDatabase() -> [Course]? {
+    func getDataFromDatabase() -> [CourseInDB]? {
         
         if let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext {
             let fetchRequest = NSFetchRequest(entityName: "Course")
             var e: NSError?
-            var course: [Course] = managedObjectContext.executeFetchRequest(fetchRequest, error: &e) as! [Course]
+            var course: [CourseInDB] = managedObjectContext.executeFetchRequest(fetchRequest, error: &e) as! [CourseInDB]
             if e != nil {
                 println("something error")
             } else {
@@ -1405,7 +1405,7 @@ class ColorgyTimeTableViewController: UIViewController {
         if let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext {
             let fetchRequest = NSFetchRequest(entityName: "Course")
             var e: NSError?
-            var course: [Course] = managedObjectContext.executeFetchRequest(fetchRequest, error: &e) as! [Course]
+            var course: [CourseInDB] = managedObjectContext.executeFetchRequest(fetchRequest, error: &e) as! [CourseInDB]
             if e != nil {
                 println("something error")
             } else {
@@ -1429,7 +1429,7 @@ class ColorgyTimeTableViewController: UIViewController {
         if let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext {
             
             // insert a new course, but not yet saved.
-            var course = NSEntityDescription.insertNewObjectForEntityForName("Course", inManagedObjectContext: managedObjectContext) as! Course
+            var course = NSEntityDescription.insertNewObjectForEntityForName("Course", inManagedObjectContext: managedObjectContext) as! CourseInDB
             // assign its value to it's key
             course.name = name
             course.lecturer = lecturer
